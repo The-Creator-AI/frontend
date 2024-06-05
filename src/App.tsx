@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.scss';
 import FileContent from './components/FileContent';
 import MultiSelectCheckbox from './components/FileTree';
@@ -7,9 +7,8 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { NodeId } from 'react-accessible-treeview';
-import { Layout, Row, Col } from 'antd';
+import { DraggableCore } from 'react-draggable';
 
-const { Content } = Layout;
 const queryClient = new QueryClient()
 
 // Error Boundary Component
@@ -44,21 +43,37 @@ function App() {
     nodeId: NodeId;
     filePath: string;
   }>();
+  const [splitterPosition, setSplitterPosition] = useState(20); // Initial position (percentage)
+  const fileTreeRef = useRef<HTMLDivElement>(null);
+  const fileContentRef = useRef<HTMLDivElement>(null);
+
+  const handleSplitterDrag = (e: any, data: any) => {
+    const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
+    setSplitterPosition(Math.max(10, Math.min(90, newPosition)));
+  };
+
+  // Update column widths based on splitter position
+  useEffect(() => {
+    if (fileTreeRef.current && fileContentRef.current) {
+      fileTreeRef.current.style.width = `${splitterPosition}%`;
+      fileContentRef.current.style.width = `${100 - splitterPosition}%`;
+    }
+  }, [splitterPosition]);
+
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary> {/* Wrap the entire app in ErrorBoundary */}
-        <Layout>
-          <Content>
-            <Row gutter={16}>
-              <Col span={12}>
-                <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
-              </Col>
-              <Col span={12}>
-                {selectedFile && <FileContent filePath={selectedFile.filePath} />}
-              </Col>
-            </Row>
-          </Content>
-        </Layout>
+      <ErrorBoundary> 
+        <div className="App">
+          <div className="file-tree" ref={fileTreeRef} style={{overflow: 'auto', height: '100%'}}>
+            <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
+          </div>
+          <DraggableCore onDrag={handleSplitterDrag}>
+            <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
+          </DraggableCore>
+          <div className="file-content" ref={fileContentRef} style={{overflow: 'auto', height: '100%'}}>
+            {selectedFile && <FileContent filePath={selectedFile.filePath} />}
+          </div>
+        </div>
       </ErrorBoundary>
     </QueryClientProvider>
   );

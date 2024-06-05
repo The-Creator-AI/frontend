@@ -17,15 +17,21 @@ const FileContent = ({ filePath }: FileContentProps) => {
   });
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       {isPending && <p>Loading file content...</p>}
       {error && <p>Error loading file content: {error.message}</p>}
       {data && (
         <MonacoEditor
-          height='500px'
           theme='vs-dark'
           language='typescript'
           value={data}
+          options={{
+            minimap: {
+              renderCharacters: true,
+              maxColumn: 500,
+              size: 'fit'
+            }
+          }}
         />
       )}
     </div>
