@@ -4,8 +4,11 @@ import { IoMdArrowDropright } from "react-icons/io";
 import TreeView, { flattenTree } from "react-accessible-treeview";
 import cx from "classnames";
 import "./styles.scss";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import config from "../config";
 
-const folder = {
+const data = {
   name: "",
   children: [
     {
@@ -64,14 +67,20 @@ const folder = {
   ],
 };
 
-const data = flattenTree(folder);
-
 function MultiSelectCheckbox() {
+  const { isPending, error, data } = useQuery({
+    queryKey: ['repoData'],
+    queryFn: async () => (await axios.get(config.BASE_URL + '/creator/directory-structure')).data
+  });
+
   return (
     <div>
       <div className="checkbox">
-        <TreeView
-          data={data}
+        {!isPending && data ? <TreeView
+          data={flattenTree({
+            name: '',
+            children: data
+          })}
           aria-label="Checkbox tree"
           multiSelect
           propagateSelect
@@ -108,7 +117,7 @@ function MultiSelectCheckbox() {
               </div>
             );
           }}
-        />
+        /> : null}
       </div>
     </div>
   );
