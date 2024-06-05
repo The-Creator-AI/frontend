@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FaSquare, FaCheckSquare, FaMinusSquare } from "react-icons/fa";
 import PropTypes from 'prop-types';
 import { IoMdArrowDropright } from "react-icons/io";
@@ -87,6 +87,16 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectChec
     name: '',
     children: data
   }), [data]);
+
+  useEffect(() => {
+    // if selectedFile is not in the nodes list or is undefined, choose a random file (not branch though)
+    if (!nodes.find(n => n.id === selectedFile?.nodeId) || !selectedFile) {
+      const randomFile = nodes.find(n => !n.isBranch && n.name);
+      if (randomFile) {
+        setSelectedFile({ nodeId: randomFile.id, filePath: randomFile.name });
+      }
+    }
+  }, [nodes]);
 
   const buildPath = useCallback((node: INode<IFlatMetadata>, currentPath: string): string => {
     const parentNode = nodes.find(n => n.id === node.parent);
