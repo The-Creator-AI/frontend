@@ -1,4 +1,5 @@
 import './App.scss';
+import FileContent from './components/FileContent';
 import MultiSelectCheckbox from './components/FileTree';
 import {
   QueryClient,
@@ -12,6 +13,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <div className="App">
         <MultiSelectCheckbox />
+        <FileContent filePath=''/>
       </div>
     </QueryClientProvider>
   );
