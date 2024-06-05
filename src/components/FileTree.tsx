@@ -1,22 +1,14 @@
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FaSquare, FaCheckSquare, FaMinusSquare } from "react-icons/fa";
 import { IoMdArrowDropright } from "react-icons/io";
-import TreeView, { flattenTree } from "react-accessible-treeview";
+import TreeView, { INode, flattenTree } from "react-accessible-treeview";
 import cx from "classnames";
 import "./styles.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import config from "../config";
 import FileContent from "./FileContent";
-
-const buildPath = (node: any, currentPath: string): string => {
-  console.log({ node })
-  if (node.parent) {
-    return buildPath(node.parent, `${node.parent.name}/${currentPath}`);
-  } else {
-    return currentPath;
-  }
-};
+import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
 const data = {
   name: "",
@@ -83,6 +75,20 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
     queryKey: ['repoData'],
     queryFn: async () => (await axios.get(config.BASE_URL + '/creator/directory-structure')).data
   });
+  const nodes = useMemo(() => flattenTree({
+    name: '',
+    children: data
+  }), [data]);
+
+  const buildPath = useCallback((node: INode<IFlatMetadata>, currentPath: string): string => {
+    const parentNode = nodes.find(n => n.id === node.parent);
+    console.log({ node, parentNode });
+    if (parentNode?.name) {
+      return buildPath(parentNode, `${parentNode.name}/${currentPath}`);
+    } else {
+      return currentPath;
+    }
+  }, [nodes]);
 
   const handleFileSelect = (filePath: string) => {
     console.log({ filePath });
@@ -94,10 +100,7 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
       <div className="checkbox">
         {!isPending && data ? (
           <TreeView
-            data={flattenTree({
-              name: '',
-              children: data
-            })}
+            data={nodes}
             aria-label="Checkbox tree"
             multiSelect
             propagateSelect
