@@ -142,7 +142,7 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectChec
                   />
                   <span
                     className={cx("name", { "name--selected": isSelected })}
-                    onClick={() => handleFileSelect(element.id, buildPath(element, element.name))}
+                    onClick={() => !isBranch && handleFileSelect(element.id, buildPath(element, element.name))}
                   >
                     {element.name}
                   </span>
