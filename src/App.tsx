@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './App.scss';
 import FileContent from './components/FileContent';
 import MultiSelectCheckbox from './components/FileTree';
@@ -9,11 +10,12 @@ import {
 const queryClient = new QueryClient()
 
 function App() {
+  const [selectedFile, setSelectedFile] = useState('');
   return (
     <QueryClientProvider client={queryClient}>
       <div className="App">
-        <MultiSelectCheckbox />
-        <FileContent filePath=''/>
+        <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
+        {selectedFile && <FileContent filePath={selectedFile} />}
       </div>
     </QueryClientProvider>
   );

@@ -77,8 +77,8 @@ const data = {
   ],
 };
 
-function MultiSelectCheckbox() {
-  const [selectedFile, setSelectedFile] = useState('');
+function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
+  
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: async () => (await axios.get(config.BASE_URL + '/creator/directory-structure')).data
@@ -142,7 +142,6 @@ function MultiSelectCheckbox() {
           />
         ) : null}
       </div>
-      {selectedFile && <FileContent key={selectedFile} filePath={selectedFile} />}
     </div>
   );
 }
