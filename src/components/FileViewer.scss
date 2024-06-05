@@ -1,0 +1,28 @@
+.file-viewer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.file-tree,
+.file-content {
+    position: relative;
+    height: 100%;
+}
+
+.splitter {
+    background-color: #ccc;
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: col-resize;
+    z-index: 1;
+}
+
+.splitter:hover {
+    background-color: #5f6772;
+    width: 8px;
+    cursor: col-resize;
+}
