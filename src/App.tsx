@@ -13,7 +13,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <div className="App">
-          <FileExplorer initialSplitterPosition={30} /> 
+          <FileExplorer /> 
         </div>
       </ErrorBoundary>
     </QueryClientProvider>

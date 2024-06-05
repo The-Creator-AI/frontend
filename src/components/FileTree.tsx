@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { IoMdArrowDropright } from "react-icons/io";
 import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
 import cx from "classnames";
-import "./styles.scss";
+import "./FileTree.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import config from "../config";
