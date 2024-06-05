@@ -4,7 +4,7 @@ import {
 } from '@tanstack/react-query';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 import './App.scss';
-import FileViewer from './components/FileViewer';
+import FileExplorer from './components/FileExplorer';
 
 const queryClient = new QueryClient();
 
@@ -13,7 +13,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <div className="App">
-          <FileViewer initialSplitterPosition={30} /> 
+          <FileExplorer initialSplitterPosition={30} /> 
         </div>
       </ErrorBoundary>
     </QueryClientProvider>

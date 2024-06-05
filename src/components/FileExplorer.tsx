@@ -3,13 +3,13 @@ import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
 import FileContent from './FileContent';
 import FileTree from './FileTree';
-import './FileViewer.scss';
+import './FileExplorer.scss';
 
-interface FileViewerProps {
+interface FileExplorerProps {
     initialSplitterPosition?: number;
 }
 
-const FileViewer: React.FC<FileViewerProps> = ({ initialSplitterPosition = 20 }) => {
+const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 20 }) => {
     const [selectedFile, setSelectedFile] = useState<{
         nodeId: NodeId;
         filePath: string;
@@ -46,4 +46,4 @@ const FileViewer: React.FC<FileViewerProps> = ({ initialSplitterPosition = 20 })
     );
 };
 
-export default FileViewer;
+export default FileExplorer;
