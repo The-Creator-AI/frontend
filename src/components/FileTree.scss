@@ -1,3 +1,7 @@
+.tree ul {
+  padding-inline-start: 10px;
+}
+
 .tree li {
   display: flex;
   flex-direction: column;
@@ -12,37 +16,23 @@
   box-sizing: content-box;
 }
 
-.checkbox .tree,
-.checkbox .tree-node,
-.checkbox .tree-node-group {
-  list-style: none;
-  margin: 0;
+.checkbox .tree {
   padding: 0;
 }
 
-.checkbox .tree-branch-wrapper,
-.checkbox .tree-node__leaf {
-  outline: none;
-}
-
-.checkbox .tree-node {
+.tree-node {
   cursor: pointer;
+  position: relative;
 }
 
-.checkbox .tree-node .name:hover {
+.tree-node {
+  padding: 4px 0px;
+  width: 100%;
+}
+
+.tree-node--selected,
+.tree-node:hover {
   background: rgba(131, 131, 131, 0.3);
-}
-
-.checkbox .tree-node--focused .name {
-  background: rgba(131, 131, 131, 0.3);
-}
-
-.checkbox .tree-node .name--selected {
-  background: rgba(131, 131, 131, 0.3);
-}
-
-.checkbox .tree-node {
-  display: inline-block;
 }
 
 .checkbox .checkbox-icon {
@@ -63,4 +53,14 @@
 
 .checkbox .arrow--open {
   transform: rotate(90deg);
+}
+
+.arrow-icon {
+  position: absolute;
+  left: -15px;
+  top: 8px;
+}
+
+.checkbox-icon {
+
 }

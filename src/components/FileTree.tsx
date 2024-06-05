@@ -127,9 +127,9 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectChec
               return (
                 <div
                   {...getNodeProps({ onClick: handleExpand })}
-                  style={{ marginLeft: 40 * (level - 1) }}
+                  style={{ marginLeft: 10 * (level - 1) }}
                 >
-                  {isBranch && <ArrowIcon isOpen={isExpanded} />}
+                  {isBranch && <ArrowIcon isOpen={isExpanded} className="arrow-icon"/>}
                   <CheckBoxIcon
                     className="checkbox-icon"
                     onClick={(e) => {
