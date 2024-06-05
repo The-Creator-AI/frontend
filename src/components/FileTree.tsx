@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { FaSquare, FaCheckSquare, FaMinusSquare } from "react-icons/fa";
+import PropTypes from 'prop-types';
 import { IoMdArrowDropright } from "react-icons/io";
-import TreeView, { INode, flattenTree } from "react-accessible-treeview";
+import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
 import cx from "classnames";
 import "./styles.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import config from "../config";
-import FileContent from "./FileContent";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
 const data = {
@@ -69,7 +69,15 @@ const data = {
   ],
 };
 
-function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
+interface MultiSelectCheckboxProps {
+  selectedFile: {
+    nodeId: NodeId;
+    filePath: string;
+  } | undefined;
+  setSelectedFile: (file: { nodeId: NodeId; filePath: string }) => void;
+}
+
+function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectCheckboxProps) {
   
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData'],
@@ -82,7 +90,6 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
 
   const buildPath = useCallback((node: INode<IFlatMetadata>, currentPath: string): string => {
     const parentNode = nodes.find(n => n.id === node.parent);
-    console.log({ node, parentNode });
     if (parentNode?.name) {
       return buildPath(parentNode, `${parentNode.name}/${currentPath}`);
     } else {
@@ -90,9 +97,8 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
     }
   }, [nodes]);
 
-  const handleFileSelect = (filePath: string) => {
-    console.log({ filePath });
-    setSelectedFile(filePath);
+  const handleFileSelect = (nodeId: NodeId, filePath: string) => {
+    setSelectedFile({ nodeId, filePath });
   };
 
   return (
@@ -101,6 +107,7 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
         {!isPending && data ? (
           <TreeView
             data={nodes}
+            selectedIds={selectedFile?.nodeId ? [selectedFile.nodeId] : []}
             aria-label="Checkbox tree"
             multiSelect
             propagateSelect
@@ -135,7 +142,7 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
                   />
                   <span
                     className={cx("name", { "name--selected": isSelected })}
-                    onClick={() => handleFileSelect(buildPath(element, element.name))}
+                    onClick={() => handleFileSelect(element.id, buildPath(element, element.name))}
                   >
                     {element.name}
                   </span>
@@ -148,6 +155,14 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile }) {
     </div>
   );
 }
+
+MultiSelectCheckbox.propTypes = {
+  selectedFile: PropTypes.shape({
+    nodeId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    filePath: PropTypes.string.isRequired,
+  }),
+  setSelectedFile: PropTypes.func.isRequired,
+};
 
 const ArrowIcon = ({ isOpen, className = '' }) => {
   const baseClass = "arrow";
