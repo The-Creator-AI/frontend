@@ -37,6 +37,10 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
+.checkbox .tree-node .name--selected {
+  background: rgba(0, 0, 0, 0.3);
+}
+
 .checkbox .tree-node {
   display: inline-block;
 }
