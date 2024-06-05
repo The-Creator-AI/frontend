@@ -8,35 +8,9 @@ import {
 } from '@tanstack/react-query'
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
+import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 
-const queryClient = new QueryClient()
-
-// Error Boundary Component
-class ErrorBoundary extends React.Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: any) {
-    // Update state so the next render will show the fallback UI.
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: any, errorInfo: any) {
-    // You can also log the error to an error reporting service
-    console.error(error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      console.error('Something went wrong...');
-    }
-
-    // Normally, just render the children
-    return this.props.children;
-  }
-}
+const queryClient = new QueryClient();
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<{
@@ -62,7 +36,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary> 
+      <ErrorBoundary>
         <div className="App">
           <div className="file-tree" ref={fileTreeRef} style={{overflow: 'auto', height: '100%'}}>
             <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
