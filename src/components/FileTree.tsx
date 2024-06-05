@@ -3,7 +3,7 @@ import { FaSquare, FaCheckSquare, FaMinusSquare } from "react-icons/fa";
 import { IoMdArrowDropright } from "react-icons/io";
 import TreeView, { flattenTree } from "react-accessible-treeview";
 import cx from "classnames";
-// import "./styles.css";
+import "./styles.scss";
 
 const folder = {
   name: "",
@@ -11,7 +11,23 @@ const folder = {
     {
       name: "Fruits",
       children: [
-        { name: "Avocados" },
+        {
+          name: "Avocados",
+          children: [
+            { name: "Apple Juice" },
+            { name: "Chocolate" },
+            { name: "Coffee" },
+            {
+              name: "Tea",
+              children: [
+                { name: "Black Tea" },
+                { name: "Green Tea" },
+                { name: "Red Tea" },
+                { name: "Matcha" },
+              ],
+            },
+          ],
+        },
         { name: "Bananas" },
         { name: "Berries" },
         { name: "Oranges" },

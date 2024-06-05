@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import MultiSelectCheckbox from './components/FileTree';
 
 function App() {
