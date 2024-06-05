@@ -7,7 +7,9 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { NodeId } from 'react-accessible-treeview';
+import { Layout, Row, Col } from 'antd';
 
+const { Content } = Layout;
 const queryClient = new QueryClient()
 
 // Error Boundary Component
@@ -45,10 +47,18 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary> {/* Wrap the entire app in ErrorBoundary */}
-        <div className="App">
-          <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
-          {selectedFile && <FileContent filePath={selectedFile.filePath} />}
-        </div>
+        <Layout>
+          <Content>
+            <Row gutter={16}>
+              <Col span={12}>
+                <MultiSelectCheckbox selectedFile={selectedFile} setSelectedFile={setSelectedFile}/>
+              </Col>
+              <Col span={12}>
+                {selectedFile && <FileContent filePath={selectedFile.filePath} />}
+              </Col>
+            </Row>
+          </Content>
+        </Layout>
       </ErrorBoundary>
     </QueryClientProvider>
   );
