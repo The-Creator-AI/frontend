@@ -72,8 +72,12 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
         const childNode = treeData.find(node => node.id === childId);
         return childNode?.children?.length as number > 0;
     });
+    const hasNoChildWithChildren = expandedNode?.children?.every(childId => {
+      const childNode = treeData.find(node => node.id === childId);
+      return !childNode?.isBranch;
+  });
 
-    if (hasGrandchildren) {
+    if (hasGrandchildren || hasNoChildWithChildren) {
         return; // No need to reload data
     }
 
@@ -191,7 +195,7 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
                 {...getNodeProps({
                   onClick: (evt) => {
                     handleExpand(evt);
-                    getMoreDataOnExpand((element.id));
+                    // getMoreDataOnExpand((element.id));
                   }
                 })}
                 style={{ marginLeft: 10 * (level - 1) }}
