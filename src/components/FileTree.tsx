@@ -63,18 +63,27 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
   };
 
   const getMoreDataOnExpand = useCallback((nodeId: NodeId) => {
-    // 1. Find the expanded node in the tree data
+    // 1. Find the expanded node and check its children
     const expandedNode = treeData.find(node => node.id === nodeId);
     const expandedNodeParent = treeData.find(node => node.id === expandedNode?.parent);
-  
-    // 2. Check if the expanded node already has children
+
+    // **Optimization:** Exit early if the node has children with their own children
+    const hasGrandchildren = expandedNode?.children?.some(childId => {
+        const childNode = treeData.find(node => node.id === childId);
+        return childNode?.children?.length as number > 0;
+    });
+
+    if (hasGrandchildren) {
+        return; // No need to reload data
+    }
+
+    // 2. (If needed) Fetch data for the expanded node (directory)
     if (expandedNode?.children?.length) {
-      // 3. Fetch data for the expanded node (which is actually the directory)
-      const newPath = buildPath(expandedNode, expandedNode.name);
-  
-      axios.get(`${config.BASE_URL}/creator/directory-structure?dir=${newPath}`, {
-        responseType: 'json'
-      }).then(response => {
+        // 3. Fetch data for the expanded node (which is actually the directory)
+        const newPath = buildPath(expandedNode, expandedNode.name);
+        axios.get(`${config.BASE_URL}/creator/directory-structure?dir=${newPath}`, {
+            responseType: 'json'
+        }).then(response => {
         // 4. Flatten the fetched directory structure
         const newDescendents = flattenTree({
           name: '',
