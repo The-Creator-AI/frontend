@@ -47,11 +47,11 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
   };
 
   const getBreadcrumbs = () => {
-    const parts = currentPath.split('/').filter(Boolean);
+    const parts = currentPath.split('/');
     const breadcrumbs = parts.reduce((acc, part) => {
-      const path = acc.length > 0 ? `${acc[acc.length - 1]}/${part}` : part;
-      return [...acc, path];
-    }, [] as string[]);
+      const path = acc.length > 0 ? `${acc[acc.length - 1].path}/${part}` : part;
+      return [...acc, { path, part }];
+    }, [] as { path: string; part: string }[]);
     return breadcrumbs;
   };
 
@@ -61,10 +61,10 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
         {getBreadcrumbs().map((dir, index) => (
           <span
             key={index}
-            onClick={() => handleBreadcrumbClick(dir)}
+            onClick={() => handleBreadcrumbClick(dir.path)}
             style={{ cursor: 'pointer' }}
           >
-            {dir}{index < getBreadcrumbs().length - 1 && ' / '}
+            {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
           </span>
         ))}
       </div>

@@ -22,26 +22,16 @@ interface FileTreeProps {
 const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, currentPath = '' }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
-  console.log({ treeData });
-
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData', currentPath],
     queryFn: async () => {
       const response = await axios.get(`${config.BASE_URL}/creator/directory-structure?dir=${currentPath}`);
-      console.log({ response });
       return response.data;
     }
   });
 
   useEffect(() => {
-    console.log({ isPending, data });
     if (!isPending && data) {
-      console.log({
-        toFlatten: {
-          name: '',
-          children: data.children
-        }
-      })
       setTreeData(flattenTree({
         name: '',
         children: data.children
@@ -123,7 +113,6 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
         };
   
         const nodeReplacingExpandedNode = newDescendents.find(n => n.parent === null);
-        console.log({ nodeReplacingExpandedNode });
         // 8. Update parent-child relationships for existing nodes
         newDescendents.forEach(newDescendent => {
           // Update parent-child relationships for the expanded node (which will be replaced with the one coming in data)
