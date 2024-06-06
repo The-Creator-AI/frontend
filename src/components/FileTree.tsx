@@ -113,7 +113,6 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectChec
 
   return (
     <div>
-      <div className="checkbox">
         {!isPending && data ? (
           <TreeView
             data={nodes}
@@ -161,7 +160,6 @@ function MultiSelectCheckbox({ selectedFile, setSelectedFile } : MultiSelectChec
             }}
           />
         ) : null}
-      </div>
     </div>
   );
 }

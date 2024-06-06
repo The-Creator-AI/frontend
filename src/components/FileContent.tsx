@@ -26,6 +26,7 @@ const FileContent = ({ filePath }: FileContentProps) => {
           language='typescript'
           value={data}
           options={{
+            fontSize: 14,
             minimap: {
               renderCharacters: true,
               maxColumn: 500,
