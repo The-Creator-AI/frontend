@@ -4,46 +4,85 @@ import { DraggableCore } from 'react-draggable';
 import FileContent from './FileContent';
 import FileTree from './FileTree';
 import './FileExplorer.scss';
+import axios from 'axios';
+import config from '../config';
 
 interface FileExplorerProps {
-    initialSplitterPosition?: number;
+  initialSplitterPosition?: number;
 }
 
 const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 20 }) => {
-    const [selectedFile, setSelectedFile] = useState<{
-        nodeId: NodeId;
-        filePath: string;
-    }>();
-    const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); // Initial position (percentage)
-    const fileTreeRef = useRef<HTMLDivElement>(null);
-    const fileContentRef = useRef<HTMLDivElement>(null);
+  const [selectedFile, setSelectedFile] = useState<{
+    nodeId: NodeId;
+    filePath: string;
+  }>();
+  const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); // Initial position (percentage)
+  const [currentPath, setCurrentPath] = useState('');
+  const fileTreeRef = useRef<HTMLDivElement>(null);
+  const fileContentRef = useRef<HTMLDivElement>(null);
 
-    const handleSplitterDrag = (e: any, data: any) => {
-        const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
-        setSplitterPosition(Math.max(10, Math.min(90, newPosition)));
-    };
+  const handleSplitterDrag = (e: any, data: any) => {
+    const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
+    setSplitterPosition(Math.max(10, Math.min(90, newPosition)));
+  };
 
-    // Update column widths based on splitter position
-    useEffect(() => {
-        if (fileTreeRef.current && fileContentRef.current) {
-            fileTreeRef.current.style.width = `${splitterPosition}%`;
-            fileContentRef.current.style.width = `${100 - splitterPosition}%`;
-        }
-    }, [splitterPosition]);
+  // Update column widths based on splitter position
+  useEffect(() => {
+    if (fileTreeRef.current && fileContentRef.current) {
+      fileTreeRef.current.style.width = `${splitterPosition}%`;
+      fileContentRef.current.style.width = `${100 - splitterPosition}%`;
+    }
+  }, [splitterPosition]);
 
-    return (
-        <div className="file-viewer">
-            <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
-                <FileTree selectedFile={selectedFile} setSelectedFile={setSelectedFile} />
-            </div>
-            <DraggableCore onDrag={handleSplitterDrag}>
-                <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
-            </DraggableCore>
-            <div className="file-content" ref={fileContentRef} style={{ overflow: 'auto', height: '100%' }}>
-                {selectedFile && <FileContent filePath={selectedFile.filePath} />}
-            </div>
-        </div>
-    );
+  useEffect(() => {
+    axios.get(`${config.BASE_URL}/creator/directory-structure`, {
+      responseType: 'json',
+    }).then(response => {
+      setCurrentPath(response.data.currentPath); // Set the initial path from the backend response
+    });
+  }, []); // Only run once on component mount
+
+  const handleBreadcrumbClick = (dir: string) => {
+    setCurrentPath(dir);
+  };
+
+  const getBreadcrumbs = () => {
+    const parts = currentPath.split('/').filter(Boolean);
+    const breadcrumbs = parts.reduce((acc, part) => {
+      const path = acc.length > 0 ? `${acc[acc.length - 1]}/${part}` : part;
+      return [...acc, path];
+    }, [] as string[]);
+    return breadcrumbs;
+  };
+
+  return (
+    <div className="file-viewer">
+      <div className="breadcrumbs">
+        {getBreadcrumbs().map((dir, index) => (
+          <span
+            key={index}
+            onClick={() => handleBreadcrumbClick(dir)}
+            style={{ cursor: 'pointer' }}
+          >
+            {dir}{index < getBreadcrumbs().length - 1 && ' / '}
+          </span>
+        ))}
+      </div>
+      <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
+        {currentPath ? <FileTree
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          currentPath={currentPath}
+        /> : `No current path selected!`}
+      </div>
+      <DraggableCore onDrag={handleSplitterDrag}>
+        <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
+      </DraggableCore>
+      <div className="file-content" ref={fileContentRef} style={{ overflow: 'auto', height: '100%' }}>
+        {selectedFile && <FileContent filePath={selectedFile.filePath} />}
+      </div>
+    </div>
+  );
 };
 
 export default FileExplorer;

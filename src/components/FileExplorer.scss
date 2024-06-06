@@ -34,3 +34,19 @@
     width: 8px;
     cursor: col-resize;
 }
+
+.breadcrumbs {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1e1e1e;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 10; // Ensure breadcrumbs are above the file tree
+}
+
+.breadcrumbs span {
+    color: #ccc;
+    font-size: 14px;
+}
