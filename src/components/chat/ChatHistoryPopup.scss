@@ -10,36 +10,36 @@
     z-index: 10; // Ensure it's above other elements
     border-radius: 8px;
     overflow-y: auto;
-
+    
     .chat-history-container {
         padding: 10px;
     }
-
+    
     .message {
         margin-bottom: 8px;
         padding: 8px 12px;
         border-radius: 4px;
         position: relative; // To position the delete icon
-
+    
         &.user {
             background-color: #007bff;
             color: white;
             text-align: right;
         }
-
+    
         &.bot {
             background-color: #f0f0f0;
             text-align: left;
         }
-
+    
         .user {
             font-weight: bold;
         }
-
+    
         .message-content {
             /* No specific styling needed, it just groups the content */
         }
-
+    
         .delete-icon {
             position: absolute;
             top: 5px; // Adjust vertical position
@@ -47,13 +47,13 @@
             cursor: pointer;
             font-size: 16px; // Adjust icon size
             color: #888; // Light gray color
-
+    
             &:hover {
                 color: #333; // Darker gray on hover
             }
         }
     }
-
+    
     .model-badge {
         background-color: #ddd;
         /* Light gray background for the badge */
@@ -62,12 +62,16 @@
         margin-right: 5px;
         font-size: 12px;
     }
-
+    
     .loading-message {
         /* Style for the loading message */
         text-align: left;
         font-style: italic;
         color: #aaa;
         /* Light gray color for the message */
+    }
+    
+    .markdown-container {
+        word-wrap: break-word; /* Add word-wrap to enable line breaks */
     }
 }

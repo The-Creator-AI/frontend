@@ -25,7 +25,9 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHist
                                 message.model ? <span className="model-badge">{message.model}</span> : null
                             )}
                             <span className="user">{message.user}:</span>
-                            <ReactMarkdown>{message.message}</ReactMarkdown>
+                            <div className="markdown-container">
+                                <ReactMarkdown>{message.message}</ReactMarkdown>
+                            </div>
                         </div>
                         <CloseOutlined 
                             className="delete-icon" 
