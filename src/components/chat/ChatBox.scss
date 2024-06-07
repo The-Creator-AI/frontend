@@ -1,0 +1,42 @@
+.chat-box {
+    position: fixed;
+    bottom: 20px;
+    left: 50%; // Position it at 50% from the left
+    transform: translateX(-50%); // Shift it back by half its width
+    width: 100%;
+    max-width: 500px; // Optional: Limit the width of the chat box
+    background-color: #2a2a2a;
+    padding: 10px;
+    box-sizing: border-box;
+    transition: transform 0.3s ease-in-out;
+
+    &.active {
+        transform: translate(-50%, 0); // Adjust transform for active state
+    }
+
+    .chat-input {
+        display: flex;
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: default;
+            }
+        }
+    }
+}
