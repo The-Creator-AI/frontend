@@ -21,7 +21,7 @@ const useChat = () => {
 
     try {
       const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
-        message, 
+        chatHistory, 
         selectedFiles 
       }); 
       const botResponse: ChatMessage = { 
