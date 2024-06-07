@@ -11,10 +11,11 @@ import { NodeId } from 'react-accessible-treeview';
 const queryClient = new QueryClient();
 
 function App() {
+  const [currentPath, setCurrentPath] = useState('');
   const [selectedFiles, setSelectedFiles] = useState<{
     nodeId: NodeId;
     filePath: string;
-  }[]>([]); // Changed to array
+  }[]>([]);
   const [isChatActive, setIsChatActive] = useState(false);
   const { chatHistory, sendMessage } = useChat();
 
@@ -23,7 +24,7 @@ function App() {
   };
 
   const handleSendMessage = (message: string) => {
-    sendMessage(message, selectedFiles.map(f => f.filePath));
+    sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`));
   };
 
   return (
@@ -31,6 +32,8 @@ function App() {
       <ErrorBoundary>
         <div className="App">
           <FileExplorer
+            currentPath={currentPath}
+            setCurrentPath={setCurrentPath}
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
           />

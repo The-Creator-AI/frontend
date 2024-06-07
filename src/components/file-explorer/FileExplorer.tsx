@@ -9,17 +9,20 @@ import config from '../../config';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
+  currentPath: string;
+  setCurrentPath: Dispatch<SetStateAction<string>>;
   selectedFiles: { nodeId: NodeId; filePath: string; }[];
   setSelectedFiles: Dispatch<SetStateAction<{ nodeId: NodeId; filePath: string; }[]>>;
 }
 
 const FileExplorer: React.FC<FileExplorerProps> = ({
   initialSplitterPosition = 20,
+  currentPath,
+  setCurrentPath,
   selectedFiles,
   setSelectedFiles
 }) => {
   const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); 
-  const [currentPath, setCurrentPath] = useState('');
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
 
