@@ -4,7 +4,7 @@ import {
 } from '@tanstack/react-query';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 import './App.scss';
-import FileExplorer from './components/FileExplorer';
+import FileExplorer from './components/file-explorer/FileExplorer';
 
 const queryClient = new QueryClient();
 

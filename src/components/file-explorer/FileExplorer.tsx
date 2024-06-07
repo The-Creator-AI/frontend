@@ -5,7 +5,7 @@ import FileContent from './FileContent';
 import FileTree from './FileTree';
 import './FileExplorer.scss';
 import axios from 'axios';
-import config from '../config';
+import config from '../../config';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;

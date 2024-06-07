@@ -7,7 +7,7 @@ import cx from "classnames";
 import "./FileTree.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import config from "../config";
+import config from "../../config";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
 interface FileTreeProps {

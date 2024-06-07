@@ -2,7 +2,7 @@ import React from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import config from '../config';
+import config from '../../config';
 
 interface FileContentProps {
   filePath: string;
