@@ -11,15 +11,15 @@ import config from "../../config";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
 interface FileTreeProps {
-  selectedFile: {
+  selectedFiles: {
     nodeId: NodeId;
     filePath: string;
-  } | undefined;
-  setSelectedFile: (file: { nodeId: NodeId; filePath: string }) => void;
+  }[];
+  setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void; // Update type to accept array
   currentPath?: string;
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, currentPath = '' }) => {
+const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '' }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
   const { isPending, error, data } = useQuery({
@@ -29,6 +29,14 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
       return response.data;
     }
   });
+
+  const handleFileSelect = (nodeId: NodeId, filePath: string) => {
+    if (selectedFiles.find(f => f.nodeId === nodeId)) {
+      setSelectedFiles(selectedFiles.filter(f => f.nodeId !== nodeId));
+    } else {
+      setSelectedFiles([...selectedFiles, { nodeId, filePath }]);
+    }
+  };
 
   useEffect(() => {
     if (!isPending && data) {
@@ -47,10 +55,6 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
       return currentPath;
     }
   }, [treeData]);
-
-  const handleFileSelect = (nodeId: NodeId, filePath: string) => {
-    setSelectedFile({ nodeId, filePath });
-  };
 
   const getMoreDataOnExpand = useCallback((nodeId: NodeId) => {
     // 1. Find the expanded node and check its children
@@ -162,9 +166,9 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
       {!isPending && treeData.length ? (
         <TreeView
           data={treeData}
-          selectedIds={selectedFile?.nodeId ? [selectedFile.nodeId] : []}
           aria-label="Checkbox tree"
           multiSelect
+          selectedIds={selectedFiles.map(f => f.nodeId)} 
           propagateSelect
           propagateSelectUpwards
           togglableSelect
@@ -193,7 +197,7 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
                 <CheckBoxIcon
                   className="checkbox-icon"
                   onClick={(e) => {
-                    handleSelect(e);
+                    handleFileSelect(element.id, buildPath(element, element.name))
                     e.stopPropagation();
                   }}
                   variant={
@@ -201,7 +205,7 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
                   }
                 />
                 <span
-                  className={cx("name", { "name--selected": isSelected })}
+                  className={cx("name", { "name--selected": selectedFiles.find(f => f.nodeId === element.id) })}
                   onClick={() => !isBranch && handleFileSelect(element.id, buildPath(element, element.name))}
                 >
                   {element.name}
@@ -213,15 +217,6 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFile, setSelectedFile, curr
       ) : <span>File tree not loaded!</span>}
     </div>
   );
-};
-
-FileTree.propTypes = {
-  selectedFile: PropTypes.shape({
-    nodeId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-    filePath: PropTypes.string.isRequired,
-  }),
-  setSelectedFile: PropTypes.func.isRequired,
-  currentPath: PropTypes.string,
 };
 
 const ArrowIcon = ({ isOpen, className = '' }) => {

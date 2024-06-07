@@ -5,25 +5,41 @@ import FileExplorer from './components/file-explorer/FileExplorer';
 import ChatBox from './components/chat/ChatBox';
 import ChatHistoryPopup from './components/chat/ChatHistoryPopup';
 import { useState } from 'react';
-import useChat from './components/chat/useChat'; 
+import useChat, { ChatMessage } from './components/chat/useChat';
+import { NodeId } from 'react-accessible-treeview';
 
 const queryClient = new QueryClient();
 
 function App() {
+  const [selectedFiles, setSelectedFiles] = useState<{
+    nodeId: NodeId;
+    filePath: string;
+  }[]>([]); // Changed to array
   const [isChatActive, setIsChatActive] = useState(false);
-  const { chatHistory, sendMessage } = useChat(); // Use the custom hook
+  const { chatHistory, sendMessage } = useChat();
 
   const handleChatActivate = () => {
     setIsChatActive(!isChatActive);
+  };
+
+  const handleSendMessage = (message: string) => {
+    sendMessage(message, selectedFiles.map(f => f.filePath));
   };
 
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <div className="App">
-          <FileExplorer />
+          <FileExplorer
+            selectedFiles={selectedFiles}
+            setSelectedFiles={setSelectedFiles}
+          />
           {isChatActive && <ChatHistoryPopup chatHistory={chatHistory} />}
-          <ChatBox onChatActivate={handleChatActivate} isActive={isChatActive} onSendMessage={sendMessage} /> 
+          <ChatBox
+            onChatActivate={handleChatActivate}
+            isActive={isChatActive}
+            onSendMessage={handleSendMessage}
+          />
         </div>
       </ErrorBoundary>
     </QueryClientProvider>

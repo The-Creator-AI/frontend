@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
 import FileContent from './FileContent';
@@ -9,14 +9,16 @@ import config from '../../config';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
+  selectedFiles: { nodeId: NodeId; filePath: string; }[];
+  setSelectedFiles: Dispatch<SetStateAction<{ nodeId: NodeId; filePath: string; }[]>>;
 }
 
-const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 20 }) => {
-  const [selectedFile, setSelectedFile] = useState<{
-    nodeId: NodeId;
-    filePath: string;
-  }>();
-  const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); // Initial position (percentage)
+const FileExplorer: React.FC<FileExplorerProps> = ({
+  initialSplitterPosition = 20,
+  selectedFiles,
+  setSelectedFiles
+}) => {
+  const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); 
   const [currentPath, setCurrentPath] = useState('');
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
@@ -26,7 +28,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
     setSplitterPosition(Math.max(10, Math.min(90, newPosition)));
   };
 
-  // Update column widths based on splitter position
   useEffect(() => {
     if (fileTreeRef.current && fileContentRef.current) {
       fileTreeRef.current.style.width = `${splitterPosition}%`;
@@ -38,12 +39,13 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
     axios.get(`${config.BASE_URL}/creator/directory-structure`, {
       responseType: 'json',
     }).then(response => {
-      setCurrentPath(response.data.currentPath); // Set the initial path from the backend response
+      setCurrentPath(response.data.currentPath); 
     });
-  }, []); // Only run once on component mount
+  }, []);
 
   const handleBreadcrumbClick = (dir: string) => {
     setCurrentPath(dir);
+    setSelectedFiles([]); // Clear selected files when changing directories
   };
 
   const getBreadcrumbs = () => {
@@ -58,7 +60,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
   return (
     <div className="file-viewer">
       <div className="breadcrumbs">
-        {getBreadcrumbs().map((dir, index) => (
+      {getBreadcrumbs().map((dir, index) => (
           <span
             key={index}
             onClick={() => handleBreadcrumbClick(dir.path)}
@@ -69,17 +71,18 @@ const FileExplorer: React.FC<FileExplorerProps> = ({ initialSplitterPosition = 2
         ))}
       </div>
       <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
-        {currentPath ? <FileTree
-          selectedFile={selectedFile}
-          setSelectedFile={setSelectedFile}
-          currentPath={currentPath}
+        {currentPath ? <FileTree 
+          selectedFiles={selectedFiles} 
+          setSelectedFiles={setSelectedFiles} 
+          currentPath={currentPath} 
         /> : `No current path selected!`}
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>
         <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
       </DraggableCore>
       <div className="file-content" ref={fileContentRef} style={{ overflow: 'auto', height: '100%' }}>
-        {selectedFile && <FileContent filePath={selectedFile.filePath} />}
+        {/* Display content for the first selected file (or handle multiple files differently if needed) */}
+        {selectedFiles.length > 0 && <FileContent filePath={selectedFiles[0].filePath} />}
       </div>
     </div>
   );
