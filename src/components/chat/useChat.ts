@@ -6,14 +6,14 @@ export interface ChatMessage {
   user: 'user' | 'bot';
   message: string;
   model?: string; 
-  selectedFiles?: string[]; // Add selectedFiles property
+  selectedFiles?: string[];
 }
 
 const useChat = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
+  const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async (message: string, selectedFiles: string[]) => { // Add selectedFiles parameter
+  const sendMessage = async (message: string, selectedFiles: string[]) => {
     const newMessage: ChatMessage = { user: 'user', message, selectedFiles };
     setChatHistory((chatHistory) => [...chatHistory, newMessage]);
 
@@ -21,7 +21,7 @@ const useChat = () => {
 
     try {
       const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
-        chatHistory, 
+        chatHistory: [...chatHistory, newMessage], 
         selectedFiles 
       }); 
       const botResponse: ChatMessage = { 
@@ -34,11 +34,17 @@ const useChat = () => {
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
-      setIsLoading(false); // Set loading to false after request is complete
+      setIsLoading(false);
     }
   };
 
-  return { chatHistory, sendMessage, isLoading }; // Return isLoading
+  const deleteMessage = (indexToDelete: number) => {
+    setChatHistory(prevHistory => 
+      prevHistory.filter((_, index) => index !== indexToDelete)
+    );
+  };
+
+  return { chatHistory, sendMessage, isLoading, deleteMessage };
 };
 
 export default useChat;

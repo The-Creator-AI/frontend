@@ -19,7 +19,7 @@ function App() {
     filePath: string;
   }[]>([]);
   const [isChatActive, setIsChatActive] = useState(false);
-  const { isLoading, chatHistory, sendMessage } = useChat();
+  const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
 
   const handleChatActivate = () => {
     setIsChatActive(!isChatActive);
@@ -43,7 +43,10 @@ function App() {
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
           />
-          {isChatActive && <ChatHistoryPopup isLoading={isLoading} chatHistory={chatHistory} />}
+          {isChatActive && <ChatHistoryPopup
+            isLoading={isLoading}
+            chatHistory={chatHistory}
+            deleteMessage={deleteMessage} />}
           <ChatBox
             onChatActivate={handleChatActivate}
             isActive={isChatActive}
