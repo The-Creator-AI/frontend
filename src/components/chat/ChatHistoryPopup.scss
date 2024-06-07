@@ -73,5 +73,22 @@
     
     .markdown-container {
         word-wrap: break-word; /* Add word-wrap to enable line breaks */
+
+        pre {
+            background-color: #adaeaf;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+
+            .copy-icon {
+                cursor: pointer;
+            }
+        }
+    
+        code {
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
     }
 }

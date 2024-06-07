@@ -3,6 +3,7 @@ import './ChatHistoryPopup.scss';
 import { ChatMessage } from './useChat';
 import ReactMarkdown from 'react-markdown';
 import { CloseOutlined } from '@ant-design/icons';
+import CodeBlock from './CodeBlock';
 
 interface ChatHistoryPopupProps {
     chatHistory: ChatMessage[];
@@ -26,7 +27,11 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHist
                             )}
                             <span className="user">{message.user}:</span>
                             <div className="markdown-container">
-                                <ReactMarkdown>{message.message}</ReactMarkdown>
+                                <ReactMarkdown
+                                components={{
+                                    code: CodeBlock as any
+                                  }}
+                                >{message.message}</ReactMarkdown>
                             </div>
                         </div>
                         <CloseOutlined 
