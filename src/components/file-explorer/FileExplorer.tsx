@@ -53,6 +53,12 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     return breadcrumbs;
   };
 
+  const handleRightClick = (event: React.MouseEvent, nodeId: NodeId, filePath: string) => {
+    event.preventDefault();
+    setCurrentPath(`${currentPath}/${filePath}`);
+    setSelectedFiles([]); // Clear any selected files
+  };
+
   return (
     <div className="file-viewer">
       <div className="breadcrumbs">
@@ -72,6 +78,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           setSelectedFiles={setSelectedFiles} 
           currentPath={currentPath} 
           setActiveFile={setActiveFile}
+          onRightClick={handleRightClick} // Pass the handler function to FileTree
         /> : `No current path selected!`}
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>

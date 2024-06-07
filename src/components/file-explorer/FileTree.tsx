@@ -18,9 +18,10 @@ interface FileTreeProps {
   setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void; 
   currentPath?: string;
   setActiveFile: (filePath: string | null) => void; // New prop for active file
+  onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void; // Add this prop
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '', setActiveFile }) => {
+const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '', setActiveFile, onRightClick }) => { // Include onRightClick in props
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
   const { isPending, error, data } = useQuery({
@@ -193,8 +194,12 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
                 {...getNodeProps({
                   onClick: (evt) => {
                     handleExpand(evt);
-                    // getMoreDataOnExpand((element.id));
-                  }
+                  },
+                  // onContextMenu: (event) => { // Add onContextMenu handler
+                  //   if (isBranch) {
+                  //     onRightClick(event, element.id, buildPath(element, element.name));
+                  //   }
+                  // }
                 })}
                 style={{ marginLeft: 10 * (level - 1) }}
               >
@@ -212,6 +217,10 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
                 <span
                   className={cx("name", { "name--selected": selectedFiles.find(f => f.nodeId === element.id) })}
                   onClick={() => !isBranch && handleFileClick(element.id, buildPath(element, element.name))}
+                  onContextMenu={(event) => {
+                    onRightClick(event, element.id, buildPath(element, element.name));
+                    event.preventDefault(); // Prevent default right-click menu
+                  }}
                 >
                   {element.name}
                 </span>
