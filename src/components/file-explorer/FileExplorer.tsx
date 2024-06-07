@@ -25,6 +25,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); 
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
+  const [activeFile, setActiveFile] = useState<string | null>(null);
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
@@ -78,6 +79,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           selectedFiles={selectedFiles} 
           setSelectedFiles={setSelectedFiles} 
           currentPath={currentPath} 
+          setActiveFile={setActiveFile}
         /> : `No current path selected!`}
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>
@@ -85,7 +87,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       </DraggableCore>
       <div className="file-content" ref={fileContentRef} style={{ overflow: 'auto', height: '100%' }}>
         {/* Display content for the first selected file (or handle multiple files differently if needed) */}
-        {selectedFiles.length > 0 && <FileContent filePath={selectedFiles[0].filePath} />}
+        {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />} 
       </div>
     </div>
   );

@@ -6,12 +6,13 @@ import config from '../../config';
 
 interface FileContentProps {
   filePath: string;
+  currentPath: string;
 }
 
-const FileContent = ({ filePath }: FileContentProps) => {
+const FileContent = ({ currentPath, filePath }: FileContentProps) => {
   const { isPending, error, data } = useQuery({
     queryKey: ['fileContent', filePath],
-    queryFn: async () => (await axios.get(`${config.BASE_URL}/creator/file/content?path=${filePath}`, {
+    queryFn: async () => (await axios.get(`${config.BASE_URL}/creator/file/content?path=${currentPath}/${filePath}`, {
         responseType: 'text'
     })).data
   });

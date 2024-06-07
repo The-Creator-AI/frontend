@@ -15,11 +15,12 @@ interface FileTreeProps {
     nodeId: NodeId;
     filePath: string;
   }[];
-  setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void; // Update type to accept array
+  setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void; 
   currentPath?: string;
+  setActiveFile: (filePath: string | null) => void; // New prop for active file
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '' }) => {
+const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '', setActiveFile }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
   const { isPending, error, data } = useQuery({
@@ -36,6 +37,10 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
     } else {
       setSelectedFiles([...selectedFiles, { nodeId, filePath }]);
     }
+  };
+
+  const handleFileClick = (nodeId: NodeId, filePath: string) => {
+    setActiveFile(filePath); 
   };
 
   useEffect(() => {
@@ -206,7 +211,7 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
                 />
                 <span
                   className={cx("name", { "name--selected": selectedFiles.find(f => f.nodeId === element.id) })}
-                  onClick={() => !isBranch && handleFileSelect(element.id, buildPath(element, element.name))}
+                  onClick={() => !isBranch && handleFileClick(element.id, buildPath(element, element.name))}
                 >
                   {element.name}
                 </span>
