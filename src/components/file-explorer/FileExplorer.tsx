@@ -39,14 +39,6 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     }
   }, [splitterPosition]);
 
-  useEffect(() => {
-    axios.get(`${config.BASE_URL}/creator/directory-structure`, {
-      responseType: 'json',
-    }).then(response => {
-      setCurrentPath(response.data.currentPath); 
-    });
-  }, []);
-
   const handleBreadcrumbClick = (dir: string) => {
     setCurrentPath(dir);
     setSelectedFiles([]); // Clear selected files when changing directories
