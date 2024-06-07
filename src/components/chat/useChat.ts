@@ -11,10 +11,13 @@ export interface ChatMessage {
 
 const useChat = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(false); // Add isLoading state
 
   const sendMessage = async (message: string, selectedFiles: string[]) => { // Add selectedFiles parameter
     const newMessage: ChatMessage = { user: 'user', message, selectedFiles };
-    setChatHistory([...chatHistory, newMessage]);
+    setChatHistory((chatHistory) => [...chatHistory, newMessage]);
+
+    setIsLoading(true);
 
     try {
       const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
@@ -26,13 +29,16 @@ const useChat = () => {
         message: response.data.message, 
         model: response.data.model,
       };
-      setChatHistory([...chatHistory, botResponse]);
+      console.log({ chatHistory });
+      setChatHistory((chatHistory) => [...chatHistory, botResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
+    } finally {
+      setIsLoading(false); // Set loading to false after request is complete
     }
   };
 
-  return { chatHistory, sendMessage };
+  return { chatHistory, sendMessage, isLoading }; // Return isLoading
 };
 
 export default useChat;
