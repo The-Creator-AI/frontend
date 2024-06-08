@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './ChatBox.scss';
+import React, { useState, useRef, useEffect } from 'react';
+import './ChatBox.scss'; // Import your updated CSS
 
 interface ChatBoxProps {
   isActive: boolean;
@@ -8,8 +8,18 @@ interface ChatBoxProps {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
   const [message, setMessage] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null); 
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto'; // Reset height before calculating
+      textarea.style.height = `${textarea.scrollHeight}px`; 
+    }
+  }, [message]); 
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(event.target.value);
   };
 
@@ -20,10 +30,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
     }
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    // Check for Ctrl + Enter (on both Windows/Linux and macOS)
-    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') { 
-      event.preventDefault(); // Prevent default Enter behavior
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Check for Ctrl + Enter or Cmd + Enter
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault(); 
       handleSendMessageLocal();
     }
   };
@@ -31,8 +41,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
   return (
     <div className={`chat-box ${isActive ? 'active' : ''}`}>
       <div className="chat-input">
-        <input
-          type="text"
+        <label htmlFor="chat-textarea" className="visually-hidden">
+          Type your message
+        </label> 
+        <textarea
+          id="chat-textarea" // Add ID for label association
+          ref={textareaRef} // Add ref for auto-resize
           placeholder="Type your message..."
           value={message}
           onChange={handleInputChange}

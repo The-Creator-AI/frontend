@@ -17,22 +17,42 @@
 
     .chat-input {
         display: flex;
+        align-items: flex-end; 
+        gap: 10px;
 
-        input {
+        textarea {
             flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 4px;
-            margin-right: 10px;
+            padding: 12px 16px; // More padding
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            font-size: 16px; // Adjust font size
+            resize: none; // Disable manual resizing
+            min-height: 40px; // Start with a minimum height
+            max-height: 150px;
+
+            &:focus {
+                outline: none;
+                border-color: #007bff; // Example focus style
+            }
+
+            &::placeholder {
+                color: #aaa; // Lighter placeholder
+            }
         }
 
         button {
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 8px 12px;
+            border-radius: 20px; // Match textarea
+            padding: 12px 20px;
+            font-weight: bold;
             cursor: pointer;
+            transition: background-color 0.3s; // Add transition
+
+            &:hover {
+                background-color: #0069d9; // Darken on hover
+            }
 
             &:disabled {
                 opacity: 0.5;
@@ -40,4 +60,16 @@
             }
         }
     }
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
