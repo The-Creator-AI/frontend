@@ -13,7 +13,8 @@ const useChat = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const sendMessage = async (message: string, selectedFiles: string[]) => {
+  // TODO: imageFiles still need to be handled once backend is ready for it
+  const sendMessage = async (message: string, selectedFiles: string[], imageFiles?: File[]) => {
     const newMessage: ChatMessage = { user: 'user', message, selectedFiles };
     setChatHistory((chatHistory) => [...chatHistory, newMessage]);
 

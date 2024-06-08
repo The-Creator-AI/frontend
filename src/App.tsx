@@ -19,8 +19,8 @@ function App() {
   }[]>([]);
   const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
 
-  const handleSendMessage = (message: string) => {
-    sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`));
+  const handleSendMessage = (message: string, imageFiles?: File[]) => {
+    sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`), imageFiles);
   };
 
   useEffect(() => {

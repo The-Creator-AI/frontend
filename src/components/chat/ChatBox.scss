@@ -60,6 +60,24 @@
             }
         }
     }
+
+    .image-previews {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px; 
+    
+        .image-preview {
+          width: 50px; // Adjust preview size as needed
+          height: 50px;
+          overflow: hidden;
+    
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
 }
 
 .visually-hidden {
