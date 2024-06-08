@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import useChat, { ChatMessage } from './components/chat/useChat';
 import { NodeId } from 'react-accessible-treeview';
 import { useSearchParams } from 'react-router-dom';
+import Chat from './components/chat/Chat';
 
 const queryClient = new QueryClient();
 
@@ -18,12 +19,7 @@ function App() {
     nodeId: NodeId;
     filePath: string;
   }[]>([]);
-  const [isChatActive, setIsChatActive] = useState(false);
   const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
-
-  const handleChatActivate = () => {
-    setIsChatActive(!isChatActive);
-  };
 
   const handleSendMessage = (message: string) => {
     sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`));
@@ -43,15 +39,10 @@ function App() {
             selectedFiles={selectedFiles}
             setSelectedFiles={setSelectedFiles}
           />
-          {isChatActive && <ChatHistoryPopup
-            isLoading={isLoading}
+          <Chat isLoading={isLoading}
             chatHistory={chatHistory}
-            deleteMessage={deleteMessage} />}
-          <ChatBox
-            onChatActivate={handleChatActivate}
-            isActive={isChatActive}
             onSendMessage={handleSendMessage}
-          />
+            deleteMessage={deleteMessage} />
         </div>
       </ErrorBoundary>
     </QueryClientProvider>
