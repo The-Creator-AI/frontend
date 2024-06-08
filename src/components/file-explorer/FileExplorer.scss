@@ -43,7 +43,9 @@
     background-color: #1e1e1e;
     padding: 5px 10px;
     border-radius: 5px;
-    z-index: 10; // Ensure breadcrumbs are above the file tree
+    z-index: 10;
+    display: flex; /* Use flexbox to align items in a row */
+    align-items: center; /* Vertically align items to the center */
 }
 
 .breadcrumbs span {

@@ -4,6 +4,7 @@ import { DraggableCore } from 'react-draggable';
 import FileContent from './FileContent';
 import FileTree from './FileTree';
 import './FileExplorer.scss';
+import { Input } from 'antd';
 import axios from 'axios';
 import config from '../../config';
 
@@ -26,6 +27,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
   const [activeFile, setActiveFile] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState(''); // State for search term
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
@@ -59,27 +61,41 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     setSelectedFiles([]); // Clear any selected files
   };
 
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+  };
+
   return (
     <div className="file-viewer">
       <div className="breadcrumbs">
-      {getBreadcrumbs().map((dir, index) => (
-          <span
-            key={index}
-            onClick={() => handleBreadcrumbClick(dir.path)}
-            style={{ cursor: 'pointer' }}
-          >
-            {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
-          </span>
-        ))}
+        <Input.Search
+          placeholder="Search files..."
+          onSearch={handleSearch}
+          style={{ width: 300 }} 
+        />
+        <div style={{ marginLeft: '10px' }}> 
+          {getBreadcrumbs().map((dir, index) => (
+            <span
+              key={index}
+              onClick={() => handleBreadcrumbClick(dir.path)}
+              style={{ cursor: 'pointer' }}
+            >
+              {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
+            </span>
+          ))}
+        </div>
       </div>
       <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
-        {currentPath ? <FileTree 
-          selectedFiles={selectedFiles} 
-          setSelectedFiles={setSelectedFiles} 
-          currentPath={currentPath} 
-          setActiveFile={setActiveFile}
-          onRightClick={handleRightClick} // Pass the handler function to FileTree
-        /> : `No current path selected!`}
+        {currentPath ? 
+          <FileTree 
+            selectedFiles={selectedFiles} 
+            setSelectedFiles={setSelectedFiles} 
+            currentPath={currentPath} 
+            setActiveFile={setActiveFile}
+            onRightClick={handleRightClick} 
+            searchTerm={searchTerm}  // Pass search term to FileTree
+          /> 
+        : `No current path selected!`}
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>
         <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>

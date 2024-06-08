@@ -17,11 +17,12 @@ interface FileTreeProps {
   }[];
   setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void; 
   currentPath?: string;
-  setActiveFile: (filePath: string | null) => void; // New prop for active file
-  onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void; // Add this prop
+  setActiveFile: (filePath: string | null) => void; 
+  onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void;
+  searchTerm: string; // Add searchTerm prop
 }
 
-const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '', setActiveFile, onRightClick }) => { // Include onRightClick in props
+const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, currentPath = '', setActiveFile, onRightClick, searchTerm }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
   const { isPending, error, data } = useQuery({
@@ -61,6 +62,60 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
       return currentPath;
     }
   }, [treeData]);
+
+  // Function to filter tree data based on search term
+  const filterTreeData = (data: INode<IFlatMetadata>[], term: string): INode<IFlatMetadata>[] => {
+    const filteredNodes: INode<IFlatMetadata>[] = [];
+    const visitedNodeIds = new Set<number>(); 
+  
+    // Deep-clone a node for immutability
+    const cloneNode = (node: INode<IFlatMetadata>): INode<IFlatMetadata> => {
+      return {
+        ...node,
+        children: node.children ? node.children.slice() : [] // Shallow copy of children IDs
+      };
+    };
+  
+    // Helper function (recursive, but now with cloning)
+    const filterNode = (node: INode<IFlatMetadata>) => {
+      if (visitedNodeIds.has(node.id as number)) {
+        return false;
+      }
+      visitedNodeIds.add(node.id as number);
+  
+      const clonedNode = cloneNode(node);  // Clone before modifying
+      
+      // Filter & map over children with cloned nodes
+      clonedNode.children = (clonedNode.children ?? [])
+        .map(childId => data.find(n => n.id === childId))
+        .filter(child => child !== undefined && filterNode(child)) 
+        .map(child => child!.id);
+  
+      const isMatch = clonedNode.name.toLowerCase().includes(term.toLowerCase()) || clonedNode.children.length > 0;
+  
+      if (isMatch) {
+        filteredNodes.push(clonedNode);  // Push the cloned node
+      }
+      return isMatch;
+    };
+  
+    // Start with a clone of the root node
+    const rootNode = data.find(node => node.id === 0);
+    if (rootNode) {
+        filterNode(cloneNode(rootNode)); 
+    }
+  
+    return filteredNodes;
+  };  
+
+  // Use useMemo to optimize filtering 
+  const filteredTreeData = useMemo(() => {
+    if (searchTerm) {
+      return filterTreeData(treeData, searchTerm);
+    }
+    return treeData;
+  }, [treeData, searchTerm]);
+  console.log({ filteredTreeData });
 
   const getMoreDataOnExpand = useCallback((nodeId: NodeId) => {
     // 1. Find the expanded node and check its children
@@ -169,9 +224,10 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
 
   return (
     <div>
-      {!isPending && treeData.length ? (
-        <TreeView
-          data={treeData}
+      {!isPending && filteredTreeData.length ? ( 
+        <TreeView 
+          key={filteredTreeData.length}
+          data={filteredTreeData} 
           aria-label="Checkbox tree"
           multiSelect
           selectedIds={selectedFiles.map(f => f.nodeId)} 
@@ -195,19 +251,14 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
                   onClick: (evt) => {
                     handleExpand(evt);
                   },
-                  // onContextMenu: (event) => { // Add onContextMenu handler
-                  //   if (isBranch) {
-                  //     onRightClick(event, element.id, buildPath(element, element.name));
-                  //   }
-                  // }
                 })}
-                style={{ marginLeft: 10 * (level - 1) }}
+                style={{ marginLeft: 10 * (level - 1) }} 
               >
                 {isBranch && <ArrowIcon isOpen={isExpanded} className="arrow-icon" />}
                 <CheckBoxIcon
                   className="checkbox-icon"
                   onClick={(e) => {
-                    handleFileSelect(element.id, buildPath(element, element.name))
+                    handleFileSelect(element.id, buildPath(element, element.name));
                     e.stopPropagation();
                   }}
                   variant={
@@ -219,7 +270,7 @@ const FileTree: React.FC<FileTreeProps> = ({ selectedFiles, setSelectedFiles, cu
                   onClick={() => !isBranch && handleFileClick(element.id, buildPath(element, element.name))}
                   onContextMenu={(event) => {
                     onRightClick(event, element.id, buildPath(element, element.name));
-                    event.preventDefault(); // Prevent default right-click menu
+                    event.preventDefault();
                   }}
                 >
                   {element.name}
