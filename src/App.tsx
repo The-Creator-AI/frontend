@@ -1,14 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
-import './App.scss';
-import FileExplorer from './components/file-explorer/FileExplorer';
-import ChatBox from './components/chat/ChatBox';
-import ChatHistoryPopup from './components/chat/ChatHistoryPopup';
 import { useEffect, useState } from 'react';
-import useChat, { ChatMessage } from './components/chat/useChat';
 import { NodeId } from 'react-accessible-treeview';
 import { useSearchParams } from 'react-router-dom';
+import './App.scss';
 import Chat from './components/chat/Chat';
+import useChat from './components/chat/useChat';
+import FileExplorer from './components/file-explorer/FileExplorer';
 
 const queryClient = new QueryClient();
 

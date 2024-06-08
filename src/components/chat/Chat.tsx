@@ -21,21 +21,26 @@ const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSe
                 ref.current &&
                 !ref.current.contains(event.target as Node)
             ) {
-                // Deactivate the chat only if clicked outside
-                // Assuming you have a function like 'deactivateChat'
-                // to handle deactivating the chat
                 setIsChatActive(false);
             } else {
                 setIsChatActive(true)
             }
         };
 
-        // Attach the event listener
-        document.addEventListener('click', handleClickOutside);
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setIsChatActive(false);
+            }
+        }
 
-        // Cleanup: Remove the listener when the component unmounts
+        // Attach the event listeners
+        document.addEventListener('click', handleClickOutside);
+        document.addEventListener('keydown', handleEscapeKey);
+
+        // Cleanup: Remove the listeners when the component unmounts
         return () => {
             document.removeEventListener('click', handleClickOutside);
+            document.removeEventListener('keydown', handleEscapeKey);
         };
     }, []);
 
