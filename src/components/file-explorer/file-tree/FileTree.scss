@@ -24,6 +24,12 @@
   background: rgba(131, 131, 131, 0.3);
 }
 
+.tree-node--active {
+  background: rgba(180, 180, 255, 0.5); /* Light blue background */
+  font-weight: 600;                   /* Slightly bolder text */
+  // Add any other styles you like, e.g., border, box-shadow, etc. 
+}
+
 .checkbox-icon {
   margin: 0 5px;
   vertical-align: middle;

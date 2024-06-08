@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 're
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
 import FileContent from './FileContent';
-import FileTree from './FileTree';
+import FileTree from './file-tree/FileTree';
 import './FileExplorer.scss';
 import { Input } from 'antd';
 import axios from 'axios';
@@ -91,6 +91,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
             selectedFiles={selectedFiles} 
             setSelectedFiles={setSelectedFiles} 
             currentPath={currentPath} 
+            activeFile={activeFile}
             setActiveFile={setActiveFile}
             onRightClick={handleRightClick} 
             searchTerm={searchTerm}  // Pass search term to FileTree
