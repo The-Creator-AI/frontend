@@ -1,9 +1,10 @@
-import React from 'react';
-import './ChatHistoryPopup.scss';
+import React, { useRef, useState } from 'react';
+import './ChatHistoryPopup.scss'; // Import your CSS file
 import { ChatMessage } from './useChat';
 import ReactMarkdown from 'react-markdown';
 import { CloseOutlined } from '@ant-design/icons';
 import CodeBlock from './CodeBlock';
+import { UpOutlined, DownOutlined } from '@ant-design/icons'; // Import icons
 
 interface ChatHistoryPopupProps {
     chatHistory: ChatMessage[];
@@ -12,34 +13,58 @@ interface ChatHistoryPopupProps {
 }
 
 const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHistory, deleteMessage }) => {
+    const [collapsedMessages, setCollapsedMessages] = useState<{ [key: number]: boolean }>({});
+    const messageRefs = useRef<HTMLDivElement[]>([]);
+
+    const toggleMessageCollapse = (index: number) => {
+        setCollapsedMessages(prevState => ({
+            ...prevState,
+            [index]: !prevState[index]
+        }));
+    };
+
     return (
         <div className="chat-history-popup">
             <div className="chat-history-container">
-                {[...chatHistory, ...isLoading ? [{
-                    user: 'bot',
-                    model: '',
-                    message: 'Typing...'
-                }] : []].map((message, index) => (
-                    <div key={index} className={`message ${message.user}`}>
-                        <div className="message-content"> {/* Wrap content and delete icon */}
-                            {message.user === 'bot' && (
-                                message.model ? <span className="model-badge">{message.model}</span> : null
-                            )}
-                            <span className="user">{message.user}:</span>
-                            <div className="markdown-container">
-                                <ReactMarkdown
-                                components={{
-                                    code: CodeBlock as any
-                                  }}
-                                >{message.message}</ReactMarkdown>
+                {[...chatHistory]
+                    .slice(Math.max(chatHistory.length - 2, 0)) // Show last 2 messages by default
+                    .concat(isLoading ? [{ user: 'bot', model: '', message: 'Typing...' }] : [])
+                    .map((message, index) => {
+                        // Get a reference to the message div
+                        const messageRef = messageRefs.current[index];
+
+                        // Check if the message div is available and its height is less than 10rem
+                        const shouldShowCollapseButton = messageRef && messageRef.clientHeight >= 150;
+                        return <div key={index} className={`message ${message.user} ${collapsedMessages[index] ? 'collapsed' : ''}`}
+                            ref={el => messageRefs.current[index] = el as any}
+                        >
+                            <div className="message-content">
+                                {message.user === 'bot' && (
+                                    message.model ? <span className="model-badge">{message.model}</span> : null
+                                )}
+                                <span className="user">{message.user}:</span>
+                                <div className="markdown-container">
+                                    <ReactMarkdown
+                                        components={{
+                                            code: CodeBlock as any
+                                        }}
+                                    >{message.message}</ReactMarkdown>
+                                </div>
                             </div>
+                            {shouldShowCollapseButton && ( // Conditionally render button
+                                    <button 
+                                        onClick={() => toggleMessageCollapse(index)} 
+                                        className="expand-collapse-button"
+                                    >
+                                        {collapsedMessages[index] ? <DownOutlined /> : <UpOutlined />}
+                                    </button>
+                                )}
+                            <CloseOutlined
+                                className="delete-icon"
+                                onClick={() => deleteMessage(index)}
+                            />
                         </div>
-                        <CloseOutlined 
-                            className="delete-icon" 
-                            onClick={() => deleteMessage(index)} 
-                        />
-                    </div>
-                ))}
+                    })}
             </div>
         </div>
     );

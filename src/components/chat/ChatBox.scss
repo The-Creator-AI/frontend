@@ -9,6 +9,7 @@
     padding: 10px;
     box-sizing: border-box;
     transition: transform 0.3s ease-in-out;
+    z-index: 10;
 
     &.active {
         transform: translate(-50%, 0); // Adjust transform for active state

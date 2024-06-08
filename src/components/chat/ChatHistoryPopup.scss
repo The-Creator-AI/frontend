@@ -20,6 +20,32 @@
         padding: 8px 12px;
         border-radius: 4px;
         position: relative; // To position the delete icon
+
+        .expand-collapse-button {
+            position: relative; /* Ensure the button is positioned relative to the message */
+            z-index: 1; /* Place the button above the gradient overlay */
+            color: black;
+            background-color: white;
+        } 
+
+        &.collapsed {
+            .message-content {
+                /* Apply gradient overlay for collapsed messages */
+                display: block; // Ensure the content takes up space
+                height: 10em; // Set the collapsed height (adjust as needed)
+                overflow: hidden;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 1) 70%); /* Adjust gradient as needed */
+                }
+            }
+        }
     
         &.user {
             background-color: #007bff;
