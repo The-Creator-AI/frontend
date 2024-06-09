@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 import config from "../../../config";
@@ -15,6 +15,7 @@ interface FileTreeProps {
   }[];
   setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void;
   currentPath?: string;
+  setCurrentPath: Dispatch<SetStateAction<string>>;
   activeFile: string | null;
   setActiveFile: (filePath: string | null) => void;
   onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void;
@@ -25,10 +26,11 @@ const FileTree: React.FC<FileTreeProps> = ({
   selectedFiles,
   setSelectedFiles,
   currentPath = '',
+  setCurrentPath,
   activeFile,
   setActiveFile,
   onRightClick,
-  searchTerm
+  searchTerm,
 }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
 
@@ -39,6 +41,12 @@ const FileTree: React.FC<FileTreeProps> = ({
       return response.data;
     }
   });
+
+  useEffect(() => {
+    if (currentPath !== data?.currentPath) {
+      setCurrentPath(data?.currentPath || '');
+    }
+  }, [data]);
 
   const handleFileSelect = (nodeId: NodeId, filePath: string) => {
     if (selectedFiles.find(f => f.nodeId === nodeId)) {

@@ -86,17 +86,16 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
         </div>
       </div>
       <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
-        {currentPath ? 
-          <FileTree 
+        <FileTree 
             selectedFiles={selectedFiles} 
             setSelectedFiles={setSelectedFiles} 
             currentPath={currentPath} 
+            setCurrentPath={setCurrentPath}
             activeFile={activeFile}
             setActiveFile={setActiveFile}
             onRightClick={handleRightClick} 
-            searchTerm={searchTerm}  // Pass search term to FileTree
-          /> 
-        : `No current path selected!`}
+            searchTerm={searchTerm}
+          />
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>
         <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
