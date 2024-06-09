@@ -17,6 +17,22 @@ function App() {
     nodeId: NodeId;
     filePath: string;
   }[]>([]);
+
+  // Load selected files from localStorage on component mount and path change
+  useEffect(() => {
+    const storedFiles = localStorage.getItem(`selectedFiles-${currentPath}`);
+    if (storedFiles) {
+      setSelectedFiles(JSON.parse(storedFiles));
+    }
+  }, [currentPath]);
+
+  // Save selected files to localStorage whenever it changes
+  useEffect(() => {
+    if (currentPath && selectedFiles.length) {
+      localStorage.setItem(`selectedFiles-${currentPath}`, JSON.stringify(selectedFiles));
+    }
+  }, [selectedFiles]);
+
   const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
 
   const handleSendMessage = (message: string, imageFiles?: File[]) => {
