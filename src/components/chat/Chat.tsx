@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ChatHistoryPopup from './ChatHistoryPopup';
 import ChatBox from './ChatBox';
 import { ChatMessage } from './useChat';
+import './Chat.scss';
 
 interface ChatProps {
     chatHistory: ChatMessage[];
@@ -13,6 +14,7 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSendMessage }) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isChatActive, setIsChatActive] = useState(false);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -29,7 +31,11 @@ const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSe
 
         const handleEscapeKey = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
-                setIsChatActive(false);
+                if (previewImage) {
+                    setPreviewImage(null);
+                } else {
+                    setIsChatActive(false);
+                }
             }
         }
 
@@ -42,18 +48,26 @@ const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSe
             document.removeEventListener('click', handleClickOutside);
             document.removeEventListener('keydown', handleEscapeKey);
         };
-    }, []);
+    }, [previewImage, isChatActive]);
 
-    return <div ref={ref}>
-        {isChatActive && <ChatHistoryPopup
-            isLoading={isLoading}
-            chatHistory={chatHistory}
-            deleteMessage={deleteMessage} />}
-        <ChatBox
-            isActive={isChatActive}
-            onSendMessage={onSendMessage}
-        />
-    </div>;
+    return <>
+        <div className="chat" ref={ref}>
+            {isChatActive && <ChatHistoryPopup
+                isLoading={isLoading}
+                chatHistory={chatHistory}
+                deleteMessage={deleteMessage} />}
+            <ChatBox
+                isActive={isChatActive}
+                onSendMessage={onSendMessage}
+                setPreviewImage={setPreviewImage}
+            />
+        </div>
+        {previewImage && (
+            <div className="image-preview-modal" onClick={() => setPreviewImage(null)}>
+                <img src={previewImage} alt="Preview" className="preview-image" />
+            </div>
+        )}
+    </>;
 };
 
 export default Chat;

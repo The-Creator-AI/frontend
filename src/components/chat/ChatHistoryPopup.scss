@@ -1,13 +1,13 @@
 .chat-history-popup {
-    position: fixed;
-    bottom: 72px; // Adjust based on chat box height
+    // position: fixed;
+    // bottom: 72px; // Adjust based on chat box height
     left: 50%;
-    transform: translateX(-50%);
+    // transform: translateX(-50%);
     width: 100%;
     max-width: 1200px; // Should match chat box width
     height: 66vh; // 2/3 of viewport height
     background-color: rgba(0, 0, 0, 0.8);
-    z-index: 10; // Ensure it's above other elements
+    z-index: 2; // Ensure it's above other elements
     border-radius: 8px;
     overflow-y: auto;
     

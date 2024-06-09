@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss'; // Import your updated CSS
+import { CloseOutlined } from '@ant-design/icons';
 
 interface ChatBoxProps {
   isActive: boolean;
   onSendMessage: (message: string, imageFiles?: File[]) => void;
+  setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewImage }) => {
   const [message, setMessage] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null); 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
 
   // Auto-resize textarea
@@ -16,9 +18,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = 'auto'; // Reset height before calculating
-      textarea.style.height = `${textarea.scrollHeight}px`; 
+      textarea.style.height = `${textarea.scrollHeight}px`;
     }
-  }, [message]); 
+  }, [message]);
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setPastedImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
+  };
+
+  const handleImageClick = (imageUrl: string) => {
+    setPreviewImage(imageUrl);
+  };
 
   const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     const items = event.clipboardData?.items;
@@ -43,14 +53,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
     if (message || pastedImages.length > 0) {
       onSendMessage(message, pastedImages);
       setMessage('');
-      setPastedImages([]); 
+      setPastedImages([]);
     }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // Check for Ctrl + Enter or Cmd + Enter
     if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-      event.preventDefault(); 
+      event.preventDefault();
       handleSendMessageLocal();
     }
   };
@@ -60,7 +70,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
       <div className="chat-input">
         <label htmlFor="chat-textarea" className="visually-hidden">
           Type your message
-        </label> 
+        </label>
         <textarea
           id="chat-textarea" // Add ID for label association
           ref={textareaRef} // Add ref for auto-resize
@@ -68,7 +78,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
           value={message}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onPaste={handlePaste} 
+          onPaste={handlePaste}
         />
         <button onClick={handleSendMessageLocal} disabled={!message}>
           Send
@@ -77,8 +87,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage }) => {
       {pastedImages.length > 0 && (
         <div className="image-previews">
           {pastedImages.map((image, index) => (
-            <div key={index} className="image-preview">
-              <img src={URL.createObjectURL(image)} alt="Pasted" />
+            <div key={index} className="image-preview-wrapper">
+              <div
+                className="image-preview"
+                onClick={() => handleImageClick(URL.createObjectURL(image))}
+                style={{ backgroundImage: `url(${URL.createObjectURL(image)})` }} // Set background image
+              >
+                <CloseOutlined
+                  className="close-icon"
+                  onClick={(event) => {
+                    event.stopPropagation(); // Prevent click event from bubbling to parent
+                    handleRemoveImage(index);
+                  }}
+                />
+              </div>
             </div>
           ))}
         </div>
