@@ -7,7 +7,7 @@ import config from "../../../config";
 import "./FileTree.scss";
 import { filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
-import { appStore$, updateCurrentPath, updateSelectedFiles } from "../../../state/app-store";
+import { appStore$, updateCurrentPath, updateSelectedFiles } from "../../../state/app.store";
 import useStore from "../../../state/useStore";
 
 interface FileTreeProps {

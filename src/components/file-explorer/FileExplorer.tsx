@@ -8,7 +8,7 @@ import { Input } from 'antd';
 import axios from 'axios';
 import config from '../../config';
 import useStore from '../../state/useStore';
-import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../state/app-store';
+import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../state/app.store';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;

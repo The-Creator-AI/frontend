@@ -1,5 +1,10 @@
 import { NodeId } from 'react-accessible-treeview';
-import { BehaviorSubject } from 'rxjs';
+import { Store } from './store';
+
+export enum AppActions {
+  UPDATE_CURRENT_PATH = 'UPDATE_CURRENT_PATH',
+  UPDATE_SELECTED_FILES = 'UPDATE_SELECTED_FILES',
+}
 
 interface AppState {
   currentPath: string;
@@ -7,24 +12,23 @@ interface AppState {
 }
 
 const initialState: AppState = {
-  // @ts-ignore
   currentPath: new URL(window.location.href).searchParams.get('path') || '',
   selectedFiles: [],
 };
 
-const appStateSubject = new BehaviorSubject<AppState>(initialState);
+const appStateSubject = new Store<AppState, AppActions>(initialState);
 export const appStore$ = appStateSubject.asObservable(); 
 
 export const updateCurrentPath = (newPath: string) => {
-  appStateSubject.next({
+  appStateSubject._next({
     ...appStateSubject.getValue(),
     currentPath: newPath,
-  });
+  }, AppActions.UPDATE_CURRENT_PATH);
 };
 
 export const updateSelectedFiles = (newFiles: { nodeId: NodeId; filePath: string }[]) => {
-  appStateSubject.next({
+  appStateSubject._next({
     ...appStateSubject.getValue(),
     selectedFiles: newFiles,
-  });
+  }, AppActions.UPDATE_SELECTED_FILES);
 };

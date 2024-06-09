@@ -7,7 +7,7 @@ import './App.scss';
 import Chat from './components/chat/Chat';
 import useChat from './components/chat/useChat';
 import FileExplorer from './components/file-explorer/FileExplorer';
-import { appStore$, updateCurrentPath, updateSelectedFiles } from './state/app-store';
+import { appStore$, updateCurrentPath, updateSelectedFiles } from './state/app.store';
 import useStore from './state/useStore';
 
 const queryClient = new QueryClient();
@@ -17,7 +17,8 @@ function App() {
   const { currentPath, selectedFiles } = useStore(appStore$);
 
   useEffect(() => {
-    setSearchParams({ path: currentPath });
+    const paramsObject = Object.fromEntries(searchParams.entries());
+    setSearchParams({ ...paramsObject, path: currentPath });
   }, [currentPath]);
 
   // Load selected files from localStorage on component mount and path change
