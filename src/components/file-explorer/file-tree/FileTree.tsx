@@ -7,15 +7,15 @@ import config from "../../../config";
 import "./FileTree.scss";
 import { filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
+import { appState$, updateCurrentPath, updateSelectedFiles } from "../../../state/app-state";
+import useObservableState from "../../../state/useState";
 
 interface FileTreeProps {
   selectedFiles: {
     nodeId: NodeId;
     filePath: string;
   }[];
-  setSelectedFiles: (file: { nodeId: NodeId; filePath: string }[]) => void;
   currentPath?: string;
-  setCurrentPath: Dispatch<SetStateAction<string>>;
   activeFile: string | null;
   setActiveFile: (filePath: string | null) => void;
   onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void;
@@ -23,16 +23,13 @@ interface FileTreeProps {
 }
 
 const FileTree: React.FC<FileTreeProps> = ({
-  selectedFiles,
-  setSelectedFiles,
-  currentPath = '',
-  setCurrentPath,
   activeFile,
   setActiveFile,
   onRightClick,
   searchTerm,
 }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
+  const { currentPath, selectedFiles } = useObservableState(appState$);
 
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData', currentPath],
@@ -44,15 +41,16 @@ const FileTree: React.FC<FileTreeProps> = ({
 
   useEffect(() => {
     if (!currentPath && currentPath !== data?.currentPath) {
-      setCurrentPath(data?.currentPath || '');
+      console.log({ data });
+      updateCurrentPath(data?.currentPath || '');
     }
   }, [data]);
 
   const handleFileSelect = (nodeId: NodeId, filePath: string) => {
     if (selectedFiles.find(f => f.nodeId === nodeId)) {
-      setSelectedFiles(selectedFiles.filter(f => f.nodeId !== nodeId));
+      updateSelectedFiles(selectedFiles.filter(f => f.nodeId !== nodeId));
     } else {
-      setSelectedFiles([...selectedFiles, { nodeId, filePath }]);
+      updateSelectedFiles([...selectedFiles, { nodeId, filePath }]);
     }
   };
 

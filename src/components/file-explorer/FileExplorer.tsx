@@ -7,27 +7,22 @@ import './FileExplorer.scss';
 import { Input } from 'antd';
 import axios from 'axios';
 import config from '../../config';
+import useObservableState from '../../state/useState';
+import { appState$, updateCurrentPath, updateSelectedFiles } from '../../state/app-state';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
-  currentPath: string;
-  setCurrentPath: Dispatch<SetStateAction<string>>;
-  selectedFiles: { nodeId: NodeId; filePath: string; }[];
-  setSelectedFiles: Dispatch<SetStateAction<{ nodeId: NodeId; filePath: string; }[]>>;
 }
 
 const FileExplorer: React.FC<FileExplorerProps> = ({
   initialSplitterPosition = 20,
-  currentPath,
-  setCurrentPath,
-  selectedFiles,
-  setSelectedFiles
 }) => {
   const [splitterPosition, setSplitterPosition] = useState(initialSplitterPosition); 
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
   const [activeFile, setActiveFile] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
+  const [searchTerm, setSearchTerm] = useState('');
+  const { currentPath, selectedFiles } = useObservableState(appState$);
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
@@ -42,11 +37,14 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   }, [splitterPosition]);
 
   const handleBreadcrumbClick = (dir: string) => {
-    setCurrentPath(dir);
-    setSelectedFiles([]); // Clear selected files when changing directories
+    updateCurrentPath(dir);
+    updateSelectedFiles([]); // Clear selected files when changing directories
   };
 
   const getBreadcrumbs = () => {
+    if (!currentPath) {
+      return [];
+    }
     const parts = currentPath.split('/');
     const breadcrumbs = parts.reduce((acc, part) => {
       const path = acc.length > 0 ? `${acc[acc.length - 1].path}/${part}` : part;
@@ -57,8 +55,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 
   const handleRightClick = (event: React.MouseEvent, nodeId: NodeId, filePath: string) => {
     event.preventDefault();
-    setCurrentPath(`${currentPath}/${filePath}`);
-    setSelectedFiles([]); // Clear any selected files
+    updateCurrentPath(`${currentPath}/${filePath}`);
+    updateSelectedFiles([]); // Clear any selected files
   };
 
   const handleSearch = (value: string) => {
@@ -88,9 +86,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
         <FileTree 
             selectedFiles={selectedFiles} 
-            setSelectedFiles={setSelectedFiles} 
-            currentPath={currentPath} 
-            setCurrentPath={setCurrentPath}
+            currentPath={currentPath}
             activeFile={activeFile}
             setActiveFile={setActiveFile}
             onRightClick={handleRightClick} 

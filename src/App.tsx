@@ -1,28 +1,30 @@
+// src/App.tsx
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
-import { useEffect, useState } from 'react';
-import { NodeId } from 'react-accessible-treeview';
 import { useSearchParams } from 'react-router-dom';
 import './App.scss';
 import Chat from './components/chat/Chat';
 import useChat from './components/chat/useChat';
 import FileExplorer from './components/file-explorer/FileExplorer';
+import { appState$, updateCurrentPath, updateSelectedFiles } from './state/app-state';
+import useObservableState from './state/useState';
 
 const queryClient = new QueryClient();
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [currentPath, setCurrentPath] = useState(searchParams.get('path') || '');
-  const [selectedFiles, setSelectedFiles] = useState<{
-    nodeId: NodeId;
-    filePath: string;
-  }[]>([]);
+  const { currentPath, selectedFiles } = useObservableState(appState$);
+
+  useEffect(() => {
+    setSearchParams({ path: currentPath });
+  }, [currentPath]);
 
   // Load selected files from localStorage on component mount and path change
   useEffect(() => {
     const storedFiles = localStorage.getItem(`selectedFiles-${currentPath}`);
     if (storedFiles) {
-      setSelectedFiles(JSON.parse(storedFiles));
+      updateSelectedFiles(JSON.parse(storedFiles));
     }
   }, [currentPath]);
 
@@ -39,24 +41,17 @@ function App() {
     sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`), imageFiles);
   };
 
-  useEffect(() => {
-    setSearchParams({ path: currentPath });
-  }, [currentPath, setSearchParams]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <div className="App">
-          <FileExplorer
-            currentPath={currentPath}
-            setCurrentPath={setCurrentPath}
-            selectedFiles={selectedFiles}
-            setSelectedFiles={setSelectedFiles}
-          />
-          <Chat isLoading={isLoading}
+          <FileExplorer />
+          <Chat
+            isLoading={isLoading}
             chatHistory={chatHistory}
             onSendMessage={handleSendMessage}
-            deleteMessage={deleteMessage} />
+            deleteMessage={deleteMessage}
+          />
         </div>
       </ErrorBoundary>
     </QueryClientProvider>
