@@ -7,8 +7,8 @@ import config from "../../../config";
 import "./FileTree.scss";
 import { filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
-import { appState$, updateCurrentPath, updateSelectedFiles } from "../../../state/app-state";
-import useObservableState from "../../../state/useState";
+import { appStore$, updateCurrentPath, updateSelectedFiles } from "../../../state/app-store";
+import useStore from "../../../state/useStore";
 
 interface FileTreeProps {
   selectedFiles: {
@@ -29,7 +29,7 @@ const FileTree: React.FC<FileTreeProps> = ({
   searchTerm,
 }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
-  const { currentPath, selectedFiles } = useObservableState(appState$);
+  const { currentPath, selectedFiles } = useStore(appStore$);
 
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData', currentPath],

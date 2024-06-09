@@ -13,7 +13,7 @@ const initialState: AppState = {
 };
 
 const appStateSubject = new BehaviorSubject<AppState>(initialState);
-export const appState$ = appStateSubject.asObservable(); 
+export const appStore$ = appStateSubject.asObservable(); 
 
 export const updateCurrentPath = (newPath: string) => {
   appStateSubject.next({

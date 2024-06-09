@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 // Utility type to extract keys from an object whose values are not functions
 type ValuesOf<T> = T[keyof T];
 
-const useObservableState = <T>(
+const useStore = <T>(
   observable$: Observable<T>,
 ): T => {
   const [state, setState] = useState<T | {}>({});
@@ -20,4 +20,4 @@ const useObservableState = <T>(
   return state as T;
 };
 
-export default useObservableState;
+export default useStore;

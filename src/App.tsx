@@ -7,14 +7,14 @@ import './App.scss';
 import Chat from './components/chat/Chat';
 import useChat from './components/chat/useChat';
 import FileExplorer from './components/file-explorer/FileExplorer';
-import { appState$, updateCurrentPath, updateSelectedFiles } from './state/app-state';
-import useObservableState from './state/useState';
+import { appStore$, updateCurrentPath, updateSelectedFiles } from './state/app-store';
+import useStore from './state/useStore';
 
 const queryClient = new QueryClient();
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentPath, selectedFiles } = useObservableState(appState$);
+  const { currentPath, selectedFiles } = useStore(appStore$);
 
   useEffect(() => {
     setSearchParams({ path: currentPath });

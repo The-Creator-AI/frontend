@@ -7,8 +7,8 @@ import './FileExplorer.scss';
 import { Input } from 'antd';
 import axios from 'axios';
 import config from '../../config';
-import useObservableState from '../../state/useState';
-import { appState$, updateCurrentPath, updateSelectedFiles } from '../../state/app-state';
+import useStore from '../../state/useStore';
+import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../state/app-store';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
@@ -22,7 +22,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const fileContentRef = useRef<HTMLDivElement>(null);
   const [activeFile, setActiveFile] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const { currentPath, selectedFiles } = useObservableState(appState$);
+  const { currentPath, selectedFiles } = useStore(appStore$);
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
