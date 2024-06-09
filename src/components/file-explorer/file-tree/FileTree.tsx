@@ -43,7 +43,7 @@ const FileTree: React.FC<FileTreeProps> = ({
   });
 
   useEffect(() => {
-    if (currentPath !== data?.currentPath) {
+    if (!currentPath && currentPath !== data?.currentPath) {
       setCurrentPath(data?.currentPath || '');
     }
   }, [data]);
