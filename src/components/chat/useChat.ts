@@ -3,10 +3,11 @@ import axios from 'axios';
 import config from '../../config';
 
 export interface ChatMessage {
-  user: 'user' | 'bot';
+  user: 'user' | 'bot' | 'instructor';
   message: string;
   model?: string; 
   selectedFiles?: string[];
+  agentName?: string;
 }
 
 const useChat = () => {
@@ -14,15 +15,26 @@ const useChat = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // TODO: imageFiles still need to be handled once backend is ready for it
-  const sendMessage = async (message: string, selectedFiles: string[], imageFiles?: File[]) => {
-    const newMessage: ChatMessage = { user: 'user', message, selectedFiles };
-    setChatHistory((chatHistory) => [...chatHistory, newMessage]);
+  const sendMessage = async (args: {
+    agentName?: string;
+    agentInstruction?: string;
+    message: string;
+    selectedFiles: string[];
+    imageFiles?: File[];
+  }) => {
+    const { agentName, agentInstruction, message, selectedFiles } = args;
+    const messages: ChatMessage[] = [];
+    if (agentInstruction) {
+      messages.push({ user: 'instructor', message: agentInstruction, agentName });
+    }
+    messages.push({ user: 'user', message, selectedFiles });
+    setChatHistory((chatHistory) => [...chatHistory, ...messages]);
 
     setIsLoading(true);
 
     try {
       const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
-        chatHistory: [...chatHistory, newMessage], 
+        chatHistory: [...chatHistory, ...messages], 
         selectedFiles 
       }); 
       const botResponse: ChatMessage = { 

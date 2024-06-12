@@ -8,7 +8,12 @@ interface ChatProps {
     chatHistory: ChatMessage[];
     isLoading: boolean;
     deleteMessage: (indexToDelete: number) => void
-    onSendMessage: (message: string, imageFiles?: File[]) => void;
+    onSendMessage: (args: {
+        agentName?: string;
+        agentInstruction?: string;
+        message: string;
+        imageFiles?: File[];
+      }) => void;
 }
 
 const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSendMessage }) => {

@@ -27,7 +27,7 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHist
         <div className="chat-history-popup">
             <div className="chat-history-container">
                 {[...chatHistory]
-                    .slice(Math.max(chatHistory.length - 2, 0)) // Show last 2 messages by default
+                    // .slice(Math.max(chatHistory.length - 2, 0)) // Show last 2 messages by default
                     .concat(isLoading ? [{ user: 'bot', model: '', message: 'Typing...' }] : [])
                     .map((message, index) => {
                         // Get a reference to the message div
@@ -42,14 +42,14 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHist
                                 {message.user === 'bot' && (
                                     message.model ? <span className="model-badge">{message.model}</span> : null
                                 )}
-                                <span className="user">{message.user}:</span>
-                                <div className="markdown-container">
+                                {message.user === 'instructor' ? <span className="agent-badge">{message.agentName}</span>
+                                : <div className="markdown-container">
                                     <ReactMarkdown
                                         components={{
                                             code: CodeBlock as any
                                         }}
                                     >{message.message}</ReactMarkdown>
-                                </div>
+                                </div>}
                             </div>
                             {shouldShowCollapseButton && ( // Conditionally render button
                                     <button 

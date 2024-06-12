@@ -38,8 +38,16 @@ function App() {
 
   const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
 
-  const handleSendMessage = (message: string, imageFiles?: File[]) => {
-    sendMessage(message, selectedFiles.map(f => `${currentPath}/${f.filePath}`), imageFiles);
+  const handleSendMessage = (args: {
+    agentName?: string;
+    agentInstruction?: string;
+    message: string;
+    imageFiles?: File[];
+  }) => {
+    sendMessage({
+      ...args,
+      selectedFiles: selectedFiles.map(f => `${currentPath}/${f.filePath}`),
+    });
   };
 
   return (

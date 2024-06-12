@@ -7,7 +7,12 @@ import { appStore$ } from '../../state/app.store';
 
 interface ChatBoxProps {
   isActive: boolean;
-  onSendMessage: (message: string, imageFiles?: File[]) => void;
+  onSendMessage: (args: {
+    agentName?: string;
+    agentInstruction?: string;
+    message: string;
+    imageFiles?: File[];
+  }) => void;
   setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
@@ -55,12 +60,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
 
   const handleSendMessageLocal = () => {
     if (message || pastedImages.length > 0) {
-      let prompt = ``;
-      if (selectedAgent?.systemInstructions) {
-        prompt += `${selectedAgent?.systemInstructions}\n\n`;
-      }
-      prompt += message;
-      onSendMessage(prompt, pastedImages);
+      onSendMessage({
+        agentInstruction: selectedAgent?.systemInstructions,
+        agentName: selectedAgent?.name,
+        message,
+        imageFiles: pastedImages,
+      });
       setMessage('');
       setPastedImages([]);
     }
