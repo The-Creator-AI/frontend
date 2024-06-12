@@ -1,0 +1,43 @@
+.agent-selector-container {
+    /* Add any container-level styles here */
+    margin-bottom: 10px;
+    /* For example, add some spacing below the selector */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.agent-selector-container label {
+    /* Style the label */
+    display: block;
+    /* Make the label appear on its own line */
+    margin-bottom: 5px;
+    /* Add spacing between the label and the select box */
+    font-weight: bold;
+    /* Make the label text bold */
+}
+
+.agent-selector-container select {
+    /* Style the select box */
+    width: auto; 
+    /* Make the select box fit its content instead of taking full width */
+    padding: 8px 12px;
+    /* Add padding inside the select box */
+    border: 1px solid #ccc;
+    /* Add a border */
+    border-radius: 4px;
+    /* Round the corners */
+    appearance: none;
+    /* Try to remove default styling for a more consistent look across browsers */
+}
+
+/* Optional: Style the select box's dropdown arrow */
+.agent-selector-container select::-ms-expand {
+    display: none;
+    /* Hide the default arrow in IE */
+}
+
+.agent-selector-container select option {
+    /* Style the options in the dropdown */
+    padding: 5px;
+}

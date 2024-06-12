@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss'; // Import your updated CSS
 import { CloseOutlined } from '@ant-design/icons';
+import AgentSelector from './AgentSelector';
+import useStore from '../../state/useStore';
+import { appStore$ } from '../../state/app.store';
 
 interface ChatBoxProps {
   isActive: boolean;
@@ -12,6 +15,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
+  const { selectedAgent } = useStore(appStore$);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -51,7 +55,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
 
   const handleSendMessageLocal = () => {
     if (message || pastedImages.length > 0) {
-      onSendMessage(message, pastedImages);
+      let prompt = ``;
+      if (selectedAgent?.systemInstructions) {
+        prompt += `${selectedAgent?.systemInstructions}\n\n`;
+      }
+      prompt += message;
+      onSendMessage(prompt, pastedImages);
       setMessage('');
       setPastedImages([]);
     }
@@ -67,6 +76,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
 
   return (
     <div className={`chat-box ${isActive ? 'active' : ''}`}>
+      <AgentSelector /> 
       <div className="chat-input">
         <label htmlFor="chat-textarea" className="visually-hidden">
           Type your message
