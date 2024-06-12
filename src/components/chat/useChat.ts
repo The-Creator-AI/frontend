@@ -34,7 +34,9 @@ const useChat = () => {
 
     try {
       const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
-        chatHistory: [...chatHistory, ...messages], 
+        chatHistory: [
+          ...chatHistory.filter((message) => message.user !== 'instructor'),
+          ...messages], 
         selectedFiles 
       }); 
       const botResponse: ChatMessage = { 
