@@ -1,11 +1,14 @@
 .chat {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 1200px;
-    z-index: 2;
+    // position: fixed;
+    // bottom: 20px;
+    // left: 50%;
+    // transform: translateX(-50%);
+    // width: 100%;
+    // max-width: 1200px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    // z-index: 2;
     /* Add any transitions or other styles for the container */
 }
 

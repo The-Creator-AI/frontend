@@ -11,10 +11,9 @@
     background-color: #141414;
 }
 
-.file-content {
+.chat-section {
     position: relative;
     height: 100%;
-    color: #ccc;
     background-color: #1e1e1e;
 }
 
@@ -33,22 +32,4 @@
     background-color: #5f6772;
     width: 8px;
     cursor: col-resize;
-}
-
-.breadcrumbs {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #1e1e1e;
-    padding: 5px 10px;
-    border-radius: 5px;
-    z-index: 2;
-    display: flex; /* Use flexbox to align items in a row */
-    align-items: center; /* Vertically align items to the center */
-}
-
-.breadcrumbs span {
-    color: #ccc;
-    font-size: 14px;
 }

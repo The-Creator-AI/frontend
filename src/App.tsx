@@ -1,13 +1,12 @@
 // src/App.tsx
-import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
+import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './App.scss';
 import Chat from './components/chat/Chat';
-import useChat from './components/chat/useChat';
 import FileExplorer from './components/file-explorer/FileExplorer';
-import { appStore$, updateCurrentPath, updateSelectedFiles } from './state/app.store';
+import { appStore$, updateSelectedFiles } from './state/app.store';
 import useStore from './state/useStore';
 
 const queryClient = new QueryClient();
@@ -34,33 +33,13 @@ function App() {
     if (currentPath && selectedFiles.length) {
       localStorage.setItem(`selectedFiles-${currentPath}`, JSON.stringify(selectedFiles));
     }
-  }, [selectedFiles]);
-
-  const { isLoading, chatHistory, sendMessage, deleteMessage } = useChat();
-
-  const handleSendMessage = (args: {
-    agentName?: string;
-    agentInstruction?: string;
-    message: string;
-    imageFiles?: File[];
-  }) => {
-    sendMessage({
-      ...args,
-      selectedFiles: selectedFiles.map(f => `${currentPath}/${f.filePath}`),
-    });
-  };
+  }, [currentPath, selectedFiles]);
 
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
         <div className="App">
           <FileExplorer />
-          <Chat
-            isLoading={isLoading}
-            chatHistory={chatHistory}
-            onSendMessage={handleSendMessage}
-            deleteMessage={deleteMessage}
-          />
         </div>
       </ErrorBoundary>
     </QueryClientProvider>

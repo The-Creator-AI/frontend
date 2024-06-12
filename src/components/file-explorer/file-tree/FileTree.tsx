@@ -9,6 +9,7 @@ import { filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
 import { appStore$, updateCurrentPath, updateSelectedFiles } from "../../../state/app.store";
 import useStore from "../../../state/useStore";
+import { Input } from 'antd';
 
 interface FileTreeProps {
   selectedFiles: {
@@ -19,17 +20,16 @@ interface FileTreeProps {
   activeFile: string | null;
   setActiveFile: (filePath: string | null) => void;
   onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void;
-  searchTerm: string; // Add searchTerm prop
 }
 
 const FileTree: React.FC<FileTreeProps> = ({
   activeFile,
   setActiveFile,
   onRightClick,
-  searchTerm,
 }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
   const { currentPath, selectedFiles } = useStore(appStore$);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const { isPending, error, data } = useQuery({
     queryKey: ['repoData', currentPath],
@@ -74,8 +74,47 @@ const FileTree: React.FC<FileTreeProps> = ({
     return treeData;
   }, [treeData, searchTerm]);
 
+  const handleBreadcrumbClick = (dir: string) => {
+    updateCurrentPath(dir);
+    updateSelectedFiles([]); // Clear selected files when changing directories
+  };
+
+  const getBreadcrumbs = () => {
+    if (!currentPath) {
+      return [];
+    }
+    const parts = currentPath.split('/');
+    const breadcrumbs = parts.reduce((acc, part) => {
+      const path = acc.length > 0 ? `${acc[acc.length - 1].path}/${part}` : part;
+      return [...acc, { path, part }];
+    }, [] as { path: string; part: string }[]);
+    return breadcrumbs;
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+  };
+
   return (
     <div>
+      <div className="search-container">
+        <Input.Search
+          placeholder="Search files..."
+          onSearch={handleSearch}
+          style={{ width: 300 }} 
+        />
+        <div style={{ marginLeft: '10px' }}> 
+          {getBreadcrumbs().map((dir, index) => (
+            <span
+              key={index}
+              onClick={() => handleBreadcrumbClick(dir.path)}
+              style={{ cursor: 'pointer' }}
+            >
+              {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
+            </span>
+          ))}
+        </div>
+      </div>
       {!isPending && filteredTreeData.length ? (
         <TreeView
           key={filteredTreeData.length}

@@ -1,36 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ChatHistoryPopup from './ChatHistoryPopup';
 import ChatBox from './ChatBox';
-import { ChatMessage } from './useChat';
+import useChat from './useChat';
 import './Chat.scss';
 
 interface ChatProps {
-    chatHistory: ChatMessage[];
-    isLoading: boolean;
-    deleteMessage: (indexToDelete: number) => void
-    onSendMessage: (args: {
-        agentName?: string;
-        agentInstruction?: string;
-        message: string;
-        imageFiles?: File[];
-      }) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSendMessage }) => {
+const Chat: React.FC<ChatProps> = () => {
     const ref = useRef<HTMLDivElement>(null);
-    const [isChatActive, setIsChatActive] = useState(false);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const { chatHistory, deleteMessage, isLoading } = useChat();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            // Check if clicking outside of chat container
-            if (
-                ref.current &&
-                !ref.current.contains(event.target as Node)
-            ) {
-                setIsChatActive(false);
-            } else {
-                setIsChatActive(true)
+            if (previewImage) {
+                setPreviewImage(null);
             }
         };
 
@@ -38,8 +23,6 @@ const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSe
             if (event.key === 'Escape') {
                 if (previewImage) {
                     setPreviewImage(null);
-                } else {
-                    setIsChatActive(false);
                 }
             }
         }
@@ -53,18 +36,15 @@ const Chat: React.FC<ChatProps> = ({ chatHistory, isLoading, deleteMessage, onSe
             document.removeEventListener('click', handleClickOutside);
             document.removeEventListener('keydown', handleEscapeKey);
         };
-    }, [previewImage, isChatActive]);
+    }, [previewImage]);
 
     return <>
         <div className="chat" ref={ref}>
-            {isChatActive && <ChatHistoryPopup
+            <ChatHistoryPopup
                 isLoading={isLoading}
                 chatHistory={chatHistory}
-                deleteMessage={deleteMessage} />}
-            <ChatBox
-                isActive={isChatActive}
-                onSendMessage={onSendMessage}
-                setPreviewImage={setPreviewImage}
+                deleteMessage={deleteMessage} />
+            <ChatBox setPreviewImage={setPreviewImage}
             />
         </div>
         {previewImage && (

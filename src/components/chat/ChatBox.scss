@@ -1,22 +1,18 @@
 .chat-box {
     // position: fixed;
-    bottom: 20px;
+    // bottom: 20px;
     // left: 50%; // Position it at 50% from the left
     // transform: translateX(-50%); // Shift it back by half its width
-    width: 100%;
-    max-width: 1200px; // Optional: Limit the width of the chat box
+    // width: 100%;
+    // max-width: 1200px; // Optional: Limit the width of the chat box
     background-color: #e5e0e0; /* Changed background color to a lighter gray */
     padding: 10px;
     box-sizing: border-box;
     transition: transform 0.3s ease-in-out;
-    z-index: 2;
+    // z-index: 2;
 
     .agent-selector {
         margin-bottom: 10px; // Add some spacing
-    }
-
-    &.active {
-        // transform: translate(-50%, 0); // Adjust transform for active state
     }
 
     .chat-input {

@@ -55,3 +55,27 @@ button {
   left: -15px;
   top: 8px;
 }
+
+.search-container {
+  // position: fixed;
+  // top: 10px;
+  // left: 50%;
+  // transform: translateX(-50%);
+  background-color: #1e1e1e;
+  padding: 5px 10px;
+  border-radius: 5px;
+  z-index: 2;
+  display: flex; /* Use flexbox to align items in a row */
+  flex-direction: column;
+  align-items: center; /* Vertically align items to the center */
+}
+
+.breadcrumbs span {
+  color: #ccc;
+  font-size: 14px;
+
+  &:hover {
+      color: #ffffff;
+      transition: color 0.3s ease-in-out;
+  }
+}

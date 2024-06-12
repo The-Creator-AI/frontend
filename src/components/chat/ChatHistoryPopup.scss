@@ -1,18 +1,19 @@
 .chat-history-popup {
     // position: fixed;
     // bottom: 72px; // Adjust based on chat box height
-    left: 50%;
+    // left: 50%;
     // transform: translateX(-50%);
-    width: 100%;
-    max-width: 1200px; // Should match chat box width
-    height: 66vh; // 2/3 of viewport height
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 2; // Ensure it's above other elements
-    border-radius: 8px;
+    // width: 100%;
+    // max-width: 1200px; // Should match chat box width
+    // height: 66vh; // 2/3 of viewport height
+    background-color: rgba(195, 195, 195, 0.8);
+    // z-index: 2; // Ensure it's above other elements
+    // border-radius: 8px;
+    flex-grow: 1;
     overflow-y: auto;
     
     .chat-history-container {
-        padding: 10px;
+        padding: 70px 10px 10px 10px;
     }
     
     .message {

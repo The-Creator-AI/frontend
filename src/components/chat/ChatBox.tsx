@@ -4,23 +4,18 @@ import { CloseOutlined } from '@ant-design/icons';
 import AgentSelector from './AgentSelector';
 import useStore from '../../state/useStore';
 import { appStore$ } from '../../state/app.store';
+import useChat from './useChat';
 
 interface ChatBoxProps {
-  isActive: boolean;
-  onSendMessage: (args: {
-    agentName?: string;
-    agentInstruction?: string;
-    message: string;
-    imageFiles?: File[];
-  }) => void;
   setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewImage }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
-  const { selectedAgent } = useStore(appStore$);
+  const { selectedAgent, currentPath, selectedFiles } = useStore(appStore$);
+  const { sendMessage } = useChat();
 
   // Auto-resize textarea
   useEffect(() => {
@@ -60,11 +55,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
 
   const handleSendMessageLocal = () => {
     if (message || pastedImages.length > 0) {
-      onSendMessage({
+      sendMessage({
         agentInstruction: selectedAgent?.systemInstructions,
         agentName: selectedAgent?.name,
         message,
         imageFiles: pastedImages,
+        selectedFiles: selectedFiles.map(f => `${currentPath}/${f.filePath}`),
       });
       setMessage('');
       setPastedImages([]);
@@ -80,7 +76,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isActive, onSendMessage, setPreviewIm
   };
 
   return (
-    <div className={`chat-box ${isActive ? 'active' : ''}`}>
+    <div className={`chat-box`}>
       <AgentSelector /> 
       <div className="chat-input">
         <label htmlFor="chat-textarea" className="visually-hidden">
