@@ -6,6 +6,8 @@ export enum AppActions {
   UPDATE_CURRENT_PATH = 'UPDATE_CURRENT_PATH',
   UPDATE_SELECTED_FILES = 'UPDATE_SELECTED_FILES',
   UPDATE_SELECTED_AGENT = 'UPDATE_SELECTED_AGENT',
+  UPDATE_CHAT_HISTORY = 'UPDATE_CHAT_HISTORY',
+  UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
 }
 
 interface AppState {
@@ -13,6 +15,16 @@ interface AppState {
   selectedFiles: { nodeId: NodeId; filePath: string }[];
   agents: Agent[];
   selectedAgent: Agent | null;
+  chat: {
+    chatHistory: {
+      user: 'user' | 'bot' | 'instructor';
+      message: string;
+      model?: string;
+      selectedFiles?: string[];
+      agentName?: string;
+    }[];
+    isLoading: boolean;
+  };
 }
 
 const initialState: AppState = {
@@ -68,6 +80,8 @@ const initialState: AppState = {
 ## Plan Generation
 
 **Example Output:** This is just an example output, don't use it in your implementation.
+
+The output will contain two things - natural language thoughts and json plan.
 
 ## 1. Thoughts about the current state of the project that matters and what will it take to acheive our goals
 * It seems rxjs is not installed.
@@ -175,6 +189,10 @@ Now I call upon you handle what I have to say below (take into consideration the
     `,
   }],
   selectedAgent: null,
+  chat: {
+    chatHistory: [],
+    isLoading: false
+  }
 };
 
 const appStateSubject = new Store<AppState, AppActions>(initialState);
@@ -199,4 +217,24 @@ export const updateSelectedAgent = (agent: Agent | null) => {
     ...appStateSubject.getValue(),
     selectedAgent: agent,
   }, AppActions.UPDATE_SELECTED_AGENT);
+};
+
+export const updateChatHistory = (newChatHistory: AppState['chat']['chatHistory']) => {
+  appStateSubject._next({
+    ...appStateSubject.getValue(),
+    chat: {
+      ...appStateSubject.getValue().chat,
+      chatHistory: newChatHistory,
+    }
+  }, AppActions.UPDATE_CHAT_HISTORY, 'UPDATE_CHAT_HISTORY');
+};
+
+export const updateChatIsLoading = (isLoading: boolean) => {
+  appStateSubject._next({
+    ...appStateSubject.getValue(),
+    chat: {
+      ...appStateSubject.getValue().chat,
+      isLoading,
+    }
+  }, AppActions.UPDATE_CHAT_IS_LOADING, 'UPDATE_CHAT_IS_LOADING');
 };

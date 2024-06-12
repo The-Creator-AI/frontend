@@ -1,18 +1,21 @@
-import { useState } from 'react';
 import axios from 'axios';
 import config from '../../config';
+import { appStore$, updateChatHistory, updateChatIsLoading } from '../../state/app.store';
+import useStore from '../../state/useStore';
 
 export interface ChatMessage {
   user: 'user' | 'bot' | 'instructor';
   message: string;
-  model?: string; 
+  model?: string;
   selectedFiles?: string[];
   agentName?: string;
 }
 
 const useChat = () => {
-  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { chat: { chatHistory, isLoading } = {
+    chatHistory: [],
+    isLoading: false
+  }} = useStore(appStore$);
 
   // TODO: imageFiles still need to be handled once backend is ready for it
   const sendMessage = async (args: {
@@ -28,34 +31,33 @@ const useChat = () => {
       messages.push({ user: 'instructor', message: agentInstruction, agentName });
     }
     messages.push({ user: 'user', message, selectedFiles });
-    setChatHistory((chatHistory) => [...chatHistory, ...messages]);
+    updateChatHistory([...chatHistory, ...messages]);
 
-    setIsLoading(true);
+    updateChatIsLoading(true);
 
     try {
-      const response = await axios.post(`${config.BASE_URL}/creator/chat`, { 
+      const response = await axios.post(`${config.BASE_URL}/creator/chat`, {
         chatHistory: [
           ...chatHistory.filter((message) => message.user !== 'instructor'),
-          ...messages], 
-        selectedFiles 
-      }); 
-      const botResponse: ChatMessage = { 
-        user: 'bot', 
-        message: response.data.message, 
+          ...messages],
+        selectedFiles
+      });
+      const botResponse: ChatMessage = {
+        user: 'bot',
+        message: response.data.message,
         model: response.data.model,
       };
-      console.log({ chatHistory });
-      setChatHistory((chatHistory) => [...chatHistory, botResponse]);
+      updateChatHistory([...chatHistory, botResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
-      setIsLoading(false);
+      updateChatIsLoading(false);
     }
   };
 
   const deleteMessage = (indexToDelete: number) => {
-    setChatHistory(prevHistory => 
-      prevHistory.filter((_, index) => index !== indexToDelete)
+    updateChatHistory(
+      chatHistory.filter((_, index) => index !== indexToDelete)
     );
   };
 

@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { CopyOutlined } from '@ant-design/icons';
 import { message } from 'antd';
+import PlanDisplay from "../plan/PlanDisplay"; 
 
-const CodeBlock = ({ children, className }) => {
+const CodeBlock = ({ children, className , node }) => {
+    console.log({
+        children,
+        lang: node?.properties?.className
+    })
     const [copied, setCopied] = useState(false);
+    const isJson = node?.properties?.className?.includes('language-json');
+    const jsonCode = isJson ? JSON.parse(children) : null;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(children).then(() => {
@@ -13,8 +20,7 @@ const CodeBlock = ({ children, className }) => {
         });
     };
 
-    return (
-        <pre className={className}>
+    return jsonCode?.plan_title ? <PlanDisplay plan={jsonCode} /> : (<pre className={className}>
             <span className="copy-icon" onClick={handleCopy}>
                 <CopyOutlined style={{ fontSize: '16px', color: copied ? '#1890ff' : '#888' }} />
             </span>

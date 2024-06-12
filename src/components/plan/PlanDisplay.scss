@@ -1,0 +1,66 @@
+.plan-display {
+    // Overall container styles
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .plan-title {
+    // Plan title styles
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #007bff;
+  }
+  
+  .plan-summary {
+    // Plan summary styles
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .plan-steps {
+    // List of plan steps
+    list-style: none;
+    padding: 0;
+  }
+  
+  .plan-step {
+    // Individual step styles
+    margin-bottom: 10px;
+  }
+  
+  .step-description {
+    // Description of the step
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .write-code-button {
+    // Button styles
+    margin-left: 10px;
+    padding: 8px 12px;
+    border-radius: 3px;
+    font-size: 1rem;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .step-changes {
+    // Changes for each step
+    list-style: disc;
+    padding-left: 20px;
+    margin-top: 5px;
+  }
+  
+  .change-item {
+    // Item in the changes list
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
