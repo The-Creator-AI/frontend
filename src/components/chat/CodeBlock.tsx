@@ -4,10 +4,6 @@ import { message } from 'antd';
 import PlanDisplay from "../plan/PlanDisplay"; 
 
 const CodeBlock = ({ children, className , node }) => {
-    console.log({
-        children,
-        lang: node?.properties?.className
-    })
     const [copied, setCopied] = useState(false);
     const isJson = node?.properties?.className?.includes('language-json');
     const jsonCode = isJson ? JSON.parse(children) : null;
