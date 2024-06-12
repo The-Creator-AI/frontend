@@ -40,9 +40,9 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({ isLoading, chatHist
                         >
                             <div className="message-content">
                                 {message.user === 'bot' && (
-                                    message.model ? <span className="model-badge">{message.model}</span> : null
+                                    message.model ? <span className="model-badge" aria-label={message.model}>{message.model}</span> : null
                                 )}
-                                {message.user === 'instructor' ? <span className="agent-badge">{message.agentName}</span>
+                                {message.user === 'instructor' ? <span className="agent-badge" aria-label={message.message}>{message.agentName}</span>
                                 : <div className="markdown-container">
                                     <ReactMarkdown
                                         components={{

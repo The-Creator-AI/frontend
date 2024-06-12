@@ -87,6 +87,7 @@
         border-radius: 5px;
         margin-right: 5px;
         font-size: 12px;
+        cursor: pointer;
     }
 
     .agent-badge {
@@ -97,6 +98,7 @@
         margin-right: 5px;
         font-size: 12px;
         color: white;
+        cursor: pointer;
     }
     
     .loading-message {
@@ -126,5 +128,21 @@
             padding: 2px 4px;
             border-radius: 2px;
         }
+    }
+
+    /* Tooltip styles */
+    .model-badge:hover::after, .agent-badge:hover::after {
+        content: attr(aria-label); /* Display the title attribute as tooltip content */
+        // position: absolute;
+        // top: 100%; /* Position below the badge */
+        // left: 50%;
+        // transform: translateX(-50%); /* Center horizontally */
+        background-color: rgba(0, 0, 0, 0.7); /* Dark gray background with transparency */
+        color: white; /* White text color */
+        padding: 8px 12px;
+        border-radius: 4px;
+        z-index: 4; /* Ensure tooltip is above other elements */
+        white-space: pre-wrap; /* Preserve line breaks and whitespace */
+        max-width: 300px; /* Limit tooltip width */
     }
 }

@@ -65,7 +65,17 @@ const initialState: AppState = {
     *   **Assume Best Practices:** Recommend changes that align with common coding conventions and standards.
     *   **Consider Dependencies:** Account for any dependencies between steps, ensuring they are executed in the correct order.
 
+## Plan Generation
+
 **Example Output:** This is just an example output, don't use it in your implementation.
+
+## 1. Thoughts about the current state of the project that matters and what will it take to acheive our goals
+* It seems rxjs is not installed.
+* There's no store yet from which we could take reference for coding patterns.
+* The files which will need to be changed seem to be -
+  - src/store/index.ts
+
+## 2. JSONOutput
 
 \`\`\`json
 {
