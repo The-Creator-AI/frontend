@@ -1,15 +1,10 @@
-// src/App.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './App.scss';
-import Chat from './components/chat/Chat';
 import FileExplorer from './components/file-explorer/FileExplorer';
 import { appStore$, updateSelectedFiles } from './state/app.store';
 import useStore from './state/useStore';
 
-const queryClient = new QueryClient();
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -36,13 +31,9 @@ function App() {
   }, [currentPath, selectedFiles]);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <div className="App">
-          <FileExplorer />
-        </div>
-      </ErrorBoundary>
-    </QueryClientProvider>
+    <div className="App">
+      <FileExplorer />
+    </div>
   );
 }
 
