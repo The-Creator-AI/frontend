@@ -52,6 +52,8 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/cypress": "^10.0.2",
+    "cypress": "^13.11.0",
     "node-sass": "^7.0.3",
     "sass": "^1.77.4"
   }
