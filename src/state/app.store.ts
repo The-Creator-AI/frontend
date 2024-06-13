@@ -33,9 +33,8 @@ const initialState: AppState = {
   agents: [{
     id: 'functional-spec',
     name: 'Functional Spec',
-    systemInstructions: `Now I want you assist me in translating project requirements into Functional Specification Writer. 
-You write detailed Gherkin Feature files for the user scenarios provided in the messages, including edge cases.
-For each feature, clearly define the Feature, Scenario, Given, When, Then steps in Gherkin format.
+    systemInstructions: `Now I want you assist me in translating project requirements into test cases. 
+You write detailed test cases, for the user scenarios provided in the messages, including edge cases.
 Make sure to handle different edge cases and scenarios comprehensively.
 \n\n\n\n\n\n
 Now I call upon you handle what I have to say below -
