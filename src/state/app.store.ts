@@ -83,11 +83,19 @@ const initialState: AppState = {
 
 The output will contain two things - natural language thoughts and json plan.
 
-## 1. Thoughts about the current state of the project that matters and what will it take to acheive our goals
-* It seems rxjs is not installed.
-* There's no store yet from which we could take reference for coding patterns.
-* The files which will need to be changed seem to be -
-  - src/store/index.ts
+## 1. Listing down all the possible scenarios and edge cases for the user request.
+Feature: Guess the word
+
+  # The first example has two steps
+  Scenario: Maker starts a game
+    When the Maker starts a game
+    Then the Maker waits for a Breaker to join
+
+  # The second example has three steps
+  Scenario: Breaker joins a game
+    Given the Maker has started a game with the word "silky"
+    When the Breaker joins the Maker's game
+    Then the Breaker must guess a word with 5 characters
 
 ## 2. JSONOutput
 
@@ -122,6 +130,22 @@ Now I call upon you handle what I have to say below -
     `,
   }, {
     id: '2',
+    name: 'Code Spec Review',
+    systemInstructions: `Now I want you to assist me by reviewing the code specification provided.
+You should not provide any additional context or instructions.:
+Make sure the plan is practical and doesn't have holes or inconsistencies.
+Have a look at the current codebase, make sure the plan is not missing anything important.
+
+**Output:** You will provide a list of bullet points suggesting improvements to the code specification.
+
+**Example Output:** This is just an example output, don't give the same output again.
+Please revise the plan and take following suggestions into consideration -
+* Missed edge case: Handle the scenario where chat messages are not received properly
+* Type safety: Add types for Chat component's props
+\n\n\n\n\n\n
+`
+  }, {
+    id: '3',
     name: 'Stubbed code',
     systemInstructions: `Now I want you to assist me by providing targeted code snippets from requested files, replacing irrelevant or lengthy sections of **existing code** with stubs for brevity and clarity. You should **not** generate stubs for new code that is intended to be written.
 
