@@ -1,13 +1,15 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
+import { resetAppStore } from "../../state/app.store";
 import ChatBox from "./ChatBox";
 
 const expect = chai.expect
 
-describe('ChatBox Component', () => {
+describe('<ChatBox />', () => {
   beforeEach(() => {
-    cy.mount(<ChatBox setPreviewImage={() => {}} />)
+    resetAppStore();
+    cy.mount(<ChatBox setPreviewImage={() => { }} />)
     cy.get('#chat-textarea').clear(); // Clear the textarea
   });
 
@@ -27,15 +29,19 @@ describe('ChatBox Component', () => {
     cy.get('#chat-textarea').type(messageToSend);
 
     // Spy on the network request using cy.spy
-    cy.intercept('POST', expectedUrl, { times: 0 }).as('sendMessage'); // Alias the request for easier reference
+    cy.intercept('POST', expectedUrl, {
+      message: 'Hello, world!',
+      model: 'gpt-3.5-turbo',
+    }).as('sendMessage'); // Alias the request for easier reference
 
-    cy.get('button').contains('Send').click(); 
+    cy.get('button').contains('Send').click();
 
     // Verify the network request was made
     cy.wait('@sendMessage').then((interception) => {
       expect(interception.request.method).to.equal('POST');
       expect(new URL(interception.request.url).pathname).to.equal(expectedUrl);
       expect(interception.request.body.chatHistory[0].message).to.equal(messageToSend);
+      expect(interception.response?.body.message).to.equal('Hello, world!');
     });
   });
 
@@ -53,6 +59,10 @@ describe('ChatBox Component', () => {
     cy.wait('@sendMessage').then((interception) => {
       expect(interception.request.method).to.equal('POST');
       expect(new URL(interception.request.url).pathname).to.equal(expectedUrl);
+      cy.log(JSON.stringify({
+        req: interception.request.body,
+        res: interception.response
+      }))
       expect(interception.request.body.chatHistory[0].message).to.equal(messageToSend);
     });
   });

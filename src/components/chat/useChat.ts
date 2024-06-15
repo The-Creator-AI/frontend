@@ -3,7 +3,7 @@ import config from '../../config';
 import { appStore$, updateChatHistory, updateChatIsLoading } from '../../state/app.store';
 import useStore from '../../state/useStore';
 
-export interface ChatMessage {
+export interface ChatMessageType {
   user: 'user' | 'bot' | 'instructor';
   message: string;
   model?: string;
@@ -26,7 +26,7 @@ const useChat = () => {
     imageFiles?: File[];
   }) => {
     const { agentName, agentInstruction, message, selectedFiles } = args;
-    const messages: ChatMessage[] = [];
+    const messages: ChatMessageType[] = [];
     if (agentInstruction) {
       messages.push({ user: 'instructor', message: agentInstruction, agentName });
     }
@@ -42,12 +42,12 @@ const useChat = () => {
           ...messages],
         selectedFiles
       });
-      const botResponse: ChatMessage = {
+      const botResponse: ChatMessageType = {
         user: 'bot',
         message: response.data.message,
         model: response.data.model,
       };
-      updateChatHistory([...chatHistory, botResponse]);
+      updateChatHistory([...chatHistory, { user: 'user', message, selectedFiles }, botResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {

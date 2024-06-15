@@ -3,6 +3,7 @@ import { Store } from './store';
 import { Agent } from '../types/agent.type';
 
 export enum AppActions {
+  RESET_APP_STORE = 'RESET_APP_STORE',
   UPDATE_CURRENT_PATH = 'UPDATE_CURRENT_PATH',
   UPDATE_SELECTED_FILES = 'UPDATE_SELECTED_FILES',
   UPDATE_SELECTED_AGENT = 'UPDATE_SELECTED_AGENT',
@@ -230,6 +231,10 @@ Now I call upon you handle what I have to say below (take into consideration the
 
 const appStateSubject = new Store<AppState, AppActions>(initialState);
 export const appStore$ = appStateSubject.asObservable();
+
+export const resetAppStore = () => {
+  appStateSubject._next(initialState, AppActions.RESET_APP_STORE)
+}
 
 export const updateCurrentPath = (newPath: string) => {
   appStateSubject._next({

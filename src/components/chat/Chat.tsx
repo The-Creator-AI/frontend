@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ChatHistoryPopup from './ChatHistoryPopup';
+import ChatHistoryPopup from './chat-history/ChatHistoryPopup';
 import ChatBox from './ChatBox';
 import useChat from './useChat';
 import './Chat.scss';
