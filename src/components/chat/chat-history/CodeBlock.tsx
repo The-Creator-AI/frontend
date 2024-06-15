@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CopyOutlined } from '@ant-design/icons';
 import { message } from 'antd';
-import PlanDisplay from "../../plan/PlanDisplay"; 
+import PlanDisplay from "./plan/PlanDisplay"; 
 
 const CodeBlock = ({ children, className , node }) => {
     const [copied, setCopied] = useState(false);

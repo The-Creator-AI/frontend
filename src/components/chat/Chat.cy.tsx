@@ -25,7 +25,13 @@ describe('<Chat />', () => {
 
     // Second message interaction with JSON code
     cy.intercept('POST', '/creator/chat', {
-      message: '```json\n{ \n  "plan_title": "Mock Plan",\n  "plan_summary": "This is a mock plan for testing.",\n  "steps": []\n}\n```',
+      message: `\`\`\`json{
+          "plan_title": "Mock Plan",
+          "plan_summary": "This is a mock plan for testing.",
+          "steps": [{}]
+        }
+        \`\`\`
+      `,
       model: 'gpt-3.5-turbo'
     }).as('sendMessage2');
     cy.get('#chat-textarea').type('Give me a mock plan');
