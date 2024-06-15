@@ -1,4 +1,4 @@
-import ChatHistoryPopup from './ChatHistoryPopup';
+import ChatHistory from './ChatHistory';
 import { ChatMessageType } from '../useChat';
 
 // Mock data for chat history
@@ -16,9 +16,9 @@ const mockChatHistory: ChatMessageType[] = [
   },
 ];
 
-describe('<ChatHistoryPopup />', () => {
+describe('<ChatHistory />', () => {
   it('renders chat history correctly', () => {
-    cy.mount(<ChatHistoryPopup chatHistory={mockChatHistory} deleteMessage={() => { }} isLoading={false} />);
+    cy.mount(<ChatHistory chatHistory={mockChatHistory} deleteMessage={() => { }} isLoading={false} />);
 
     // Assert that each message in mockChatHistory is rendered
     mockChatHistory.forEach((message) => {
@@ -27,7 +27,7 @@ describe('<ChatHistoryPopup />', () => {
   });
 
   it('renders model badges for bot messages', () => {
-    cy.mount(<ChatHistoryPopup chatHistory={mockChatHistory} deleteMessage={() => { }} isLoading={false} />);
+    cy.mount(<ChatHistory chatHistory={mockChatHistory} deleteMessage={() => { }} isLoading={false} />);
 
     // Check that the model badge is displayed for bot messages with a model property
     cy.get('.message.bot').each(($message, index) => {
@@ -40,7 +40,7 @@ describe('<ChatHistoryPopup />', () => {
 
   it('calls deleteMessage when delete icon is clicked', () => {
     const deleteMock = cy.spy(); // Create a spy function
-    cy.mount(<ChatHistoryPopup chatHistory={mockChatHistory} deleteMessage={deleteMock} isLoading={false} />);
+    cy.mount(<ChatHistory chatHistory={mockChatHistory} deleteMessage={deleteMock} isLoading={false} />);
 
     // Click the delete icon of the first message (index 0)
     cy.get('.delete-icon').first().click();

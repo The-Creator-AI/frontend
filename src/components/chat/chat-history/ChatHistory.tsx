@@ -1,18 +1,15 @@
-import { CloseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
-import React, { useCallback, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import "./ChatHistoryPopup.scss"; // Import your CSS file
-import CodeBlock from "./CodeBlock";
+import React from "react";
 import { ChatMessageType } from "../useChat";
+import "./ChatHistory.scss"; // Import your CSS file
 import ChatMessage from "./ChatMessage";
 
-interface ChatHistoryPopupProps {
+interface ChatHistoryProps {
     chatHistory: ChatMessageType[];
     isLoading: boolean;
     deleteMessage: (indexToDelete: number) => void;
 }
 
-const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({
+const ChatHistory: React.FC<ChatHistoryProps> = ({
     isLoading,
     chatHistory,
     deleteMessage,
@@ -33,5 +30,5 @@ const ChatHistoryPopup: React.FC<ChatHistoryPopupProps> = ({
     );
 };
 
-export default ChatHistoryPopup;
+export default ChatHistory;
 

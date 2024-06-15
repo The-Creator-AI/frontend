@@ -2,7 +2,7 @@ import { CloseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { ChatMessageType } from "../useChat";
-import "./ChatHistoryPopup.scss"; // Import your CSS file
+import "./ChatHistory.scss"; // Import your CSS file
 import CodeBlock from "./CodeBlock";
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ChatHistoryPopup from './chat-history/ChatHistoryPopup';
+import ChatHistory from './chat-history/ChatHistory';
 import ChatBox from './ChatBox';
 import useChat from './useChat';
 import './Chat.scss';
@@ -40,7 +40,7 @@ const Chat: React.FC<ChatProps> = () => {
 
     return <>
         <div className="chat" ref={ref}>
-            <ChatHistoryPopup
+            <ChatHistory
                 isLoading={isLoading}
                 chatHistory={chatHistory}
                 deleteMessage={deleteMessage} />
