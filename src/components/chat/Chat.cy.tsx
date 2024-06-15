@@ -98,5 +98,14 @@ describe('<Chat />', () => {
     cy.get('.message').eq(7).find('.message-content').should(($messageContent) => {
       expect($messageContent.height()).to.be.lessThan(200);
     });
+
+    // Assert that deleteMessage is called with the correct index
+    cy.get('.message').eq(0).find('.delete-icon').click();
+    cy.get('.message').should('have.length', 7);
+    cy.get('.message').eq(0).find('.message-content').should('contain', 'How can I assist you today?');
+    cy.get('.message').eq(6).find('.delete-icon').click();
+    cy.get('.message').should('have.length', 6);
+    cy.get('.message').eq(5).find('.message-content').should('contain', 'Generate a long message');
+
   });
 });
