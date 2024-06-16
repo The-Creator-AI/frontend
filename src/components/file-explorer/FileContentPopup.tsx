@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import config from '../../config';
@@ -12,6 +12,7 @@ interface FileContentPopupProps {
 
 const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
     const { currentPath, fileContentPopup: { isOpen, filePath, content }} = useStore(appStore$, initialState);
+    const ref = useRef<HTMLDivElement>(null);
 
     const { isLoading, error } = useQuery({
         queryKey: ['fileContent', filePath],
@@ -25,12 +26,33 @@ const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
         enabled: isOpen && !!filePath, // Only fetch when the popup is open and filePath exists
     });
 
+    useEffect(() => {
+        // Check if the click is on the backdrop
+        const handleClickOutside = (event: MouseEvent) => {
+            if (ref.current && !ref.current.contains(event.target as Node)) {
+                updateFileContentPopup({ isOpen: false, filePath: undefined });
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        // Check if pressed key is Escape
+        const handleEscapeKey = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                updateFileContentPopup({ isOpen: false, filePath: undefined });
+            }
+        }
+        document.addEventListener('keydown', handleEscapeKey);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscapeKey);
+        }
+    }, []);
+
     if (!isOpen) {
         return null;
     }
 
     return (
-        <div
+        <div ref={ref}
             className="file-content-popup"
             onClick={(e) => {
                 if (e.target === e.currentTarget) { // Check if the click is on the backdrop
