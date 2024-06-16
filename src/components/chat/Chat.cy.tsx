@@ -186,4 +186,34 @@ describe('<Chat />', () => {
       expect($messageContent.height()).to.be.lessThan(200); 
     });
   });
+  it('should select an agent, display the selection, send message and receive response', () => {
+    const agentId = '1'; // Replace with the actual agent ID
+    const agentName = 'Code Spec'; // Replace with the actual agent name
+    const messageToSend = 'Test message with agent';
+    const expectedUrl = '/creator/chat'; // Replace with your actual API endpoint URL
+  
+    cy.get('#agentSelect').select(agentId);
+    cy.get('#agentSelect').should('have.value', agentId);
+  
+    cy.intercept('POST', expectedUrl, async (req) => {
+      // delay a little for the agent-badge to be displayed for a while
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      req.reply({
+        message: `Hello! This is ${agentName} responding.`,
+        model: 'gpt-3.5-turbo', 
+      });
+    }).as('sendMessage');
+  
+    cy.get('#chat-textarea').type(messageToSend);
+    cy.get('button').contains('Send').click();
+
+    cy.get('.agent-badge').should('have.text', agentName);
+
+    cy.wait('@sendMessage').then((interception) => {
+      expect(interception.request.body.chatHistory[0].agentName).to.equal(agentName); 
+    });
+  
+    cy.get('.message').should('have.length', 2); 
+    cy.get('.message').eq(1).find('.message-content').should('contain', `Hello! This is ${agentName} responding.`);
+  });
 });
