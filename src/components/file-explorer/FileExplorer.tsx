@@ -1,13 +1,12 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
-import FileContent from './FileContent';
-import FileTree from './file-tree/FileTree';
-import './FileExplorer.scss';
-import useStore from '../../state/useStore';
 import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../state/app.store';
+import useStore from '../../state/useStore';
 import Chat from '../chat/Chat';
 import FileContentPopup from './FileContentPopup';
+import './FileExplorer.scss';
+import FileTree from './file-tree/FileTree';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;

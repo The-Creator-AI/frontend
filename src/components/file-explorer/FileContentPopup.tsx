@@ -67,11 +67,19 @@ const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
                 {error && !content && <div>Error: {error.message}</div>}
                 {content && (
                     <MonacoEditor
+                        className='file-content-editor'
                         height={window.innerHeight - window.innerHeight/8}
                         width={window.innerWidth - window.innerWidth/8}
                         value={content}
+                        path={filePath}
                         options={{
                             readOnly: true, // Make the editor read-only
+                            fontSize: 14,
+                            minimap: {
+                                // renderCharacters: true,
+                                // maxColumn: 500,
+                                size: 'fit'
+                            }
                         }}
                     />
                 )}
