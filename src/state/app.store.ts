@@ -11,6 +11,7 @@ export enum AppActions {
   UPDATE_CHAT_HISTORY = 'UPDATE_CHAT_HISTORY',
   UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
   UPDATE_COLLAPSED_STATE = 'UPDATE_COLLAPSED_STATE',
+  UPDATE_FILE_CONTENT_POPUP = 'UPDATE_FILE_CONTENT_POPUP',
 }
 
 interface AppState {
@@ -22,9 +23,14 @@ interface AppState {
     chatHistory: ChatMessageType[];
     isLoading: boolean;
   };
+  fileContentPopup: {
+    isOpen: boolean;
+    filePath?: string;
+    content?: string;
+  };
 }
 
-const initialState: AppState = {
+export const initialState: AppState = {
   currentPath: new URL(window.location.href).searchParams.get('path') || '',
   selectedFiles: [],
   agents: [{
@@ -222,6 +228,9 @@ Now I call upon you handle what I have to say below (take into consideration the
   chat: {
     chatHistory: [],
     isLoading: false
+  },
+  fileContentPopup: {
+    isOpen: false,
   }
 };
 
@@ -271,4 +280,14 @@ export const updateChatIsLoading = (isLoading: boolean) => {
       isLoading,
     }
   }, AppActions.UPDATE_CHAT_IS_LOADING);
+};
+
+export const updateFileContentPopup = (newState: Partial<AppState['fileContentPopup']>) => {
+  appStateSubject._next({
+    ...appStateSubject.getValue(),
+    fileContentPopup: { 
+      ...appStateSubject.getValue().fileContentPopup, 
+      ...newState 
+    },
+  }, AppActions.UPDATE_FILE_CONTENT_POPUP);
 };

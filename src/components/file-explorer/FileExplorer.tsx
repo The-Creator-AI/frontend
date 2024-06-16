@@ -7,6 +7,7 @@ import './FileExplorer.scss';
 import useStore from '../../state/useStore';
 import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../state/app.store';
 import Chat from '../chat/Chat';
+import FileContentPopup from './FileContentPopup';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
@@ -59,6 +60,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
         {/* {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />}  */}
         <Chat />
       </div>
+      <FileContentPopup />
     </div>
   );
 };

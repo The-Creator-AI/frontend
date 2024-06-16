@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
 
-// Utility type to extract keys from an object whose values are not functions
-type ValuesOf<T> = T[keyof T];
-
 const useStore = <T>(
   observable$: Observable<T>,
+  initialState?: T
 ): T => {
-  const [state, setState] = useState<T | {}>({});
+  const [state, setState] = useState<T | {}>(initialState || ({} as T));
 
   useEffect(() => {
     const subscription = observable$.subscribe((newState) => {

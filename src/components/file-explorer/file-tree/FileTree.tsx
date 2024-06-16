@@ -7,7 +7,7 @@ import config from "../../../config";
 import "./FileTree.scss";
 import { filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
-import { appStore$, updateCurrentPath, updateSelectedFiles } from "../../../state/app.store";
+import { appStore$, updateCurrentPath, updateFileContentPopup, updateSelectedFiles } from "../../../state/app.store";
 import useStore from "../../../state/useStore";
 import { Input } from 'antd';
 
@@ -55,7 +55,7 @@ const FileTree: React.FC<FileTreeProps> = ({
   };
 
   const handleFileClick = (nodeId: NodeId, filePath: string) => {
-    setActiveFile(filePath);
+    updateFileContentPopup({ isOpen: true, filePath });
   };
 
   useEffect(() => {
