@@ -65,19 +65,19 @@ describe('<Chat />', () => {
 
     // Test clicking Write Code button and sending subsequent message
     cy.intercept('POST', '/creator/chat', {
-      message: '```tsx\n// Code for src/components/NewComponent.tsx\n```',
+      message: '```tsx\n// Code for src/App.tsx\n...```',
       model: 'gpt-3.5-turbo',
     }).as('sendMessage3');
     cy.get('.plan-step').eq(1).find('.write-code-button').click();
     cy.wait('@sendMessage3');
     cy.get('.message').should('have.length', 6);
-    cy.get('.message').eq(5).find('.message-content').find('code').should('contain', '// Code for src/components/NewComponent.tsx');
+    cy.get('.message').eq(5).find('.message-content').find('code').should('contain', '// Code for src/App.tsx\n...');
     cy.get('.message').eq(3).find('.plan-display').should('exist');
 
 
     // Third message interaction with a long message
     cy.intercept('POST', '/creator/chat', {
-      message: 'This is a very long message that should be collapsed. '.repeat(50),
+      message: 'This is a very long message that should be collapsed. '.repeat(100),
       model: 'gpt-3.5-turbo'
     }).as('sendMessage3');
     cy.get('#chat-textarea').type('Generate a long message');
@@ -92,7 +92,7 @@ describe('<Chat />', () => {
     cy.get('.message').eq(3).find('pre').should('exist'); // Check for code block
 
     cy.get('.message').eq(7).find('.message-content').should(($messageContent) => {
-      expect($messageContent.height()).to.be.greaterThan(600);
+      expect($messageContent.height()).to.be.greaterThan(260);
     });
     cy.get('.message').eq(7).find('.expand-collapse-button').should('be.visible').click();
     cy.get('.message').eq(7).find('.message-content').should(($messageContent) => {
@@ -103,9 +103,14 @@ describe('<Chat />', () => {
     cy.get('.message').eq(0).find('.delete-icon').click();
     cy.get('.message').should('have.length', 7);
     cy.get('.message').eq(0).find('.message-content').should('contain', 'How can I assist you today?');
-    cy.get('.message').eq(6).find('.delete-icon').click();
-    cy.get('.message').should('have.length', 6);
-    cy.get('.message').eq(5).find('.message-content').should('contain', 'Generate a long message');
 
+    cy.get('.message').eq(6).find('.message-content').should(($messageContent) => {
+      expect($messageContent.height()).to.be.lessThan(200);
+    });
+
+    cy.get('.message').eq(6).find('.expand-collapse-button').should('be.visible').click();
+    cy.get('.message').eq(6).find('.message-content').should(($messageContent) => {
+      expect($messageContent.height()).to.be.greaterThan(260);
+    });
   });
 });

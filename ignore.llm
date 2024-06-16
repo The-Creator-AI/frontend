@@ -13,6 +13,7 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 .llm
+cypress/screenshots
 *.llm
 .git
 .vscode
@@ -20,3 +21,4 @@ node_modules
 yarn.lock
 *.log
 *.patch
+*.llm

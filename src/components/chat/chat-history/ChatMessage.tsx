@@ -1,25 +1,21 @@
 import { CloseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { ChatMessageType } from "../useChat";
+import useChat, { ChatMessageType } from "../useChat";
 import "./ChatHistory.scss"; // Import your CSS file
 import CodeBlock from "./CodeBlock";
 
 
 interface ChatMessageProps {
     message: ChatMessageType;
-    index: number;
-    deleteMessage: (indexToDelete: number) => void;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
     message,
-    index,
-    deleteMessage,
 }) => {
     const messageRef = useRef<HTMLDivElement>(null);
+    const { deleteMessage, setMessageCollapsed } =  useChat();
     const [showCollapse, setShowCollapse] = useState(false);
-    const [isCollapsed, setCollapsed] = useState(false);
 
     useEffect(() => {
         // use ResizeObserver to detect changes in the height of the message
@@ -34,13 +30,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         if (messageRef.current) {
             resizeObserver.observe(messageRef.current);
         }
-    }, []);
+    }, [message]);
 
 
     return (
         <div
-            key={index}
-            className={`message ${message.user} ${isCollapsed ? "collapsed" : ""
+            key={message.uuid}
+            className={`message ${message.user} ${message.isCollapsed ? "collapsed" : ""
                 }`}
             ref={messageRef}
         >
@@ -74,12 +70,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     </div>
                 )}
             </div>
-            {showCollapse && (
+            {(showCollapse || message.isCollapsed) && (
                 <button
-                    onClick={() => setCollapsed(!isCollapsed)}
+                    onClick={() => setMessageCollapsed(message.uuid, !message.isCollapsed)}
                     className="expand-collapse-button"
                 >
-                    {isCollapsed ? (
+                    {message.isCollapsed ? (
                         <DownOutlined />
                     ) : (
                         <UpOutlined />
@@ -88,7 +84,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             )}
             <CloseOutlined
                 className="delete-icon"
-                onClick={() => deleteMessage(index)}
+                onClick={() => deleteMessage(message.uuid)}
             />
         </div>
     );

@@ -2,13 +2,16 @@ import axios from 'axios';
 import config from '../../config';
 import { appStore$, updateChatHistory, updateChatIsLoading } from '../../state/app.store';
 import useStore from '../../state/useStore';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface ChatMessageType {
+  uuid: string;
   user: 'user' | 'bot' | 'instructor';
   message: string;
   model?: string;
   selectedFiles?: string[];
   agentName?: string;
+  isCollapsed?: boolean;
 }
 
 const useChat = () => {
@@ -28,9 +31,19 @@ const useChat = () => {
     const { agentName, agentInstruction, message, selectedFiles } = args;
     const messages: ChatMessageType[] = [];
     if (agentInstruction) {
-      messages.push({ user: 'instructor', message: agentInstruction, agentName });
+      messages.push({
+        user: 'instructor',
+        message: agentInstruction,
+        agentName,
+        uuid: uuidv4(),
+      });
     }
-    messages.push({ user: 'user', message, selectedFiles });
+    messages.push({
+      user: 'user',
+      message,
+      selectedFiles,
+      uuid: uuidv4()
+    });
     updateChatHistory([...chatHistory, ...messages]);
 
     updateChatIsLoading(true);
@@ -46,8 +59,14 @@ const useChat = () => {
         user: 'bot',
         message: response.data.message,
         model: response.data.model,
+        uuid: uuidv4(),
       };
-      updateChatHistory([...chatHistory, { user: 'user', message, selectedFiles }, botResponse]);
+      updateChatHistory([...chatHistory, {
+        user: 'user',
+        message,
+        selectedFiles,
+        uuid: uuidv4(),
+      }, botResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -55,13 +74,24 @@ const useChat = () => {
     }
   };
 
-  const deleteMessage = (indexToDelete: number) => {
+  const deleteMessage = (uuid: string) => {
     updateChatHistory(
-      chatHistory.filter((_, index) => index !== indexToDelete)
+      chatHistory.filter((message) => message.uuid !== uuid)
     );
   };
 
-  return { chatHistory, sendMessage, isLoading, deleteMessage };
+  const setMessageCollapsed = (uuid: string, isCollapsed: boolean) => {
+    updateChatHistory(
+      chatHistory.map((message) => {
+        if (message.uuid === uuid) {
+          return { ...message, isCollapsed };
+        }
+        return message;
+      })
+    );
+  };
+
+  return { chatHistory, sendMessage, isLoading, deleteMessage, setMessageCollapsed };
 };
 
 export default useChat;

@@ -1,6 +1,7 @@
 import { NodeId } from 'react-accessible-treeview';
 import { Store } from './store';
 import { Agent } from '../types/agent.type';
+import { ChatMessageType } from '../components/chat/useChat';
 
 export enum AppActions {
   RESET_APP_STORE = 'RESET_APP_STORE',
@@ -9,6 +10,7 @@ export enum AppActions {
   UPDATE_SELECTED_AGENT = 'UPDATE_SELECTED_AGENT',
   UPDATE_CHAT_HISTORY = 'UPDATE_CHAT_HISTORY',
   UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
+  UPDATE_COLLAPSED_STATE = 'UPDATE_COLLAPSED_STATE',
 }
 
 interface AppState {
@@ -17,13 +19,7 @@ interface AppState {
   agents: Agent[];
   selectedAgent: Agent | null;
   chat: {
-    chatHistory: {
-      user: 'user' | 'bot' | 'instructor';
-      message: string;
-      model?: string;
-      selectedFiles?: string[];
-      agentName?: string;
-    }[];
+    chatHistory: ChatMessageType[];
     isLoading: boolean;
   };
 }
@@ -264,7 +260,7 @@ export const updateChatHistory = (newChatHistory: AppState['chat']['chatHistory'
       ...appStateSubject.getValue().chat,
       chatHistory: newChatHistory,
     }
-  }, AppActions.UPDATE_CHAT_HISTORY, 'UPDATE_CHAT_HISTORY');
+  }, AppActions.UPDATE_CHAT_HISTORY);
 };
 
 export const updateChatIsLoading = (isLoading: boolean) => {
@@ -274,5 +270,5 @@ export const updateChatIsLoading = (isLoading: boolean) => {
       ...appStateSubject.getValue().chat,
       isLoading,
     }
-  }, AppActions.UPDATE_CHAT_IS_LOADING, 'UPDATE_CHAT_IS_LOADING');
+  }, AppActions.UPDATE_CHAT_IS_LOADING);
 };

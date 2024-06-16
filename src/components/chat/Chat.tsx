@@ -40,10 +40,7 @@ const Chat: React.FC<ChatProps> = () => {
 
     return <>
         <div className="chat" ref={ref}>
-            <ChatHistory
-                isLoading={isLoading}
-                chatHistory={chatHistory}
-                deleteMessage={deleteMessage} />
+            <ChatHistory />
             <ChatBox setPreviewImage={setPreviewImage}
             />
         </div>

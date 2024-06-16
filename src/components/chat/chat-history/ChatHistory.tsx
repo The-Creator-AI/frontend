@@ -1,29 +1,20 @@
 import React from "react";
-import { ChatMessageType } from "../useChat";
+import useChat from "../useChat";
 import "./ChatHistory.scss"; // Import your CSS file
 import ChatMessage from "./ChatMessage";
+import { v4 as uuidv4 } from 'uuid';
 
 interface ChatHistoryProps {
-    chatHistory: ChatMessageType[];
-    isLoading: boolean;
-    deleteMessage: (indexToDelete: number) => void;
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
-    isLoading,
-    chatHistory,
-    deleteMessage,
 }) => {
+    const { chatHistory, isLoading } = useChat();
     return (
         <div className="chat-history-popup">
             <div className="chat-history-container">
-                {[...chatHistory].concat(isLoading ? [{ user: "bot", message: "Typing..." }] : []).map((message, index) => (
-                    <ChatMessage
-                        key={index}
-                        message={message}
-                        index={index}
-                        deleteMessage={deleteMessage}
-                    />
+                {[...chatHistory].concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : []).map((message, index) => (
+                    <ChatMessage message={message}/>
                 ))}
             </div>
         </div>
