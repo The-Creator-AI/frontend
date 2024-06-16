@@ -46,6 +46,29 @@ describe('<CommandPalette />', () => {
         cy.get('.command-palette').should('have.css', 'bottom', '10px');
     });
     
+    it.only('should scroll and render long lists correctly when position is bottom', () => {
+        // Generate a long list of commands
+        const longCommands: any[] = Array.from({ length: 20 }).map((_, index) => ({
+            id: `command-${index}`,
+            title: `Command ${index}`,
+            description: `Description for command ${index}`,
+        }));
+
+        cy.mount(<CommandPalette commands={longCommands} onSelect={() => { }} position="bottom" />);
+        cy.get('body').type('{meta}p');
+
+        // Assert that the command palette is visible and at the bottom
+        cy.get('.command-palette').should('be.visible').and('have.css', 'bottom', '10px');
+
+        // Assert that the command list has a scrollbar due to the long list
+        cy.get('.command-list').should('have.css', 'overflow-y', 'auto');
+
+        // Scroll to the bottom of the command list
+        cy.get('.command-list').scrollTo('bottom');
+
+        // Assert that the last command is visible
+        cy.get('.command-item').last().should('be.visible');
+    });
 
     it('renders the correct number of commands', () => {
         cy.mount(<CommandPalette commands={commands} onSelect={() => { }} />);

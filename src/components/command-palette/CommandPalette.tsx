@@ -14,12 +14,22 @@ interface CommandPaletteProps {
     position?: 'top' | 'bottom' | 'center'; // Add position prop
 }
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, onSelect, position = 'center' }) => { // Set default position to 'center'
+const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, onSelect, position = 'center' }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [filteredCommands, setFilteredCommands] = useState(commands);
     const [searchTerm, setSearchTerm] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        const highlightedElement = document.querySelector('.command-item.highlighted');
+        if (highlightedElement) {
+            highlightedElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'nearest',
+            });
+        }
+    }, [highlightedIndex]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -121,7 +131,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
                     ref={inputRef}
                 />
             </div>
-            <ul className="command-list">
+            <ul className="command-list"> 
                 {filteredCommands.map((command, index) => (
                     <li
                         key={command.id}
@@ -144,3 +154,4 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
 };
 
 export default CommandPalette;
+
