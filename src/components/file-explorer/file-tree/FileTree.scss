@@ -19,15 +19,32 @@
   width: 100%;
 }
 
-.tree-node--selected,
+// .tree-node--selected,
+// .tree-node--half-selected
 .tree-node:hover {
   background: rgba(131, 131, 131, 0.3);
+}
+
+.tree-node--file {
+  // background-color: rgb(108, 108, 108);
+}
+
+.tree-node--directory {
+  background-color: rgb(108, 108, 108);
 }
 
 .tree-node--active {
   background: rgba(180, 180, 255, 0.5); /* Light blue background */
   font-weight: 600;                   /* Slightly bolder text */
   // Add any other styles you like, e.g., border, box-shadow, etc. 
+}
+
+.tree-node--expanded {
+
+}
+
+.tree-node--collapsed {
+
 }
 
 .checkbox-icon {

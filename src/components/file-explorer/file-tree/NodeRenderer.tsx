@@ -39,10 +39,19 @@ const NodeRenderer: React.FC<NodeRendererProps> = ({
     return (
         <div
             {...getNodeProps({
-                onClick: (evt) => {
-                    handleExpand(evt);
+                onClick: (evt) => {  
                 },
             })}
+            onClick={(evt) => {
+                if (isBranch) {
+                    handleExpand(evt);
+                    evt.stopPropagation();
+                    evt.preventDefault();
+                } else {
+                    handleFileClick(element.id as number, buildPath(treeData, element, element.name));
+                }
+                
+            }}
             className={cx("tree-node", { "tree-node--active": isActive })} 
             style={{ marginLeft: 10 * (level - 1) }}
         >
@@ -52,14 +61,22 @@ const NodeRenderer: React.FC<NodeRendererProps> = ({
                 onClick={(e) => {
                     handleFileSelect(element.id as number, buildPath(treeData, element, element.name));
                     e.stopPropagation();
+                    e.preventDefault();
                 }}
                 variant={
                     isHalfSelected ? "some" : isSelected ? "all" : "none"
                 }
             />
             <span
-                className={cx("name", { "name--selected": selectedFiles.find(f => f.nodeId === element.id) })}
-                onClick={() => !isBranch && handleFileClick(element.id as number, buildPath(treeData, element, element.name))}
+                className={cx("name", {
+                    "tree-node--selected": selectedFiles.find(f => f.nodeId === element.id),
+                    "tree-node--file": !isBranch,
+                    "tree-node--active": isActive,
+                    "tree-node--directory": isBranch,
+                    "tree-node--expanded": isExpanded,
+                    "tree-node--collapsed": !isExpanded,
+                    "tree-node--half-selected": isHalfSelected
+                })}
                 onContextMenu={(event) => {
                     onRightClick(event, element.id as number, buildPath(treeData, element, element.name));
                     event.preventDefault();

@@ -25,8 +25,6 @@ const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
         enabled: isOpen && !!filePath, // Only fetch when the popup is open and filePath exists
     });
 
-    console.log({ error });
-
     if (!isOpen) {
         return null;
     }
