@@ -18,7 +18,7 @@ interface CommandPaletteProps<T> {
 
 const MAX_COMMANDS = 20;
 
-const CommandPalette = <T, >({ placeholder, commands, onSelect, isOpen, position = 'center' }: CommandPaletteProps<T>) => {
+const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position = 'center' }: CommandPaletteProps<T>) => {
     const [filteredCommands, setFilteredCommands] = useState(commands);
     const [searchTerm, setSearchTerm] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -118,7 +118,7 @@ const CommandPalette = <T, >({ placeholder, commands, onSelect, isOpen, position
                     ref={inputRef}
                 />
             </div>
-            <ul className="command-list"> 
+            <ul className="command-list">
                 {filteredCommands.map((command, index) => (
                     <li
                         key={command.title + command.description}
@@ -126,10 +126,21 @@ const CommandPalette = <T, >({ placeholder, commands, onSelect, isOpen, position
                             }`}
                         onClick={() => handleCommandSelect(command)}
                     >
-                        <div className="command-title">{command.title}</div>
-                        <div className="command-description">
-                            {command.description}
+                        <div className="command-title">
+                            {command.title.split(new RegExp(`(${searchTerm})`, 'gi')).map((part, i) => (
+                                <span key={i} className={part.toLowerCase() === searchTerm.toLowerCase() ? 'match' : ''}>
+                                    {part}
+                                </span>
+                            ))}
                         </div>
+                        <div className="command-description">
+                            {command.description.split(new RegExp(`(${searchTerm})`, 'gi')).map((part, i) => (
+                                <span key={i} className={part.toLowerCase() === searchTerm.toLowerCase() ? 'match' : ''}>
+                                    {part}
+                                </span>
+                            ))}
+                        </div>
+
                     </li>
                 )).slice(0, MAX_COMMANDS)}
                 {filteredCommands.length === 0 && (
