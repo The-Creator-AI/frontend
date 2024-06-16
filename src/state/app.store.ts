@@ -7,6 +7,7 @@ export enum AppActions {
   RESET_APP_STORE = 'RESET_APP_STORE',
   UPDATE_CURRENT_PATH = 'UPDATE_CURRENT_PATH',
   UPDATE_SELECTED_FILES = 'UPDATE_SELECTED_FILES',
+  UPDATE_RECENT_FILES = 'UPDATE_RECENT_FILES',
   UPDATE_SELECTED_AGENT = 'UPDATE_SELECTED_AGENT',
   UPDATE_CHAT_HISTORY = 'UPDATE_CHAT_HISTORY',
   UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
@@ -17,6 +18,7 @@ export enum AppActions {
 interface AppState {
   currentPath: string;
   selectedFiles: { nodeId: NodeId; filePath: string }[];
+  recentFiles: { nodeId: NodeId; filePath: string }[];
   agents: Agent[];
   selectedAgent: Agent | null;
   chat: {
@@ -33,6 +35,7 @@ interface AppState {
 export const initialState: AppState = {
   currentPath: new URL(window.location.href).searchParams.get('path') || '',
   selectedFiles: [],
+  recentFiles: [],
   agents: [{
     id: 'functional-spec',
     name: 'Functional Spec',
@@ -253,6 +256,13 @@ export const updateSelectedFiles = (newFiles: { nodeId: NodeId; filePath: string
     ...appStateSubject.getValue(),
     selectedFiles: newFiles,
   }, AppActions.UPDATE_SELECTED_FILES);
+};
+
+export const updateRecentFiles = (newFiles: { nodeId: NodeId; filePath: string }[]) => {
+    appStateSubject._next({
+      ...appStateSubject.getValue(),
+      recentFiles: newFiles,
+    }, AppActions.UPDATE_RECENT_FILES);
 };
 
 export const updateSelectedAgent = (agent: Agent | null) => {

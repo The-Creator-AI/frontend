@@ -1,21 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './CommandPalette.scss';
 
-interface Command {
+export interface Command<T> {
     id: string;
     title: string;
     description: string;
+    data?: T
 }
 
-interface CommandPaletteProps {
+interface CommandPaletteProps<T> {
     placeholder?: string;
-    commands: Command[];
-    onSelect: (command: Command) => void;
+    commands: Command<T>[];
+    onSelect: (command: Command<T>) => void;
     position?: 'top' | 'bottom' | 'center'; // Add position prop
+    isOpen: boolean;
 }
 
-const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, onSelect, position = 'center' }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const MAX_COMMANDS = 20;
+
+const CommandPalette = <T, >({ placeholder, commands, onSelect, isOpen, position = 'center' }: CommandPaletteProps<T>) => {
     const [filteredCommands, setFilteredCommands] = useState(commands);
     const [searchTerm, setSearchTerm] = useState('');
     const [highlightedIndex, setHighlightedIndex] = useState(0);
@@ -33,14 +36,6 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (
-                event.metaKey &&
-                event.key === 'p'
-            ) {
-                event.preventDefault();
-                setIsOpen(!isOpen);
-            }
-
             if (isOpen) {
                 switch (event.key) {
                     case 'ArrowUp':
@@ -59,16 +54,9 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
                         event.preventDefault();
                         if (filteredCommands[highlightedIndex]) {
                             onSelect(filteredCommands[highlightedIndex]);
-                            setIsOpen(false);
                             setSearchTerm('');
                             setHighlightedIndex(0);
                         }
-                        break;
-                    case 'Escape':
-                        event.preventDefault();
-                        setIsOpen(false);
-                        setSearchTerm('');
-                        setHighlightedIndex(0);
                         break;
                     default:
                         break;
@@ -106,9 +94,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
         setSearchTerm(event.target.value);
     };
 
-    const handleCommandSelect = (command: Command) => {
+    const handleCommandSelect = (command: Command<T>) => {
         onSelect(command);
-        setIsOpen(false);
         setSearchTerm('');
     };
 
@@ -134,7 +121,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
             <ul className="command-list"> 
                 {filteredCommands.map((command, index) => (
                     <li
-                        key={command.id}
+                        key={command.title + command.description}
                         className={`command-item ${index === highlightedIndex ? 'highlighted' : ''
                             }`}
                         onClick={() => handleCommandSelect(command)}
@@ -144,7 +131,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ placeholder, commands, 
                             {command.description}
                         </div>
                     </li>
-                ))}
+                )).slice(0, MAX_COMMANDS)}
                 {filteredCommands.length === 0 && (
                     <li className="command-item no-results">No matching commands</li>
                 )}

@@ -10,7 +10,6 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = () => {
     const ref = useRef<HTMLDivElement>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const { chatHistory, deleteMessage, isLoading } = useChat();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
