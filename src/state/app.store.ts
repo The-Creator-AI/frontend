@@ -13,6 +13,7 @@ export enum AppActions {
   UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
   UPDATE_COLLAPSED_STATE = 'UPDATE_COLLAPSED_STATE',
   UPDATE_FILE_CONTENT_POPUP = 'UPDATE_FILE_CONTENT_POPUP',
+  UPDATE_TOKEN_COUNT = 'UPDATE_TOKEN_COUNT',
 }
 
 interface AppState {
@@ -25,6 +26,7 @@ interface AppState {
     chatHistory: ChatMessageType[];
     isLoading: boolean;
   };
+  tokenCount: number;
   fileContentPopup: {
     isOpen: boolean;
     filePath?: string;
@@ -232,6 +234,7 @@ Now I call upon you handle what I have to say below (take into consideration the
     chatHistory: [],
     isLoading: false
   },
+  tokenCount: 0,
   fileContentPopup: {
     isOpen: false,
   }
@@ -280,6 +283,13 @@ export const updateChatHistory = (newChatHistory: AppState['chat']['chatHistory'
       chatHistory: newChatHistory,
     }
   }, AppActions.UPDATE_CHAT_HISTORY);
+};
+
+export const updateTokenCount = (newTokenCount: number) => {
+  appStateSubject._next({
+    ...appStateSubject.getValue(),
+    tokenCount: newTokenCount,
+  }, AppActions.UPDATE_TOKEN_COUNT);
 };
 
 export const updateChatIsLoading = (isLoading: boolean) => {

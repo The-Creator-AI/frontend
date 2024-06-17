@@ -1,8 +1,9 @@
 import axios from 'axios';
 import config from '../../config';
-import { appStore$, updateChatHistory, updateChatIsLoading } from '../../state/app.store';
+import { appStore$, updateChatHistory, updateChatIsLoading, updateTokenCount } from '../../state/app.store';
 import useStore from '../../state/useStore';
 import { v4 as uuidv4 } from 'uuid';
+import useDebounce from '../../hooks/useDebounce';
 
 export interface ChatMessageType {
   uuid: string;
@@ -17,8 +18,51 @@ export interface ChatMessageType {
 const useChat = () => {
   const { chat: { chatHistory, isLoading } = {
     chatHistory: [],
-    isLoading: false
-  }} = useStore(appStore$);
+    isLoading: false,
+  }, tokenCount } = useStore(appStore$);
+
+  const handleTokenCount = useDebounce
+    (async (args: {
+      agentName?: string;
+      agentInstruction?: string;
+      message: string;
+      selectedFiles: string[];
+      imageFiles?: File[];
+    }) => {
+      const { agentName, agentInstruction, message, selectedFiles, imageFiles } = args;
+
+      if (!message && imageFiles?.length !> 0) {
+        updateTokenCount(0);
+      }
+
+      try {
+        const messages: ChatMessageType[] = [];
+        if (agentInstruction) {
+          messages.push({
+            user: 'instructor',
+            message: agentInstruction,
+            agentName,
+            uuid: uuidv4(),
+          });
+        }
+        messages.push({
+          user: 'user',
+          message,
+          selectedFiles,
+          uuid: uuidv4()
+        });
+        const response = await axios.post(`${config.BASE_URL}/creator/token-count`, {
+          chatHistory: [
+            ...chatHistory.filter((message) => message.user !== 'instructor'),
+            ...messages
+          ],
+          selectedFiles
+        });
+        updateTokenCount(response.data);
+      } catch (error) {
+        console.error('Error fetching token count:', error);
+      }
+    }, 500); // Debounce time: 500 milliseconds
 
   // TODO: imageFiles still need to be handled once backend is ready for it
   const sendMessage = async (args: {
@@ -91,7 +135,7 @@ const useChat = () => {
     );
   };
 
-  return { chatHistory, sendMessage, isLoading, deleteMessage, setMessageCollapsed };
+  return { chatHistory, tokenCount, sendMessage, isLoading, deleteMessage, setMessageCollapsed, handleTokenCount };
 };
 
 export default useChat;

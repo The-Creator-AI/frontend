@@ -15,7 +15,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
   const { selectedAgent, currentPath, selectedFiles } = useStore(appStore$);
-  const { sendMessage } = useChat();
+  const { sendMessage, handleTokenCount, tokenCount } = useChat();
+
+  useEffect(() => {
+    handleTokenCount({
+      agentInstruction: selectedAgent?.systemInstructions,
+      agentName: selectedAgent?.name,
+      message,
+      imageFiles: pastedImages,
+      selectedFiles: selectedFiles.map(f => `${currentPath}/${f.filePath}`),
+    });
+  }, [message, selectedFiles]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -77,7 +87,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
 
   return (
     <div className={`chat-box`}>
-      <AgentSelector /> 
+      <div className="chat-box-header">
+        <AgentSelector />
+        <div className="token-count">
+        {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
+      </div>
+      </div>
       <div className="chat-input">
         <label htmlFor="chat-textarea" className="visually-hidden">
           Type your message

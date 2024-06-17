@@ -1,6 +1,4 @@
 .agent-selector-container {
-    /* Add any container-level styles here */
-    margin-bottom: 10px;
     /* For example, add some spacing below the selector */
     display: flex;
     align-items: center;
@@ -10,8 +8,6 @@
 .agent-selector-container label {
     /* Style the label */
     display: block;
-    /* Make the label appear on its own line */
-    margin-bottom: 5px;
     /* Add spacing between the label and the select box */
     font-weight: bold;
     /* Make the label text bold */

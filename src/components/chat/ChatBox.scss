@@ -10,9 +10,20 @@
     box-sizing: border-box;
     transition: transform 0.3s ease-in-out;
     // z-index: 2;
+    margin-bottom: 10px; // Add some spacing
 
-    .agent-selector {
-        margin-bottom: 10px; // Add some spacing
+    .chat-box-header {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .agent-selector {
+        }
+
+        .token-count {
+            margin-left: 1rem;
+        }
     }
 
     .chat-input {
