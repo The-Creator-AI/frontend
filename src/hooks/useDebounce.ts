@@ -1,16 +1,18 @@
 import { useRef } from "react";
 
-const useDebounce = <T>(cb: (...args: T[]) => void, delay: number) => {
+const useDebounce = <T, K>(cb: (...args: T[]) => Promise<K>, delay: number) => {
     const timer = useRef<NodeJS.Timeout>();
 
-    return (...args: T[]) => {
-        if (timer.current) {
-            clearTimeout(timer.current);
-        }
-
-        timer.current = setTimeout(() => {
-            cb(...args);
-        }, delay);
+    return (...args: T[]): Promise<K> => {
+        return new Promise((resolve) => {
+            if (timer.current) {
+                clearTimeout(timer.current);
+            }
+    
+            timer.current = setTimeout(() => {
+                cb(...args).then(resolve);
+            }, delay); 
+        });
     };
 };
 

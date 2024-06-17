@@ -22,6 +22,10 @@
 
         .token-count {
             margin-left: 1rem;
+
+            &.loading {
+                color: gray;
+            }
         }
     }
 

@@ -16,15 +16,21 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const [pastedImages, setPastedImages] = useState<File[]>([]);
   const { selectedAgent, currentPath, selectedFiles } = useStore(appStore$);
   const { sendMessage, handleTokenCount, tokenCount, chatHistory } = useChat();
+  const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
+  console.log({ isLoadingTokenCount });
 
   useEffect(() => {
-    handleTokenCount({
-      agentInstruction: selectedAgent?.systemInstructions,
-      agentName: selectedAgent?.name,
-      message,
-      imageFiles: pastedImages,
-      selectedFiles: selectedFiles?.map(f => `${currentPath}/${f.filePath}`),
-    });
+    (async () => {
+      setIsLoadingTokenCount(true);
+      await handleTokenCount({
+        agentInstruction: selectedAgent?.systemInstructions,
+        agentName: selectedAgent?.name,
+        message,
+        imageFiles: pastedImages,
+        selectedFiles: selectedFiles?.map(f => `${currentPath}/${f.filePath}`),
+      });
+      setIsLoadingTokenCount(false);
+    })();
   }, [message, selectedFiles, chatHistory]);
 
   // Auto-resize textarea
@@ -89,7 +95,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
     <div className={`chat-box`}>
       <div className="chat-box-header">
         <AgentSelector />
-        <div className="token-count">
+        {/* <div className="token-count"> */}
+        <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}>
         {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
       </div>
       </div>
