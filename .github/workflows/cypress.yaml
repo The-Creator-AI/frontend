@@ -1,37 +1,67 @@
-name: Cypress Tests
+name: Cypress Report Generation
 
 on:
   push:
     branches:
-      - '*' # Run on all branches
+      - '*'
   pull_request:
     branches:
-      - '*' # Run on all branches
+      - '*'
 
 jobs:
-  run-cypress-e2e:
-    runs-on: ubuntu-latest
+  cypress-e2e-chrome: # Job name
+    name: Run Cypress E2E Tests on Chrome
+    runs-on: ubuntu-latest # Use the latest Ubuntu runner
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20' # Replace with the Node.js version used in your project
+      - name: Checkout code
+        uses: actions/checkout@v2 # Check out the repository
+
       - name: Install dependencies
-        run: npm install
+        run: npm ci # Install dependencies using npm ci
 
-      - name: Run Cypress e2e tests
-        run: npm run cy:e2e
+      - name: Run Cypress tests
+        run: npm run cypress:e2e:run # Run Cypress E2E tests using the defined script in package.json
+        continue-on-error: true # Continue to the next step even if tests fail
 
-  run-cypress-component:
-    runs-on: ubuntu-latest
+      - name: Merge test results
+        run: npm run cypress:e2e:merge # Merge test results using mochawesome-merge
+
+      - name: Generate HTML report
+        run: npm run cypress:e2e:generate # Generate the HTML report using mochawesome-report-generator
+
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3 # Deploy the report to GitHub Pages
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public # The directory where your report is generated
+          user_name: 'github-actions[bot]' # Set the username forthe commit
+          user_email: 'github-actions[bot]@users.noreply.github.com' # Set the email for the commit
+
+  cypress-component-chrome: # Job name
+    name: Run Cypress Component Tests on Chrome
+    runs-on: ubuntu-latest #Use the latest Ubuntu runner
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20' # Replace with the Node.js version used in your project
+      - name: Checkout code
+        uses: actions/checkout@v2 # Check out the repository
+
       - name: Install dependencies
-        run: npm install
-      - name: Run Cypress component tests
-        run: npm run cy:component
+        run: npm ci # Install dependencies using npm ci
+
+      - name: Run Cypress tests
+        run: npm run cypress:component:run # Run Cypress component tests using the defined script in package.json
+        continue-on-error: true # Continue to the next step even if tests fail
+
+      - name: Merge test results
+        run: npm run cypress:component:merge # Merge test results using mochawesome-merge
+
+      - name: Generate HTML report
+        run: npm run cypress:component:generate # Generate the HTML report using mochawesome-report-generator
+
+      - name: Deploy report page
+        uses: peaceiris/actions-gh-pages@v3 # Deploy the report to GitHub Pages
+
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public # The directory where your report is generated
+          user_name: 'github-actions[bot]' # Set the username for the commit
+          user_email: 'github-actions[bot]@users.noreply.github.com' # Set the email for the commit

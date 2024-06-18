@@ -37,3 +37,12 @@ Cypress.Commands.add('mount', mount)
 
 // Example use:
 // cy.mount(<MyComponent />)
+
+Cypress.on('test:after:run', (test, results: any) => {
+  const
+ videoPath = results.video;
+  if (videoPath) {
+    const report = results.runs[0].tests[0].report; // Get the report object
+    report.video = videoPath; // Add the video path to the report object
+  }
+});
