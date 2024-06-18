@@ -21,18 +21,16 @@ const MAX_COMMANDS = 50;
 const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position = 'center' }: CommandPaletteProps<T>) => {
     const [filteredCommands, setFilteredCommands] = useState(commands);
     const [searchTerm, setSearchTerm] = useState('');
-    const [highlightedIndex, setHighlightedIndex] = useState(0);
+    const commandListRef = useRef<HTMLUListElement | null>(null); 
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        const highlightedElement = document.querySelector('.command-item.highlighted');
-        if (highlightedElement) {
-            highlightedElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-            });
+        // let's use ref to add highlighted class to the first item
+        if (isOpen && commandListRef.current && inputRef.current) {
+            commandListRef.current.scrollTop = 0;
+            commandListRef.current.querySelector('#command-0')?.classList.add('highlighted');
         }
-    }, [highlightedIndex]);
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -40,26 +38,36 @@ const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position 
                 switch (event.key) {
                     case 'ArrowUp':
                         event.preventDefault();
-                        setHighlightedIndex((prevIndex) =>
-                            Math.max(0, prevIndex - 1)
-                        );
+                        const prevIndex = commandListRef.current?.querySelector('.highlighted')?.id.split('-')[1];
+                        if (prevIndex) {
+                            const newIndex = Math.max(0, parseInt(prevIndex) - 1);
+                            if (newIndex === parseInt(prevIndex)) break;
+                            commandListRef.current?.querySelector(`#command-${prevIndex}`)?.classList.remove('highlighted');
+                            const newElement = commandListRef.current?.querySelector(`#command-${newIndex}`);
+                            newElement?.classList.add('highlighted');
+                            newElement?.scrollIntoView({ block: 'nearest' });
+                        }
                         break;
                     case 'ArrowDown':
                         event.preventDefault();
-                        setHighlightedIndex((prevIndex) => {
-                            if (prevIndex === MAX_COMMANDS - 1) {
-                                return prevIndex;
-                            } else {
-                                return Math.min(filteredCommands.length - 1, prevIndex + 1);                                
-                            }
-                        });
+                        const prevIdx = commandListRef.current?.querySelector('.highlighted')?.id.split('-')[1];
+                        if (prevIdx) {
+                            const newIndex = Math.min(filteredCommands.length - 1, MAX_COMMANDS - 1, parseInt(prevIdx) + 1);
+                            if (newIndex === parseInt(prevIdx)) break;
+                            commandListRef.current?.querySelector(`#command-${prevIdx}`)?.classList.remove('highlighted');
+                            const newElement = commandListRef.current?.querySelector(`#command-${newIndex}`);
+                            newElement?.classList.add('highlighted');
+                            newElement?.scrollIntoView({ block: 'nearest' });
+                        }
                         break;
                     case 'Enter':
                         event.preventDefault();
-                        if (filteredCommands[highlightedIndex]) {
-                            onSelect(filteredCommands[highlightedIndex]);
+                        const highlightedElement = commandListRef.current?.querySelector('.highlighted');
+                        if (highlightedElement) {
+                            const commandId = highlightedElement.id;
+                            const commandIndex = parseInt(commandId.split('-')[1]);
+                            onSelect(filteredCommands[commandIndex]);
                             setSearchTerm('');
-                            setHighlightedIndex(0);
                         }
                         break;
                     default:
@@ -73,7 +81,7 @@ const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
         };
-    }, [filteredCommands, highlightedIndex, isOpen, onSelect]);
+    }, [filteredCommands, isOpen, onSelect]);
 
 
     useEffect(() => {
@@ -91,7 +99,8 @@ const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position 
                     command.description.toLowerCase().includes(searchTerm.toLowerCase())
             )
         );
-        setHighlightedIndex(0); // Reset highlighted index when search term changes
+        commandListRef.current?.querySelector('.highlighted')?.classList.remove('highlighted');
+        commandListRef.current?.querySelector('#command-0')?.classList.add('highlighted');
     }, [searchTerm, commands]);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,12 +131,12 @@ const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position 
                     ref={inputRef}
                 />
             </div>
-            <ul className="command-list">
+            <ul className="command-list" ref={commandListRef}>
                 {filteredCommands.map((command, index) => (
                     <li
+                        id={`command-${index}`}
                         key={command.title + command.description}
-                        className={`command-item ${index === highlightedIndex ? 'highlighted' : ''
-                            }`}
+                        className='command-item'
                         onClick={() => handleCommandSelect(command)}
                     >
                         <div className="command-title">
