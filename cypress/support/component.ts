@@ -41,7 +41,7 @@ Cypress.Commands.add('mount', mount)
 
 Cypress.on("test:after:run", (test, runnable) => {
     
-    let videoName = Cypress.spec.name
+    let videoName = Cypress.spec.relative
     videoName = videoName.replace('/.js.*', '.js')
     const videoUrl = 'videos/' + videoName + '.mp4'
 
