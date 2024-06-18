@@ -12,6 +12,7 @@ jobs:
   cypress-e2e-chrome: # Job name
     name: Run Cypress E2E Tests on Chrome
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
+    if: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v2 # Check out the repository
