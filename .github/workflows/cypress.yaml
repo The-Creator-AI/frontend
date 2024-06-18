@@ -58,9 +58,6 @@ jobs:
       - name: Run Cypress tests
         run: npm run cypress:component:run # Run Cypress component tests using the defined script in package.json
         continue-on-error: true # Continue to the next step even if tests fail
-      
-      - name: Create directory
-        run: mkdir -p cypress/results/json/
 
       - name: Merge test results
         run: npm run cypress:component:merge # Merge test results using mochawesome-merge
