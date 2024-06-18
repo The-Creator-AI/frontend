@@ -46,9 +46,13 @@ const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position 
                         break;
                     case 'ArrowDown':
                         event.preventDefault();
-                        setHighlightedIndex((prevIndex) =>
-                            Math.min(filteredCommands.length - 1, prevIndex + 1)
-                        );
+                        setHighlightedIndex((prevIndex) => {
+                            if (prevIndex === MAX_COMMANDS - 1) {
+                                return prevIndex;
+                            } else {
+                                return Math.min(filteredCommands.length - 1, prevIndex + 1);                                
+                            }
+                        });
                         break;
                     case 'Enter':
                         event.preventDefault();
