@@ -13,6 +13,8 @@ jobs:
     name: Run Cypress E2E Tests on Chrome
     runs-on: ubuntu-latest # Use the latest Ubuntu runner
     if: false
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2 # Check out the repository
@@ -44,6 +46,8 @@ jobs:
   cypress-component-chrome: # Job name
     name: Run Cypress Component Tests on Chrome
     runs-on: ubuntu-latest #Use the latest Ubuntu runner
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2 # Check out the repository
