@@ -41,9 +41,9 @@ Cypress.Commands.add('mount', mount)
 
 Cypress.on("test:after:run", (test, runnable) => {
     
-    let videoName = Cypress.spec.relative
-    videoName = videoName.replace('/.js.*', '.js')
-    const videoUrl = 'videos/' + videoName + '.mp4'
+    // Assuming your video files are under the `public/videos` directory
+    const relativePath =  Cypress.spec.relative.replace(/^\.\//, '') // Remove leading "./"
+    const videoUrl = `videos/${relativePath}.mp4`;
 
     addContext({ test }, videoUrl)
 });
