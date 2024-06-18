@@ -28,7 +28,7 @@
             border-radius: 4px; /* Round the corners */
 
             &.loading {
-                color: gray;
+                color: gray !important;
             }
         }
     }
