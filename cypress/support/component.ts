@@ -20,6 +20,7 @@ import './commands'
 // require('./commands')
 
 import { mount } from 'cypress/react18'
+import addContext from 'mochawesome/addContext';
 
 // Augment the Cypress namespace to include type definitions for
 // your custom command.
@@ -35,14 +36,14 @@ declare global {
 
 Cypress.Commands.add('mount', mount)
 
-// Example use:
-// cy.mount(<MyComponent />)
+// Alternatively you can use CommonJS syntax:
+// require('./commands')
 
-Cypress.on('test:after:run', (test, results: any) => {
-  const
- videoPath = results.video;
-  if (videoPath) {
-    const report = results.runs[0].tests[0].report; // Get the report object
-    report.video = videoPath; // Add the video path to the report object
-  }
+Cypress.on("test:after:run", (test, runnable) => {
+    
+    let videoName = Cypress.spec.name
+    videoName = videoName.replace('/.js.*', '.js')
+    const videoUrl = 'videos/' + videoName + '.mp4'
+
+    addContext({ test }, videoUrl)
 });

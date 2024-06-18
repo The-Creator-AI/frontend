@@ -11,6 +11,7 @@ export default defineConfig({
     video: true,
     videoCompression: 15,
     reporter: "cypress-multi-reporters",
+    screenshotsFolder: "images",
     reporterOptions: {
       reporterEnabled: "mochawesome",
       mochawesomeReporterOptions: {
@@ -18,6 +19,7 @@ export default defineConfig({
         "overwrite": false,
         html: false,
         json: true,
+        embeddedScreenshots: true
       },
     },
   },
