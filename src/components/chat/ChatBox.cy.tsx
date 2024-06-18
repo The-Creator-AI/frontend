@@ -99,4 +99,61 @@ describe('<ChatBox />', () => {
     cy.get('#chat-textarea').clear(); // Clear the textarea
     cy.get('button').contains('Send').should('be.disabled'); // Check that the button is disabled again
   });
+
+  it.only('should change the token count color based on token count', () => {
+    // Spy on the network request using cy.spy
+    const expectedUrl = '/creator/token-count'; // Replace with your actual API endpoint URL
+    cy.intercept('POST', expectedUrl, (req) => {
+      // This will control the token counts returned
+      if (req.body.chatHistory[0].message === 'Short message') {
+        req.reply({
+          statusCode: 200,
+          body: 5000
+        });
+      } else if (req.body.chatHistory[0].message === 'Medium message') {
+        req.reply({
+          statusCode: 200,
+          body: 20000
+        });
+      } else if (req.body.chatHistory[0].message === 'Long message') {
+        req.reply({
+          statusCode: 200,
+          body: 50000
+        });
+      } else if (req.body.chatHistory[0].message === 'Very long message') {
+        req.reply({
+          statusCode: 200,
+          body: 100000
+        });
+      }
+      else {
+        req.reply({
+          statusCode: 400,
+          body: {
+            message: 'Unexpected request'
+          }
+        });
+      }
+    }).as('getTokenCount'); 
+
+    // Type a short message
+    cy.get('#chat-textarea').type('Short message');
+    cy.wait('@getTokenCount'); 
+    cy.get('.token-count').should('have.css', 'color', 'rgb(13, 242, 0)');
+
+    // Type a medium message
+    cy.get('#chat-textarea').clear().type('Medium message');
+    cy.wait('@getTokenCount');
+    cy.get('.token-count').should('have.css', 'color', 'rgb(51, 204, 0)'); 
+
+    // Type a long message
+    cy.get('#chat-textarea').clear().type('Long message');
+    cy.wait('@getTokenCount');
+    cy.get('.token-count').should('have.css', 'color', 'rgb(127, 127, 0)'); 
+
+    // Type a very long message
+    cy.get('#chat-textarea').clear().type('Very long message');
+    cy.wait('@getTokenCount');
+    cy.get('.token-count').should('have.css', 'color', 'rgb(255, 0, 0)');
+  });
 });

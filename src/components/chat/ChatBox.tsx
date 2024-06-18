@@ -96,7 +96,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
       <div className="chat-box-header">
         <AgentSelector />
         {/* <div className="token-count"> */}
-        <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}>
+        <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}
+        style={{
+          color: `rgb(${(tokenCount / 1000) * 2.55}, ${(100 - (tokenCount / 1000)) * 2.55}, 0)`,
+        }}
+        >
         {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
       </div>
       </div>
