@@ -1,0 +1,106 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2024-06-18T16:28:26.309Z",
+    "end": "2024-06-18T16:28:26.366Z",
+    "duration": 57,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "0ae3c2e0-e65f-4e66-ac0f-d1c6f33f9304",
+      "title": "",
+      "fullFile": "src/components/chat/chat-history/plan/PlanDisplay.cy.tsx",
+      "file": "src/components/chat/chat-history/plan/PlanDisplay.cy.tsx",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "a28f5205-de16-4533-b54c-e14b12711ba5",
+          "title": "<PlanDisplay />",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "renders",
+              "fullTitle": "<PlanDisplay /> renders",
+              "timedOut": null,
+              "duration": 37,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "// see: https://on.cypress.io/mounting-react\ncy.mount( /*#__PURE__*/(0,react_jsx_dev_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxDEV)(_PlanDisplay__WEBPACK_IMPORTED_MODULE_1__[\"default\"], {\n  plan: {\n    plan_title: 'Test Plan',\n    plan_summary: 'Test Summary',\n    steps: [{\n      type: 'command',\n      command: 'npm install',\n      working_directory: '.'\n    }]\n  }\n}, void 0, false, {\n  fileName: _jsxFileName,\n  lineNumber: 7,\n  columnNumber: 14\n}, undefined));",
+              "err": {},
+              "uuid": "bc91af28-dc64-4b1d-a0e7-98482ecb2ec6",
+              "parentUUID": "a28f5205-de16-4533-b54c-e14b12711ba5",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "bc91af28-dc64-4b1d-a0e7-98482ecb2ec6"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 37,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "report.json",
+        "saveHtml": false,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.1.3"
+    },
+    "marge": {
+      "options": {
+        "id": "default",
+        "reportDir": "cypress/results/json",
+        "reportFilename": "report.json",
+        "html": false,
+        "json": true
+      },
+      "version": "6.2.0"
+    }
+  }
+}

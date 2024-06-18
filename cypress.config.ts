@@ -8,5 +8,17 @@ export default defineConfig({
     },
     viewportWidth: 1200,
     viewportHeight: 800,
+    video: true,
+    videoCompression: 15,
+    reporter: "cypress-multi-reporters",
+    reporterOptions: {
+      reporterEnabled: "mochawesome",
+      mochawesomeReporterOptions: {
+        reportDir: "cypress/results/json",
+        reportFilename: "report.json",
+        html: false,
+        json: true,
+      },
+    },
   },
 });
