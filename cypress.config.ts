@@ -11,7 +11,8 @@ export default defineConfig({
     video: true,
     videoCompression: 15,
     reporter: "cypress-multi-reporters",
-    screenshotsFolder: "images",
+    screenshotsFolder: "public/images",
+    videosFolder: "public/videos",
     reporterOptions: {
       reporterEnabled: "mochawesome",
       mochawesomeReporterOptions: {
