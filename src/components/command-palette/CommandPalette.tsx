@@ -16,7 +16,7 @@ interface CommandPaletteProps<T> {
     isOpen: boolean;
 }
 
-const MAX_COMMANDS = 20;
+const MAX_COMMANDS = 50;
 
 const CommandPalette = <T,>({ placeholder, commands, onSelect, isOpen, position = 'center' }: CommandPaletteProps<T>) => {
     const [filteredCommands, setFilteredCommands] = useState(commands);
