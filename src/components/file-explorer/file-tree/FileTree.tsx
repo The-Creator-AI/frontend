@@ -160,7 +160,7 @@ const FileTree: React.FC<FileTreeProps> = ({
   return (
     <div>
       <div className="search-container">
-        <Input.Search
+        {/* <Input.Search
           placeholder="Search files..."
           onSearch={handleSearch}
           style={{ width: 300 }}
@@ -175,7 +175,7 @@ const FileTree: React.FC<FileTreeProps> = ({
               {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
             </span>
           ))}
-        </div>
+        </div> */}
       </div>
       {!isPending && filteredTreeData.length ? (
         <TreeView

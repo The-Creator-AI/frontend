@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './App.scss';
 import FileExplorer from './components/file-explorer/FileExplorer';
 import { appStore$ } from './state/app.store';
 import useStore from './state/useStore';
+import Tips from './components/tips/Tips';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
 
   return (
     <div className="App">
+      <Tips />
       <FileExplorer />
     </div>
   );
