@@ -1,4 +1,6 @@
-import React from 'react';
+/// <reference types="cypress" />
+/// <reference types="chai" />
+
 import CommandPalette, { Command } from './CommandPalette';
 
 describe('<CommandPalette />', () => {
