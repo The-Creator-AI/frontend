@@ -1,7 +1,7 @@
 import { Store } from '../../../state/store';
 import axios from 'axios';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ResearchResult, ResearchState } from '../research.types';
+import { ResearchResultClient, ResearchState } from '../research.types';
 import { ResearchActions } from './research-store.actions';
 import config from '../../../config';
 
@@ -10,7 +10,7 @@ export const initialState: ResearchState = {
     query: '',
     isLoading: false,
     error: null,
-    results: null,
+    researchResponse: null,
     searchHistory: [],
 };
 

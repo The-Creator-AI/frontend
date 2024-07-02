@@ -11,19 +11,15 @@ import {
 import './Research.scss';
 import useStore from '../../state/useStore';
 import { researchStore$ } from './store/research-store';
+import ReactMarkdown from 'react-markdown';
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
     const inputRef = useRef<HTMLInputElement>(null);
-    const [showSourceCount, setShowSourceCount] = useState(10); // State to control source display limit
-
-    const handleShowMoreSources = () => {
-        setShowSourceCount(state.results?.sources?.length || 10); // Show all sources
-    };
 
     if (!state) return null;
 
-    const { query = '', isLoading, error, results, searchHistory = [] } = state;
+    const { query = '', isLoading, error, researchResponse, searchHistory = [] } = state;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +51,7 @@ const Research: React.FC = () => {
             <button
                 data-testid="clear-results"
                 onClick={clearResults}
-                disabled={isLoading || (!results && !error)}
+                disabled={isLoading || (!researchResponse && !error)}
             >
                 Clear
             </button>
@@ -64,23 +60,23 @@ const Research: React.FC = () => {
 
             {error && <div data-testid="error-message" className="error">{error}</div>}
 
-            {results && (
+            {researchResponse && (
                 <div className="results">
-                    <h2>Research Summary</h2>
-                    <p data-testid="research-summary">{results.summary}</p>
-                    <h3>Sources</h3>
+                    <h2>Meta Summary</h2>
+                    <ReactMarkdown>
+                        {researchResponse.metaSummary}
+                    </ReactMarkdown>
+                    <h3>Summaries</h3>
                     <ul data-testid="research-sources">
-                        {results?.sources?.slice(0, showSourceCount).map((source, index) => (
-                            <li key={index}>
-                                <a href={source.url} target="_blank" rel="noopener noreferrer">{source.title}</a>
+                        {researchResponse?.summarizedResults.map((result, index) => (
+                            <li key={index} className="result">
+                                <a href={result.link} target="_blank" rel="noreferrer">{result.title}</a>
+                                <ReactMarkdown>
+                                    {result.llmSummary}
+                                </ReactMarkdown>
                             </li>
                         ))}
                     </ul>
-                    {results?.sources?.length > showSourceCount && (
-                        <button className='show-more-sources' data-testid="show-more-sources" onClick={handleShowMoreSources}>
-                            Show More Sources
-                        </button>
-                    )}
                 </div>
             )}
 

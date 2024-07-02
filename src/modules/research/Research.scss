@@ -4,6 +4,34 @@
   padding: 20px;
   font-family: Arial, sans-serif;
 
+  .results {
+    .research-sources {
+      list-style-type: none;
+      padding: 0;
+  
+      li {
+        margin-bottom: 5px;
+      }
+  
+      a {
+        color: #0066cc;
+        text-decoration: none;
+  
+        &:hover {
+          text-decoration: none;
+          border-bottom: 1px solid #0066cc;
+        }
+      }
+  
+      .result {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+    }
+  }
+
   form {
     display: flex;
     gap: 10px;

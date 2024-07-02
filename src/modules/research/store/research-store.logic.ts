@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ResearchResult } from "../research.types";
+import { ResearchResultClient } from "../research.types";
 import { initialState, researchStateSubject } from "./research-store";
 import { ResearchActions } from "./research-store.actions";
 import config from "../../../config";
@@ -25,10 +25,10 @@ export const setError = (error: string | null) => {
     }, ResearchActions.SET_ERROR);
 };
 
-export const setResults = (results: ResearchResult | null) => {
+export const setResults = (results: ResearchResultClient | null) => {
     researchStateSubject._next({
         ...researchStateSubject.getValue(),
-        results,
+        researchResponse: results,
     }, ResearchActions.SET_RESULTS);
 };
 
@@ -44,7 +44,7 @@ export const addToHistory = (query: string) => {
 export const clearResults = () => {
     researchStateSubject._next({
         ...researchStateSubject.getValue(),
-        results: null,
+        researchResponse: null,
         error: null,
         query: '',
     }, ResearchActions.CLEAR_RESULTS);
