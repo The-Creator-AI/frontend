@@ -1,6 +1,6 @@
 import React from 'react';
-import useStore from '../../state/useStore';
-import { appStore$, updateSelectedAgent } from '../../state/app.store';
+import useStore from '../../../../state/useStore';
+import { appStore$, updateSelectedAgent } from '../../store/app.store';
 import './AgentSelector.scss';
 
 const AgentSelector: React.FC = () => {

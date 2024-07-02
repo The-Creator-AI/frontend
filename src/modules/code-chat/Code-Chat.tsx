@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import './App.scss';
+import './Code-Chat.scss';
 import FileExplorer from './components/file-explorer/FileExplorer';
-import { appStore$ } from './state/app.store';
-import useStore from './state/useStore';
 import Tips from './components/tips/Tips';
+import useStore from '../../state/useStore';
+import { appStore$ } from './store/app.store';
 
 
-function App() {
+function CodeChat() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentPath } = useStore(appStore$);
 
@@ -17,11 +17,11 @@ function App() {
   }, [currentPath, searchParams, setSearchParams]);
 
   return (
-    <div className="App">
+    <div className="CodeChat">
       <Tips />
       <FileExplorer />
     </div>
   );
 }
 
-export default App;
+export default CodeChat;

@@ -1,6 +1,6 @@
 import { NodeId } from 'react-accessible-treeview';
-import { Store } from './store';
-import { Agent } from '../types/agent.type';
+import { Store } from '../../../state/store';
+import { Agent } from '../../../types/agent.type';
 import { ChatMessageType } from '../components/chat/useChat';
 
 export enum AppActions {

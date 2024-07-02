@@ -1,5 +1,5 @@
-import AppProviders from '../../../AppProviders';
-import { updateCurrentPath } from '../../../state/app.store';
+import Providers from '../../../../../Providers';
+import { updateCurrentPath } from '../../../store/app.store';
 import FileTree from './FileTree';
 
 // Mock data for the file tree
@@ -23,7 +23,7 @@ const mockTreeData = {
 
 describe.skip('<FileTree />', () => {
   beforeEach(() => {
-    cy.mount(<AppProviders>
+    cy.mount(<Providers>
       <FileTree
         activeFile={null}
         setActiveFile={() => { }}
@@ -31,7 +31,7 @@ describe.skip('<FileTree />', () => {
         selectedFiles={[]}
         currentPath={'src'}
       />
-    </AppProviders>);
+    </Providers>);
 
   cy.intercept('GET', '/creator/directory-structure?dir=*', {
     statusCode: 200,

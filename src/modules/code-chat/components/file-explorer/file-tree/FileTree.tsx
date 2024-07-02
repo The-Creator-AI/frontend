@@ -3,12 +3,12 @@ import axios from "axios";
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
-import config from "../../../config";
+import config from "../../../../../config";
 import "./FileTree.scss";
 import { buildPath, filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
-import { appStore$, updateCurrentPath, updateFileContentPopup, updateRecentFiles, updateSelectedFiles } from "../../../state/app.store";
-import useStore from "../../../state/useStore";
+import { appStore$, updateCurrentPath, updateFileContentPopup, updateRecentFiles, updateSelectedFiles } from "../../../store/app.store";
+import useStore from "../../../../../state/useStore";
 import { Input } from 'antd';
 import CommandPalette, { Command } from "../../command-palette/CommandPalette";
 

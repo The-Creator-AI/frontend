@@ -1,9 +1,9 @@
 import axios from 'axios';
-import config from '../../config';
-import { appStore$, updateChatHistory, updateChatIsLoading, updateTokenCount } from '../../state/app.store';
-import useStore from '../../state/useStore';
+import config from '../../../../config';
+import { appStore$, updateChatHistory, updateChatIsLoading, updateTokenCount } from '../../store/app.store';
+import useStore from '../../../../state/useStore';
 import { v4 as uuidv4 } from 'uuid';
-import useDebounce from '../../hooks/useDebounce';
+import useDebounce from '../../../../hooks/useDebounce';
 
 export interface ChatMessageType {
   uuid: string;

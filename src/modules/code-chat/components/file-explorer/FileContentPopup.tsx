@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import config from '../../config';
+import config from '../../../../config';
 import MonacoEditor from '@monaco-editor/react';
-import { appStore$, initialState, updateFileContentPopup } from '../../state/app.store';
-import useStore from '../../state/useStore';
+import { appStore$, initialState, updateFileContentPopup } from '../../store/app.store';
+import useStore from '../../../../state/useStore';
 import './FileContentPopup.scss';
 
 interface FileContentPopupProps {

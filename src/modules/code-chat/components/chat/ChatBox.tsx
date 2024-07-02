@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss'; // Import your updated CSS
 import { CloseOutlined } from '@ant-design/icons';
 import AgentSelector from './AgentSelector';
-import useStore from '../../state/useStore';
-import { appStore$ } from '../../state/app.store';
+import useStore from '../../../../state/useStore';
+import { appStore$ } from '../../store/app.store';
 import useChat from './useChat';
 
 interface ChatBoxProps {

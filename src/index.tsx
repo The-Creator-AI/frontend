@@ -1,16 +1,16 @@
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import AppProviders from './AppProviders';
+import Providers from './Providers';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
+import RoutesRenderer from './RoutesRenderer';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <AppProviders>
-    <App />
-  </AppProviders>
+  <Providers>
+      <RoutesRenderer />
+  </Providers>
 );
 
 // If you want to start measuring performance in your app, pass a function
