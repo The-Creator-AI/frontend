@@ -58,7 +58,7 @@ export const fetchResearch = async (query: string) => {
     setIsLoading(true);
     setError(null);
     try {
-        const { data } = await axios.post(`${config.BASE_URL}/api/research`, { query });
+        const { data } = await axios.post(`${config.BASE_URL}/research`, { query });
         setResults(data);
         addToHistory(query);
     } catch (err) {

@@ -10,7 +10,7 @@ import {
 } from './store/research-store.logic';
 import './Research.scss';
 import useStore from '../../state/useStore';
-import { debouncedQuery$, researchStore$ } from './store/research-store';
+import { researchStore$ } from './store/research-store';
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
@@ -20,14 +20,6 @@ const Research: React.FC = () => {
     const handleShowMoreSources = () => {
         setShowSourceCount(state.results?.sources?.length || 10); // Show all sources
     };
-
-    useEffect(() => {
-        const subscription = debouncedQuery$.subscribe(query => {
-            if (query) fetchResearch(query);
-        });
-
-        return () => subscription.unsubscribe();
-    }, []);
 
     if (!state) return null;
 

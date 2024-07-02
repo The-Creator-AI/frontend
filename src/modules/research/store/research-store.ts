@@ -17,11 +17,3 @@ export const initialState: ResearchState = {
 // Create the store
 export const researchStateSubject = new Store<ResearchState, ResearchActions>(initialState);
 export const researchStore$ = researchStateSubject.asObservable();
-
-export const debouncedQuery$ = researchStore$.pipe(
-    map(state => state.query),
-    debounceTime(300),
-    distinctUntilChanged(),
-    map(query => query.trim())
-);
-
