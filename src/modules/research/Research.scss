@@ -4,34 +4,6 @@
   padding: 20px;
   font-family: Arial, sans-serif;
 
-  .results {
-    .research-sources {
-      list-style-type: none;
-      padding: 0;
-  
-      li {
-        margin-bottom: 5px;
-      }
-  
-      a {
-        color: #0066cc;
-        text-decoration: none;
-  
-        &:hover {
-          text-decoration: none;
-          border-bottom: 1px solid #0066cc;
-        }
-      }
-  
-      .result {
-        margin-bottom: 10px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-    }
-  }
-
   form {
     display: flex;
     gap: 10px;
@@ -67,23 +39,63 @@
       color: #333;
     }
 
+    pre {
+      background-color: #adaeaf;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      /* Since CSS 2.1 */
+      white-space: -moz-pre-wrap;
+      /* Mozilla, since 1999 */
+      white-space: -pre-wrap;
+      /* Opera 4-6 */
+      white-space: -o-pre-wrap;
+      /* Opera 7 */
+      word-wrap: break-word;
+      /* Internet Explorer 5.5+ */
+
+    }
+
+    .meta-summary {
+      box-shadow: 0 2px 4px rgba(9, 199, 25);
+      margin-bottom: 50px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
     ul {
       list-style-type: none;
       padding: 0;
-      padding-left: 20px;
 
-      li {
-        margin-bottom: 5px;
+      a {
+        color: #0066cc;
+        text-decoration: none;
 
-        a {
-          color: #0066cc;
+        &:hover {
           text-decoration: none;
-
-          &:hover {
-            text-decoration: none;
-            border-bottom: 1px solid #0066cc;
-          }
+          border-bottom: 1px solid #0066cc;
         }
+      }
+
+      // box shadow color should be alternate, depending on whether it's even or odd
+      .result:nth-child(even) {
+        background-color: #f2f2f2;
+        border-color: #e98b8b;
+        box-shadow: 0 2px 4px #e98b8b, inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+
+      .result:nth-child(odd) {
+        background-color: #fff;
+        border-color: #6060db;
+        box-shadow: 0 2px 4px #6060db, inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+      }
+
+      .result {
+        margin-bottom: 50px;
+        padding: 10px;
+        border-radius: 5px;
       }
     }
   }

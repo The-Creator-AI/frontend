@@ -62,11 +62,11 @@ const Research: React.FC = () => {
 
             {researchResponse && (
                 <div className="results">
-                    <h2>Meta Summary</h2>
-                    <ReactMarkdown>
-                        {researchResponse.metaSummary}
-                    </ReactMarkdown>
-                    <h3>Summaries</h3>
+                    <div data-testid="meta-summary" className="meta-summary">
+                        <ReactMarkdown>
+                            {researchResponse.metaSummary}
+                        </ReactMarkdown>
+                    </div>
                     <ul data-testid="research-sources">
                         {researchResponse?.summarizedResults.map((result, index) => (
                             <li key={index} className="result">
