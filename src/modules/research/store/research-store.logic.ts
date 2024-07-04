@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ResearchResultClient } from "../research.types";
+import { ResearchResultClient, SummarizedResult } from "../research.types";
 import { initialState, researchStateSubject } from "./research-store";
 import { ResearchActions } from "./research-store.actions";
 import config from "../../../config";
@@ -31,6 +31,22 @@ export const setResults = (results: ResearchResultClient | null) => {
         researchResponse: results,
     }, ResearchActions.SET_RESULTS);
 };
+
+export const addUpdateResult = (result: SummarizedResult) => {
+    const currentState = researchStateSubject.getValue();
+    // delete the summarrizedResults item matching the current data from the store if it exists
+    const newSummarizedResults = currentState.researchResponse?.summarizedResults?.filter(
+        (summarizedResult) => summarizedResult.link !== result.link
+    ) || [];
+    researchStateSubject._next({
+        ...currentState,
+        researchResponse: {
+            ...currentState.researchResponse,
+            metaSummary: currentState.researchResponse?.metaSummary || 'Fetching meta summary...',
+            summarizedResults: [...newSummarizedResults, result],
+        },
+    }, ResearchActions.ADD_TO_HISTORY);
+}
 
 export const addToHistory = (query: string) => {
     const currentState = researchStateSubject.getValue();

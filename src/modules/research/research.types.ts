@@ -41,12 +41,13 @@ export interface GoogleSearchResultClient {
   };
 }
 
+export interface SummarizedResult extends GoogleSearchResultClient {
+  llmSummary: string;
+}
+
 export interface ResearchResultClient {
   metaSummary: string;
-  summarizedResults: (GoogleSearchResultClient &
-    {
-      llmSummary: string;
-    })[];
+  summarizedResults: SummarizedResult[];
 }
 
 export interface ResearchState {
