@@ -166,8 +166,9 @@ export const sendChatMessage = async (args: {
 const addBotMessageChunk = (message: BotMessageChunk) => {
   console.log("addBotMessageChunk", message);
   const {chunk, ...messageWithoutChunk } = message;
-  const existingMessage = codeChatStoreStateSubject.getValue().chat.chatHistory.find((message) => message.uuid === messageWithoutChunk.uuid);
-  const newChatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory.filter((message) => message.uuid !== messageWithoutChunk.uuid);
+  const chatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory;
+  const existingMessage = chatHistory.find((message) => message.uuid === messageWithoutChunk.uuid);
+  const newChatHistory = chatHistory.filter((message) => message.uuid !== messageWithoutChunk.uuid);
   newChatHistory.push({
     ...messageWithoutChunk,
     message: (existingMessage?.message || '') + (chunk || '')
@@ -178,7 +179,9 @@ const addBotMessageChunk = (message: BotMessageChunk) => {
 };
 
 const addBotMessage = (message: ChatMessageType) => {
-  const newChatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory.filter((message) => message.uuid !== message.uuid);
+  const chatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory;
+  const newChatHistory = chatHistory.filter((msg) => msg.uuid !== message.uuid);
+  console.log({ chatHistory, message, newChatHistory });
   newChatHistory.push(message);
   updateChatHistory([...newChatHistory]);
 };
