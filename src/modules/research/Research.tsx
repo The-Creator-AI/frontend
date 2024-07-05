@@ -1,26 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-    updateQuery,
-    fetchResearch,
-    clearResults,
-    setIsLoading,
-    setError,
-    setResults,
-    addToHistory,
-    addUpdateResult,
-} from "./store/research-store.logic";
-import "./Research.scss"; // Import your CSS file
-import useStore from "../../state/useStore";
-import { researchStore$ } from "./store/research-store";
+import React, { useEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { io } from "socket.io-client"; // Import socket.io-client
-import { ResearchResultClient, SummarizedResult } from "./research.types";
 import config from "../../config";
+import useStore from "../../state/useStore";
+import "./Research.scss"; // Import your CSS file
+import { researchStore$ } from "./store/research-store";
+import {
+    addUpdateResult,
+    clearResults,
+    setError,
+    setIsLoading,
+    updateQuery
+} from "./store/research-store.logic";
+import { SummarizedResult } from "./research.types";
+import { ClientIPC, ServerToClientChannel } from "@The-Creator-AI/fe-be-common";
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
     const inputRef = useRef<HTMLInputElement>(null);
-    const [socket, setSocket] = useState<any>(null); // State for the WebSocket
+    const clientIPC = ClientIPC.getInstance(`${config.BASE_URL}/research`);
 
     const {
         query = "",
@@ -31,55 +29,42 @@ const Research: React.FC = () => {
     } = state;
 
     useEffect(() => {
-        const newSocket = io(`${config.BASE_URL}/research`); // Connect to your backend's WebSocket server with namespace 'research'
-        setSocket(newSocket);
+        clientIPC.onServerMessage(ServerToClientChannel.progress, (data: any) => {
+            setIsLoading(true); // Set loading state
+            setError(null); // Clear any previous error
+            console.log(data.message); // Update client UI with progress message
+        });
 
-        // Cleanup: Disconnect the socket when the component unmounts
+        clientIPC.onServerMessage(ServerToClientChannel.result, (data: SummarizedResult) => {
+            console.log({ data });
+            addUpdateResult(data);
+            setIsLoading(false); // Finish loading
+            setError(null); // Clear any previous error
+        });
+
+        clientIPC.onServerMessage(ServerToClientChannel.error, (data: any) => {
+            setError(data.message); // Set the error message
+            setIsLoading(false); // Finish loading
+        });
+
+        clientIPC.onServerMessage(ServerToClientChannel.complete, () => {
+            setIsLoading(false); // Finish loading
+        });
         return () => {
-            if (newSocket) {
-                newSocket.disconnect();
-            }
+            clientIPC.disconnect();
         };
-    }, []);
-
-    useEffect(() => {
-        if (socket) {
-            // Listen for 'progress', 'results', 'error', and 'complete' events
-            socket.on("progress", (data: any) => {
-                setIsLoading(true); // Set loading state
-                setError(null); // Clear any previous error
-                console.log(data.message); // Update client UI with progress message
-            });
-
-            socket.on("result", (data: SummarizedResult) => {
-                console.log({ data });
-                addUpdateResult(data);
-                setIsLoading(false); // Finish loading
-                setError(null); // Clear any previous error
-            });
-
-            socket.on("error", (data: any) => {
-                setError(data.message); // Set the error message
-                setIsLoading(false); // Finish loading
-            });
-
-            socket.on("complete", () => {
-                setIsLoading(false); // Finish loading
-            });
-        }
-    }, [socket]);
+    }, [clientIPC]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim()) {
             // Emit 'search' event to the WebSocket server
-            socket?.emit("search", query.trim());
+            // socket?.emit("search", query.trim());
+            clientIPC?.sendToServer('search' as any, query.trim() as any);
         }
     };
 
     if (!state) return null;
-
-    console.log({ researchResponse });
 
     return (
         <div className="research-component">
