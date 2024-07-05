@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { ModulConfig } from "../modules.types";
 import { routesPaths } from "../routes-paths";
-import { onComplete, onError, onProgress, onResult } from "./store/research-store.logic";
+import { onChunk, onComplete, onError, onProgress, onResult } from "./store/research-store.logic";
 
 const moduleConfigs: ModulConfig[] = [{
     route: {
@@ -15,6 +15,7 @@ const moduleConfigs: ModulConfig[] = [{
         onProgress,
         onError,
         onResult,
+        onChunk,
         onComplete
     ],
 }];

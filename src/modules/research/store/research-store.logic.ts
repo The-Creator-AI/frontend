@@ -1,18 +1,13 @@
+import {
+  ToClient
+} from "@The-Creator-AI/fe-be-common";
 import axios from "axios";
-import { io, Socket } from "socket.io-client";
+import config from "../../../config";
+import { getGatewayListener } from "../../gateway";
 import { ResearchResultClient, SummarizedResult } from "../research.types";
 import { initialState, researchStateSubject } from "./research-store";
 import { ResearchActions } from "./research-store.actions";
-import config from "../../../config";
-import {
-  ToServer,
-  ToClient,
-  onServerMessage,
-  sendToServer,
-  ChannelBody,
-} from "@The-Creator-AI/fe-be-common";
-import { getGatewayListener } from "../../gateway";
-import { getSocket } from "../../gateway/store/gateway.logic";
+import { SummarizedResultChunk } from "@The-Creator-AI/fe-be-common/dist/types";
 
 export const updateQuery = (query: string) => {
   researchStateSubject._next(
@@ -76,6 +71,37 @@ export const addUpdateResult = (result: SummarizedResult) => {
   );
 };
 
+export const addChunk = (result: SummarizedResultChunk) => {
+  console.log({result});
+  const currentState = researchStateSubject.getValue();
+  const {chunk, ...resultWithoutChunk } = result;
+
+  const existingResult = currentState.researchResponse?.summarizedResults?.find(
+    (summarizedResult) => summarizedResult.link === result.link
+  );
+  const newSummarizedResults = currentState.researchResponse?.summarizedResults?.filter(
+    (summarizedResult) => summarizedResult.link !== result.link
+  ) || [];
+  newSummarizedResults.push({
+    ...resultWithoutChunk,
+    llmSummary: existingResult?.llmSummary + result.chunk || "",
+  } as any);
+  
+  researchStateSubject._next(
+    {
+      ...currentState,
+      researchResponse: {
+        ...currentState.researchResponse,
+        metaSummary:
+          currentState.researchResponse?.metaSummary ||
+          "Fetching meta summary...",
+        summarizedResults: newSummarizedResults,
+      },
+    },
+    ResearchActions.ADD_TO_HISTORY
+  );
+};
+
 export const addToHistory = (query: string) => {
   const currentState = researchStateSubject.getValue();
   const newHistory = [
@@ -122,24 +148,26 @@ export const fetchResearch = async (query: string) => {
 };
 
 export const onProgress = getGatewayListener(ToClient.PROGRESS, (data) => {
-    setIsLoading(true); // Set loading state
-    setError(null); // Clear any previous error
-    console.log(data.message); // Update client UI with progress message
+  setIsLoading(true); // Set loading state
+  setError(null); // Clear any previous error
 });
 
 export const onError = getGatewayListener(ToClient.ERROR, (data) => {
-    setError(data.message); // Set the error message
-    setIsLoading(false); // Finish loading
+  setError(data.message); // Set the error message
+  setIsLoading(false); // Finish loading
 });
 
 export const onResult = getGatewayListener(ToClient.RESULT, (data) => {
-    addUpdateResult(data);
-    setIsLoading(false); // Finish loading
-    setError(null); // Clear any previous error
+  addUpdateResult(data);
+  setIsLoading(false); // Finish loading
+  setError(null); // Clear any previous error
+});
+
+export const onChunk = getGatewayListener(ToClient.CHUNK, (data) => {
+  addChunk(data);
 });
 
 export const onComplete = getGatewayListener(ToClient.COMPLETE, (data) => {
-    setIsLoading(false); // Finish loading
-    setError(null); // Clear any previous error
-    console.log(data.message); // Update client UI with progress message
+  setIsLoading(false); // Finish loading
+  setError(null); // Clear any previous error
 });
