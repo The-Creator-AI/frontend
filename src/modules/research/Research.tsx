@@ -1,7 +1,5 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { Socket, io } from "socket.io-client"; // Import socket.io-client
-import config from "../../config";
 import useStore from "../../state/useStore";
 import "./Research.scss"; // Import your CSS file
 import { researchStore$ } from "./store/research-store";
@@ -10,77 +8,25 @@ import {
     clearResults,
     setError,
     setIsLoading,
-    updateQuery
+    updateQuery,
 } from "./store/research-store.logic";
-import { SummarizedResult } from "./research.types";
-import { ToServer, ToClient, onServerMessage, sendToServer } from "@The-Creator-AI/fe-be-common";
+import { sendMessage } from "../gateway/store/gateway.logic";
+import { ToServer } from "@The-Creator-AI/fe-be-common";
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
     const inputRef = useRef<HTMLInputElement>(null);
-    // const socket = useMemo(() => {
-    //     console.log("connecting");
-    //     return io(`${config.BASE_URL}/research`);
-    // }, []);
-
-    const [socket, setSocket] = React.useState<Socket | null>(null);
-
-    const {
-        query = "",
+    const { query = "",
         isLoading,
         error,
         researchResponse,
         searchHistory = [],
     } = state;
 
-    useEffect(() => {
-        if (!socket) {
-            const newSocket = io(`${config.BASE_URL}/research`); // Connect to your backend's WebSocket server with namespace 'research'
-            setSocket(newSocket);
-        }
-
-        // Cleanup: Disconnect the socket when the component unmounts
-        return () => {
-            if (socket) {
-                socket.disconnect();
-            }
-        };
-    }, []);
-
-    useEffect(() => {
-        if (!socket) return;
-
-        onServerMessage(socket, ToClient.PROGRESS, (data) => {
-            setIsLoading(true); // Set loading state
-            setError(null); // Clear any previous error
-            console.log(data.message); // Update client UI with progress message
-        });
-
-        onServerMessage(socket, ToClient.RESULT, (data) => {
-            console.log({ data });
-            addUpdateResult(data);
-            setIsLoading(false); // Finish loading
-            setError(null); // Clear any previous error
-        });
-
-        onServerMessage(socket, ToClient.ERROR, (data) => {
-            setError(data.message); // Set the error message
-            setIsLoading(false); // Finish loading
-        });
-
-        onServerMessage(socket, ToClient.COMPLETE, (data) => {
-            setIsLoading(false); // Finish loading
-        });
-    }, [socket]);
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (socket && query.trim()) {
-            sendToServer(
-                socket,
-                ToServer.SEARCH,
-                { topic: query.trim() }
-            );
+        if (query.trim()) {
+            sendMessage(ToServer.SEARCH, { topic: query.trim() });
         }
     };
 

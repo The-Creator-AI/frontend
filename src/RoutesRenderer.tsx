@@ -1,13 +1,20 @@
-import { Suspense } from "react";
-import { modules } from "./modules/modules.index";
+import { Suspense, useEffect } from "react";
 import {
-    BrowserRouter as Router,
     Route,
-    Routes,
-    Navigate,
+    BrowserRouter as Router,
+    Routes
 } from "react-router-dom";
+import { modules } from "./modules/modules.index";
+import { connectSocket, disconnectSocket } from "./modules/gateway/store/gateway.logic";
 
 function RoutesRenderer() {
+    useEffect(() => {
+        connectSocket();
+
+        return () => {
+            disconnectSocket();
+        };
+    }, []);
     return (
         <Router>
             <Routes>
