@@ -1,55 +1,17 @@
-import { NodeId } from 'react-accessible-treeview';
-import { Store } from '../../../state/store';
-import { Agent } from '../../../types/agent.type';
-import { ChatMessageType } from '../components/chat/useChat';
-
-export enum AppActions {
-  RESET_APP_STORE = 'RESET_APP_STORE',
-  UPDATE_CURRENT_PATH = 'UPDATE_CURRENT_PATH',
-  UPDATE_SELECTED_FILES = 'UPDATE_SELECTED_FILES',
-  UPDATE_RECENT_FILES = 'UPDATE_RECENT_FILES',
-  UPDATE_SELECTED_AGENT = 'UPDATE_SELECTED_AGENT',
-  UPDATE_CHAT_HISTORY = 'UPDATE_CHAT_HISTORY',
-  UPDATE_CHAT_IS_LOADING = 'UPDATE_CHAT_IS_LOADING',
-  UPDATE_COLLAPSED_STATE = 'UPDATE_COLLAPSED_STATE',
-  UPDATE_FILE_CONTENT_POPUP = 'UPDATE_FILE_CONTENT_POPUP',
-  UPDATE_TOKEN_COUNT = 'UPDATE_TOKEN_COUNT',
-}
-
-interface AppState {
-  currentPath: string;
-  selectedFiles: { nodeId: NodeId; filePath: string }[];
-  recentFiles: { nodeId: NodeId; filePath: string }[];
-  agents: Agent[];
-  selectedAgent: Agent | null;
-  chat: {
-    chatHistory: ChatMessageType[];
-    isLoading: boolean;
-  };
-  tokenCount: number;
-  fileContentPopup: {
-    isOpen: boolean;
-    filePath?: string;
-    content?: string;
-  };
-}
-
-export const initialState: AppState = {
-  currentPath: new URL(window.location.href).searchParams.get('path') || '',
-  selectedFiles: [],
-  recentFiles: [],
-  agents: [{
-    id: 'functional-spec',
-    name: 'Functional Spec',
+export const AGENTS = [
+  {
+    id: "functional-spec",
+    name: "Functional Spec",
     systemInstructions: `Now I want you assist me in translating project requirements into test cases. 
 You write detailed test cases, for the user scenarios provided in the messages, including edge cases.
 Make sure to handle different edge cases and scenarios comprehensively.
 \n\n\n\n\n\n
 Now I call upon you handle what I have to say below -
-\n\n\n` 
-  }, {
-    id: '1',
-    name: 'Code Spec',
+\n\n\n`,
+  },
+  {
+    id: "1",
+    name: "Code Spec",
     systemInstructions: `Now I want you to to assist me in translating project requirements into actionable implementation plans. You will analyze what I say next and existing codebase context to generate these plans.
 
 **Output:** Your response must be in JSON format and contain the following elements:
@@ -145,9 +107,10 @@ Feature: Guess the word
 Now I call upon you handle what I have to say below -
 \n\n\n
     `,
-  }, {
-    id: '2',
-    name: 'Code Spec Review',
+  },
+  {
+    id: "2",
+    name: "Code Spec Review",
     systemInstructions: `Now I want you to assist me by reviewing the code specification provided.
 You should not provide any additional context or instructions.:
 Make sure the plan is practical and doesn't have holes or inconsistencies.
@@ -160,10 +123,11 @@ Please revise the plan and take following suggestions into consideration -
 * Missed edge case: Handle the scenario where chat messages are not received properly
 * Type safety: Add types for Chat component's props
 \n\n\n\n\n\n
-`
-  }, {
-    id: '3',
-    name: 'Stubbed code',
+`,
+  },
+  {
+    id: "3",
+    name: "Stubbed code",
     systemInstructions: `Now I want you to assist me by providing targeted code snippets from requested files, replacing irrelevant or lengthy sections of **existing code** with stubs for brevity and clarity. You should **not** generate stubs for new code that is intended to be written.
 
 **Output:** You will provide a code snippet in the same programming language as the requested file. The snippet should adhere to the following guidelines:
@@ -228,86 +192,5 @@ In this example, the code related to form validation has been omitted, and a com
 Now I call upon you handle what I have to say below (take into consideration the plan as well if we have some active plan) -
 \n\n\n
     `,
-  }],
-  selectedAgent: null,
-  chat: {
-    chatHistory: [],
-    isLoading: false
   },
-  tokenCount: 0,
-  fileContentPopup: {
-    isOpen: false,
-  }
-};
-
-const appStateSubject = new Store<AppState, AppActions>(initialState);
-export const appStore$ = appStateSubject.asObservable();
-
-export const resetAppStore = () => {
-  appStateSubject._next(initialState, AppActions.RESET_APP_STORE)
-}
-
-export const updateCurrentPath = (newPath: string) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    currentPath: newPath,
-  }, AppActions.UPDATE_CURRENT_PATH);
-};
-
-export const updateSelectedFiles = (newFiles: { nodeId: NodeId; filePath: string }[]) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    selectedFiles: newFiles,
-  }, AppActions.UPDATE_SELECTED_FILES);
-};
-
-export const updateRecentFiles = (newFiles: { nodeId: NodeId; filePath: string }[]) => {
-    appStateSubject._next({
-      ...appStateSubject.getValue(),
-      recentFiles: newFiles,
-    }, AppActions.UPDATE_RECENT_FILES);
-};
-
-export const updateSelectedAgent = (agent: Agent | null) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    selectedAgent: agent,
-  }, AppActions.UPDATE_SELECTED_AGENT);
-};
-
-export const updateChatHistory = (newChatHistory: AppState['chat']['chatHistory']) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    chat: {
-      ...appStateSubject.getValue().chat,
-      chatHistory: newChatHistory,
-    }
-  }, AppActions.UPDATE_CHAT_HISTORY);
-};
-
-export const updateTokenCount = (newTokenCount: number) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    tokenCount: newTokenCount,
-  }, AppActions.UPDATE_TOKEN_COUNT);
-};
-
-export const updateChatIsLoading = (isLoading: boolean) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    chat: {
-      ...appStateSubject.getValue().chat,
-      isLoading,
-    }
-  }, AppActions.UPDATE_CHAT_IS_LOADING);
-};
-
-export const updateFileContentPopup = (newState: Partial<AppState['fileContentPopup']>) => {
-  appStateSubject._next({
-    ...appStateSubject.getValue(),
-    fileContentPopup: { 
-      ...appStateSubject.getValue().fileContentPopup, 
-      ...newState 
-    },
-  }, AppActions.UPDATE_FILE_CONTENT_POPUP);
-};
+];

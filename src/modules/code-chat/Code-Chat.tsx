@@ -4,12 +4,12 @@ import './Code-Chat.scss';
 import FileExplorer from './components/file-explorer/FileExplorer';
 import Tips from './components/tips/Tips';
 import useStore from '../../state/useStore';
-import { appStore$ } from './store/app.store';
+import { codeChatStore$ } from './store/code-chat.store';
 
 
 function CodeChat() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { currentPath } = useStore(appStore$);
+  const { currentPath } = useStore(codeChatStore$);
 
   useEffect(() => {
     const paramsObject = Object.fromEntries(searchParams.entries());

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
-import { resetAppStore } from "../../store/app.store";
+import { resetAppStore } from "../../store/code-chat-store.logic";
 import Chat from "./Chat";
 
 const expect = chai.expect

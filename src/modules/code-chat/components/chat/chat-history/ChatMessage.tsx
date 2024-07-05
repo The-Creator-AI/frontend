@@ -1,7 +1,8 @@
 import { CloseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import useChat, { ChatMessageType } from "../useChat";
+import useChat from "../useChat";
+import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 import "./ChatHistory.scss"; // Import your CSS file
 import CodeBlock from "./CodeBlock";
 

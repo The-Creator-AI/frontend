@@ -1,5 +1,5 @@
 import ChatHistory from './ChatHistory';
-import { ChatMessageType } from '../useChat';
+import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 
 // Mock data for chat history
 const mockChatHistory: ChatMessageType[] = [

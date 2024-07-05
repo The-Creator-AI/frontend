@@ -1,5 +1,5 @@
 import Providers from '../../../../../Providers';
-import { updateCurrentPath } from '../../../store/app.store';
+import { updateCurrentPath } from '../../../store/code-chat-store.logic';
 import FileTree from './FileTree';
 
 // Mock data for the file tree

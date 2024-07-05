@@ -3,15 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import config from '../../../../config';
 import MonacoEditor from '@monaco-editor/react';
-import { appStore$, initialState, updateFileContentPopup } from '../../store/app.store';
+import { codeChatStore$, initialState } from '../../store/code-chat.store';
 import useStore from '../../../../state/useStore';
 import './FileContentPopup.scss';
+import { updateFileContentPopup } from '../../store/code-chat-store.logic';
 
 interface FileContentPopupProps {
 }
 
 const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
-    const { currentPath, fileContentPopup: { isOpen, filePath, content }} = useStore(appStore$, initialState);
+    const { currentPath, fileContentPopup: { isOpen, filePath, content }} = useStore(codeChatStore$, initialState);
     const ref = useRef<HTMLDivElement>(null);
 
     const { isLoading, error } = useQuery({

@@ -1,9 +1,6 @@
 import { Store } from '../../../state/store';
-import axios from 'axios';
-import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ResearchResultClient, ResearchState } from '../research.types';
+import { ResearchState } from '../research.types';
 import { ResearchActions } from './research-store.actions';
-import config from '../../../config';
 
 // Initial state
 export const initialState: ResearchState = {

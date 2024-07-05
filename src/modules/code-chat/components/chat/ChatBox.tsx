@@ -3,7 +3,7 @@ import './ChatBox.scss'; // Import your updated CSS
 import { CloseOutlined } from '@ant-design/icons';
 import AgentSelector from './AgentSelector';
 import useStore from '../../../../state/useStore';
-import { appStore$ } from '../../store/app.store';
+import { codeChatStore$ } from '../../store/code-chat.store';
 import useChat from './useChat';
 
 interface ChatBoxProps {
@@ -14,7 +14,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
-  const { selectedAgent, currentPath, selectedFiles } = useStore(appStore$);
+  const { selectedAgent, currentPath, selectedFiles } = useStore(codeChatStore$);
   const { sendMessage, handleTokenCount, tokenCount, chatHistory } = useChat();
   const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
   console.log({ isLoadingTokenCount });

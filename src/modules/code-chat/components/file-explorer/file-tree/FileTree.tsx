@@ -1,16 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 import config from "../../../../../config";
+import useStore from "../../../../../state/useStore";
+import { updateCurrentPath, updateFileContentPopup, updateRecentFiles, updateSelectedFiles } from "../../../store/code-chat-store.logic";
+import { codeChatStore$, } from "../../../store/code-chat.store";
+import CommandPalette, { Command } from "../../command-palette/CommandPalette";
 import "./FileTree.scss";
 import { buildPath, filterTreeData } from "./FileTree.utils";
 import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
-import { appStore$, updateCurrentPath, updateFileContentPopup, updateRecentFiles, updateSelectedFiles } from "../../../store/app.store";
-import useStore from "../../../../../state/useStore";
-import { Input } from 'antd';
-import CommandPalette, { Command } from "../../command-palette/CommandPalette";
 
 interface FileTreeProps {
   selectedFiles: {
@@ -29,7 +29,7 @@ const FileTree: React.FC<FileTreeProps> = ({
   onRightClick,
 }) => {
   const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
-  const { currentPath, selectedFiles, recentFiles } = useStore(appStore$);
+  const { currentPath, selectedFiles, recentFiles } = useStore(codeChatStore$);
   const [searchTerm, setSearchTerm] = useState('');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 

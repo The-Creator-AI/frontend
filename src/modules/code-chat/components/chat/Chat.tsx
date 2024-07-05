@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ChatHistory from './chat-history/ChatHistory';
 import ChatBox from './ChatBox';
-import useChat from './useChat';
 import './Chat.scss';
 
 interface ChatProps {

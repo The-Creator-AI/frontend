@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
-import { appStore$, updateCurrentPath, updateSelectedFiles } from '../../store/app.store';
+import { codeChatStore$ } from '../../store/code-chat.store';
+import { updateCurrentPath, updateSelectedFiles } from '../../store/code-chat-store.logic';
 import useStore from '../../../../state/useStore';
 import Chat from '../chat/Chat';
 import FileContentPopup from './FileContentPopup';
@@ -19,7 +20,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const fileTreeRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
   const [activeFile, setActiveFile] = useState<string | null>(null);
-  const { currentPath, selectedFiles } = useStore(appStore$);
+  const { currentPath, selectedFiles } = useStore(codeChatStore$);
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;

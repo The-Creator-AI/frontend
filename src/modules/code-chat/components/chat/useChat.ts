@@ -1,25 +1,17 @@
 import axios from 'axios';
 import config from '../../../../config';
-import { appStore$, updateChatHistory, updateChatIsLoading, updateTokenCount } from '../../store/app.store';
+import { codeChatStore$ } from '../../store/code-chat.store';
 import useStore from '../../../../state/useStore';
 import { v4 as uuidv4 } from 'uuid';
 import useDebounce from '../../../../hooks/useDebounce';
-
-export interface ChatMessageType {
-  uuid: string;
-  user: 'user' | 'bot' | 'instructor';
-  message: string;
-  model?: string;
-  selectedFiles?: string[];
-  agentName?: string;
-  isCollapsed?: boolean;
-}
+import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../store/code-chat-store.logic';
+import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 
 const useChat = () => {
   const { chat: { chatHistory, isLoading } = {
     chatHistory: [],
     isLoading: false,
-  }, tokenCount } = useStore(appStore$);
+  }, tokenCount } = useStore(codeChatStore$);
 
   const handleTokenCount = useDebounce
     (async (args: {
@@ -64,60 +56,6 @@ const useChat = () => {
       }
     }, 500); // Debounce time: 500 milliseconds
 
-  // TODO: imageFiles still need to be handled once backend is ready for it
-  const sendMessage = async (args: {
-    agentName?: string;
-    agentInstruction?: string;
-    message: string;
-    selectedFiles: string[];
-    imageFiles?: File[];
-  }) => {
-    const { agentName, agentInstruction, message, selectedFiles } = args;
-    const messages: ChatMessageType[] = [];
-    if (agentInstruction) {
-      messages.push({
-        user: 'instructor',
-        message: agentInstruction,
-        agentName,
-        uuid: uuidv4(),
-      });
-    }
-    messages.push({
-      user: 'user',
-      message,
-      selectedFiles,
-      uuid: uuidv4()
-    });
-    updateChatHistory([...chatHistory, ...messages]);
-
-    updateChatIsLoading(true);
-
-    try {
-      const response = await axios.post(`${config.BASE_URL}/creator/chat`, {
-        chatHistory: [
-          ...chatHistory.filter((message) => message.user !== 'instructor'),
-          ...messages],
-        selectedFiles
-      });
-      const botResponse: ChatMessageType = {
-        user: 'bot',
-        message: response.data.message,
-        model: response.data.model,
-        uuid: uuidv4(),
-      };
-      updateChatHistory([...chatHistory, {
-        user: 'user',
-        message,
-        selectedFiles,
-        uuid: uuidv4(),
-      }, botResponse]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
-      updateChatIsLoading(false);
-    }
-  };
-
   const deleteMessage = (uuid: string) => {
     updateChatHistory(
       chatHistory.filter((message) => message.uuid !== uuid)
@@ -135,7 +73,7 @@ const useChat = () => {
     );
   };
 
-  return { chatHistory, tokenCount, sendMessage, isLoading, deleteMessage, setMessageCollapsed, handleTokenCount };
+  return { chatHistory, tokenCount, sendMessage: sendChatMessage, isLoading, deleteMessage, setMessageCollapsed, handleTokenCount };
 };
 
 export default useChat;
