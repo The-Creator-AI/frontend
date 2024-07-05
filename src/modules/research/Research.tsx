@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
-import { io } from "socket.io-client"; // Import socket.io-client
+import { Socket, io } from "socket.io-client"; // Import socket.io-client
 import config from "../../config";
 import useStore from "../../state/useStore";
 import "./Research.scss"; // Import your CSS file
@@ -13,12 +13,17 @@ import {
     updateQuery
 } from "./store/research-store.logic";
 import { SummarizedResult } from "./research.types";
-import { ClientIPC, ServerToClientChannel } from "@The-Creator-AI/fe-be-common";
+import { ClientToServerChannel, ServerToClientChannel, onServerMessage, sendToServer } from "@The-Creator-AI/fe-be-common";
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
     const inputRef = useRef<HTMLInputElement>(null);
-    const clientIPC = ClientIPC.getInstance(`${config.BASE_URL}/research`);
+    // const socket = useMemo(() => {
+    //     console.log("connecting");
+    //     return io(`${config.BASE_URL}/research`);
+    // }, []);
+
+    const [socket, setSocket] = React.useState<Socket | null>(null);
 
     const {
         query = "",
@@ -29,38 +34,53 @@ const Research: React.FC = () => {
     } = state;
 
     useEffect(() => {
-        clientIPC.onServerMessage(ServerToClientChannel.progress, (data: any) => {
+        if (!socket) {
+            const newSocket = io(`${config.BASE_URL}/research`); // Connect to your backend's WebSocket server with namespace 'research'
+            setSocket(newSocket);
+        }
+
+        // Cleanup: Disconnect the socket when the component unmounts
+        return () => {
+            if (socket) {
+                socket.disconnect();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        onServerMessage(socket, ServerToClientChannel.progress, (data) => {
             setIsLoading(true); // Set loading state
             setError(null); // Clear any previous error
             console.log(data.message); // Update client UI with progress message
         });
 
-        clientIPC.onServerMessage(ServerToClientChannel.result, (data: SummarizedResult) => {
+        onServerMessage(socket, ServerToClientChannel.result, (data) => {
             console.log({ data });
             addUpdateResult(data);
             setIsLoading(false); // Finish loading
             setError(null); // Clear any previous error
         });
 
-        clientIPC.onServerMessage(ServerToClientChannel.error, (data: any) => {
+        onServerMessage(socket, ServerToClientChannel.error, (data) => {
             setError(data.message); // Set the error message
             setIsLoading(false); // Finish loading
         });
 
-        clientIPC.onServerMessage(ServerToClientChannel.complete, () => {
+        onServerMessage(socket, ServerToClientChannel.complete, (data) => {
             setIsLoading(false); // Finish loading
         });
-        return () => {
-            clientIPC.disconnect();
-        };
-    }, [clientIPC]);
+    }, [socket]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (query.trim()) {
-            // Emit 'search' event to the WebSocket server
-            // socket?.emit("search", query.trim());
-            clientIPC?.sendToServer('search' as any, query.trim() as any);
+        if (socket && query.trim()) {
+            sendToServer(
+                socket,
+                ClientToServerChannel.search,
+                { topic: query.trim() }
+            );
         }
     };
 
