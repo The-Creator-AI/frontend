@@ -84,7 +84,7 @@ export const addChunk = (result: SummarizedResultChunk) => {
   ) || [];
   newSummarizedResults.push({
     ...resultWithoutChunk,
-    llmSummary: existingResult?.llmSummary + result.chunk || "",
+    llmSummary: (existingResult?.llmSummary || "") + (result.chunk || ""),
   } as any);
   
   researchStateSubject._next(

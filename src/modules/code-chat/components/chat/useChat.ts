@@ -40,7 +40,6 @@ const useChat = () => {
         messages.push({
           user: 'user',
           message,
-          selectedFiles,
           uuid: uuidv4()
         });
         const response = await axios.post(`${config.BASE_URL}/creator/token-count`, {

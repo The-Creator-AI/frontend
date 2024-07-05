@@ -23,7 +23,7 @@ export const connectSocket = () => {
   if (gatewayStateSubject.getValue().socket) {
     return;
   }
-  const socket: Socket = io(`${config.BASE_URL}/research`);
+  const socket: Socket = io(`${config.BASE_URL}`);
   console.log("connecting to socket", socket);
   gatewayStateSubject._next(
     {
@@ -109,6 +109,7 @@ export const sendMessage = <T extends ToServer>(
   channel: T,
   message: ChannelBody<T>
 ) => {
+  console.log("sendMessage", channel, message);
   const socket = getSocket();
   if (socket) {
     sendToServer(socket, channel, message);

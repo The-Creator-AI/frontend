@@ -6,10 +6,13 @@ import {
 } from "./code-chat.store";
 import { Agent } from "../../../types/agent.type";
 import { CodeChatActions } from "./code-chat-store.actions";
-import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
+import { BotMessageChunk, ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import config from "../../../config";
+import { sendMessage } from "../../gateway/store/gateway.logic";
+import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
+import { getGatewayListener } from "../../gateway";
 
 export const resetAppStore = () => {
   codeChatStoreStateSubject._next(
@@ -146,6 +149,13 @@ export const sendChatMessage = async (args: {
   updateChatIsLoading(true);
 
   try {
+    sendMessage(ToServer.USER_MESSAGE, {
+      chatHistory: [
+        ...chatHistory.filter((message) => message.user !== "instructor"),
+        ...messages,
+      ],
+      selectedFiles,
+    });
     const response = await axios.post(`${config.BASE_URL}/creator/chat`, {
       chatHistory: [
         ...chatHistory.filter((message) => message.user !== "instructor"),
@@ -168,3 +178,21 @@ export const sendChatMessage = async (args: {
     updateChatIsLoading(false);
   }
 };
+
+const addBotMessageChunk = (message: BotMessageChunk) => {
+  console.log("addBotMessageChunk", message);
+  const {chunk, ...messageWithoutChunk } = message;
+  const existingMessage = codeChatStoreStateSubject.getValue().chat.chatHistory.find((message) => message.uuid === messageWithoutChunk.uuid);
+  const newChatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory.filter((message) => message.uuid !== messageWithoutChunk.uuid);
+  newChatHistory.push({
+    ...messageWithoutChunk,
+    message: (existingMessage?.message || '') + (chunk || '')
+  });
+  updateChatHistory([
+    ...newChatHistory,
+  ]);
+}
+
+export const oneBotMessage = getGatewayListener(ToClient.BOT_MESSAGE_CHUNK, (message) => {
+  addBotMessageChunk(message);
+});

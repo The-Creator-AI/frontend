@@ -13,7 +13,9 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     return (
         <div className="chat-history-popup">
             <div className="chat-history-container">
-                {[...chatHistory].concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : []).map((message, index) => (
+                {[...chatHistory]
+                // .concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : [])
+                .map((message, index) => (
                     <ChatMessage message={message}/>
                 ))}
             </div>
