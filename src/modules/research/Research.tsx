@@ -13,7 +13,7 @@ import {
     updateQuery
 } from "./store/research-store.logic";
 import { SummarizedResult } from "./research.types";
-import { ClientToServerChannel, ServerToClientChannel, onServerMessage, sendToServer } from "@The-Creator-AI/fe-be-common";
+import { ToServer, ToClient, onServerMessage, sendToServer } from "@The-Creator-AI/fe-be-common";
 
 const Research: React.FC = () => {
     const state = useStore(researchStore$);
@@ -50,25 +50,25 @@ const Research: React.FC = () => {
     useEffect(() => {
         if (!socket) return;
 
-        onServerMessage(socket, ServerToClientChannel.progress, (data) => {
+        onServerMessage(socket, ToClient.PROGRESS, (data) => {
             setIsLoading(true); // Set loading state
             setError(null); // Clear any previous error
             console.log(data.message); // Update client UI with progress message
         });
 
-        onServerMessage(socket, ServerToClientChannel.result, (data) => {
+        onServerMessage(socket, ToClient.RESULT, (data) => {
             console.log({ data });
             addUpdateResult(data);
             setIsLoading(false); // Finish loading
             setError(null); // Clear any previous error
         });
 
-        onServerMessage(socket, ServerToClientChannel.error, (data) => {
+        onServerMessage(socket, ToClient.ERROR, (data) => {
             setError(data.message); // Set the error message
             setIsLoading(false); // Finish loading
         });
 
-        onServerMessage(socket, ServerToClientChannel.complete, (data) => {
+        onServerMessage(socket, ToClient.COMPLETE, (data) => {
             setIsLoading(false); // Finish loading
         });
     }, [socket]);
@@ -78,7 +78,7 @@ const Research: React.FC = () => {
         if (socket && query.trim()) {
             sendToServer(
                 socket,
-                ClientToServerChannel.search,
+                ToServer.SEARCH,
                 { topic: query.trim() }
             );
         }
