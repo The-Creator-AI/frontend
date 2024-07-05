@@ -156,22 +156,6 @@ export const sendChatMessage = async (args: {
       ],
       selectedFiles,
     });
-    const response = await axios.post(`${config.BASE_URL}/creator/chat`, {
-      chatHistory: [
-        ...chatHistory.filter((message) => message.user !== "instructor"),
-        ...messages,
-      ],
-      selectedFiles,
-    });
-    updateChatHistory([
-      ...chatHistory,
-      {
-        user: "user",
-        message,
-        uuid: uuidv4(),
-      },
-      response.data,
-    ]);
   } catch (error) {
     console.error("Error sending message:", error);
   } finally {
@@ -191,8 +175,18 @@ const addBotMessageChunk = (message: BotMessageChunk) => {
   updateChatHistory([
     ...newChatHistory,
   ]);
-}
+};
 
-export const oneBotMessage = getGatewayListener(ToClient.BOT_MESSAGE_CHUNK, (message) => {
+const addBotMessage = (message: ChatMessageType) => {
+  const newChatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory.filter((message) => message.uuid !== message.uuid);
+  newChatHistory.push(message);
+  updateChatHistory([...newChatHistory]);
+};
+
+export const oneBotMessageChunk = getGatewayListener(ToClient.BOT_MESSAGE_CHUNK, (message) => {
   addBotMessageChunk(message);
+});
+
+export const onBotMessage = getGatewayListener(ToClient.BOT_MESSAGE, (message) => {
+  addBotMessage(message);
 });
