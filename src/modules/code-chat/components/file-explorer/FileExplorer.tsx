@@ -65,8 +65,8 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
         sections={[
           {
             id: "settings",
-            title: "Settings",
-            content: <div>Settings content here</div>,
+            title: "Selections History",
+            content: <div>Selections History</div>,
             collapsed: false,
             height: 30,
           },

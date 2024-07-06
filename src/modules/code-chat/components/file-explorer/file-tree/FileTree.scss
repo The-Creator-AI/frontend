@@ -18,11 +18,12 @@
         padding: 3px 10px;
         display: flex;
         align-items: center;
+        z-index: 1;
 
         &:hover {
           &::before { // Use a pseudo-element for the background
             content: "";
-            background-color: #eee;
+            background-color: #e0dcdc;
             position: absolute;
             left: -200px;
             right: -200px;
