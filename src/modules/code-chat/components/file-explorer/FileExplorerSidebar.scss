@@ -1,0 +1,58 @@
+.flie-explorer-sidebar {
+    width: 300px;
+    /* Adjust as needed */
+    background-color: #f0f0f0;
+    user-select: none;
+
+    .section-resizer {
+        height: 5px;
+        cursor: ns-resize; 
+        background-color: #ccc; // Light gray background
+        &:hover {
+            background-color: #999; // Darker gray on hover
+        }
+    }
+
+    .section {
+        border-bottom: 1px solid #ddd;
+        display: flex;
+        flex-direction: column;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            position: relative;
+            padding: 10px;
+            padding-left: 25px;
+            background-color: #e1dede;
+            cursor: pointer;
+
+            .arrow {
+                // transition: all 0.2s ease-in-out;
+                position: absolute;
+                left: 0px;
+                top: 6px;
+                font-size: 25px;
+
+                &.down {
+                    transform: rotate(90deg);
+                    left: -2px;
+                    top: 5px;
+                }
+            }
+        }
+
+        .section-content {
+            padding: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .section-resizer {
+            height: 5px;
+            cursor: ns-resize;
+        }
+    }
+}

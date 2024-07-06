@@ -17,7 +17,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const { selectedAgent, currentPath, selectedFiles } = useStore(codeChatStore$);
   const { sendMessage, handleTokenCount, tokenCount, chatHistory } = useChat();
   const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
-  console.log({ isLoadingTokenCount });
 
   useEffect(() => {
     (async () => {

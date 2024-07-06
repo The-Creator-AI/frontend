@@ -57,7 +57,6 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   }, [isCommandPaletteOpen]);
 
   const handleNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, node: FileNode, path: string) => {
-    console.log({ e, node, path });
     if ((e.target as HTMLElement)?.classList?.contains('checkbox')) {
       return;
     }
