@@ -4,22 +4,26 @@
     display: flex;
 }
 
-.file-tree {
+.side-panel {
     position: relative;
-    height: 100%;
-    color: #ccc;
-    background-color: #141414;
+    overflow-x: hidden;
+    // height: 100%;
+    padding: 0.8rem;
+    // color: #ccc;
+    // background-color: #141414;
 }
 
 .chat-section {
     position: relative;
+    overflow: auto;
     height: 100%;
     background-color: #1e1e1e;
 }
 
 .splitter {
-    background-color: #ccc;
-    width: 4px;
+    transition: width, background-color 0.2s ease-in-out;
+    background-color: #e0e0e0;
+    width: 2px;
     height: 100%;
     position: absolute;
     right: 0;
@@ -29,7 +33,7 @@
 }
 
 .splitter:hover {
-    background-color: #5f6772;
-    width: 8px;
+    background-color: #3d659c;
+    width: 5px;
     cursor: col-resize;
 }

@@ -27,7 +27,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
         agentName: selectedAgent?.name,
         message,
         imageFiles: pastedImages,
-        selectedFiles: selectedFiles?.map(f => `${currentPath}/${f.filePath}`),
+        selectedFiles: selectedFiles?.map(filePath => `${currentPath}/${filePath}`),
       });
       setIsLoadingTokenCount(false);
     })();
@@ -76,7 +76,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
         agentName: selectedAgent?.name,
         message,
         imageFiles: pastedImages,
-        selectedFiles: selectedFiles.map(f => `${currentPath}/${f.filePath}`),
+        selectedFiles: selectedFiles.map(filePath => `${currentPath}/${filePath}`),
       });
       setMessage('');
       setPastedImages([]);

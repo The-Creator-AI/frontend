@@ -1,98 +1,79 @@
-.tree ul {
-  padding-inline-start: 10px;
-  width: 100%;
-}
+.file-tree {
+  font-family: sans-serif;
 
-.tree li {
-  display: flex;
-  flex-direction: column;
-  align-items: self-start;
-}
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    // margin-left: 15px;
 
-.tree-node {
-  cursor: pointer;
-  position: relative;
-}
+    li {
+      position: relative;
+      padding: 0px 0;
+      margin-left: 12px;
 
-.tree-node {
-  padding: 4px 0px;
-  width: 100%;
-}
+      .node {
+        position: relative;
+        cursor: pointer;
+        padding: 3px 10px;
+        display: flex;
+        align-items: center;
 
-// .tree-node--selected,
-// .tree-node--half-selected
-.tree-node:hover {
-  background: rgba(131, 131, 131, 0.3);
-}
+        &:hover {
+          &::before { // Use a pseudo-element for the background
+            content: "";
+            background-color: #eee;
+            position: absolute;
+            left: -200px;
+            right: -200px;
+            top: 0px;
+            bottom: -2px;
+            z-index: -1;
+          }
+        }
 
-.tree-node--file {
-  // background-color: rgb(108, 108, 108);
-}
+        &.directory {
+          // font-weight: bold;
 
-.tree-node--directory {
-  background-color: rgb(108, 108, 108);
-}
+          &.expanded {
+            .arrow {
+              transform: rotate(90deg);
+              top: -2px;
+              left: -12px;
+            }
+          }
+        }
 
-.tree-node--active {
-  background: rgba(180, 180, 255, 0.5); /* Light blue background */
-  font-weight: 600;                   /* Slightly bolder text */
-  // Add any other styles you like, e.g., border, box-shadow, etc. 
-}
+        &.file {
+          font-weight: normal;
+        }
 
-.tree-node--expanded {
+        &.selected {
+          // background-color: #eee;
+        }
 
-}
+        .name {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }        
 
-.tree-node--collapsed {
+        .arrow {
+          // transition: all 0.2s ease-in-out;
+          position: absolute;
+          left: -10px;
+          top: 2px;
+          font-size: 25px;
 
-}
+          &.down {
+            transform: rotate(90deg);
+          }
+        }
 
-.checkbox-icon {
-  margin: 0 5px;
-  vertical-align: middle;
-}
-
-button {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.arrow {
-  margin-left: 5px;
-  vertical-align: middle;
-}
-
-.arrow--open {
-  transform: rotate(90deg);
-}
-
-.arrow-icon {
-  position: absolute;
-  left: -15px;
-  top: 8px;
-}
-
-.search-container {
-  // position: fixed;
-  // top: 10px;
-  // left: 50%;
-  // transform: translateX(-50%);
-  background-color: #1e1e1e;
-  padding: 5px 10px;
-  border-radius: 5px;
-  z-index: 2;
-  display: flex; /* Use flexbox to align items in a row */
-  flex-direction: column;
-  align-items: center; /* Vertically align items to the center */
-}
-
-.breadcrumbs span {
-  color: #ccc;
-  font-size: 14px;
-
-  &:hover {
-      color: #ffffff;
-      transition: color 0.3s ease-in-out;
+        .checkbox {
+          margin-right: 10px;
+        }
+      }
+    }
   }
 }

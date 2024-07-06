@@ -8,8 +8,8 @@ import { CodeChatActions } from './code-chat-store.actions';
 
 export interface CodeChatStoreState {
   currentPath: string;
-  selectedFiles: { nodeId: NodeId; filePath: string }[];
-  recentFiles: { nodeId: NodeId; filePath: string }[];
+  selectedFiles: string[];
+  recentFiles: string[];
   agents: Agent[];
   selectedAgent: Agent | null;
   chat: {

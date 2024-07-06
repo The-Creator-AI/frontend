@@ -2,7 +2,7 @@
 /// <reference types="chai" />
 
 import { connectSocket, disconnectSocket } from "../../../gateway/store/gateway.logic";
-import { resetAppStore } from "../../store/code-chat-store.logic";
+import { resetCodeChatStore } from "../../store/code-chat-store.logic";
 import ChatBox from "./ChatBox";
 
 const expect = chai.expect
@@ -17,7 +17,7 @@ describe('<ChatBox />', () => {
   });
 
   beforeEach(() => {
-    resetAppStore();
+    resetCodeChatStore();
     cy.mount(<ChatBox setPreviewImage={() => { }} />)
     cy.get('#chat-textarea').clear(); // Clear the textarea
   });

@@ -2,7 +2,7 @@
 /// <reference types="chai" />
 
 import { connectSocket, disconnectSocket } from "../../../gateway/store/gateway.logic";
-import { resetAppStore } from "../../store/code-chat-store.logic";
+import { resetCodeChatStore } from "../../store/code-chat-store.logic";
 import Chat from "./Chat";
 
 const expect = chai.expect
@@ -17,7 +17,7 @@ describe('<Chat />', () => {
   });
 
   beforeEach(() => {
-    resetAppStore();
+    resetCodeChatStore();
     cy.mount(<Chat />);
   });
 

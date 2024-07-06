@@ -2,12 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NodeId } from 'react-accessible-treeview';
 import { DraggableCore } from 'react-draggable';
 import { codeChatStore$ } from '../../store/code-chat.store';
-import { updateCurrentPath, updateSelectedFiles } from '../../store/code-chat-store.logic';
+import { updateCurrentPath, updateSelectedFiles, updateFileContentPopup, updateRecentFiles } from '../../store/code-chat-store.logic';
 import useStore from '../../../../state/useStore';
 import Chat from '../chat/Chat';
 import FileContentPopup from './FileContentPopup';
 import './FileExplorer.scss';
 import FileTree from './file-tree/FileTree';
+import axios from 'axios';
+import config from '../../../../config';
+import { useQuery } from '@tanstack/react-query';
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
@@ -21,6 +24,13 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   const fileContentRef = useRef<HTMLDivElement>(null);
   const [activeFile, setActiveFile] = useState<string | null>(null);
   const { currentPath, selectedFiles } = useStore(codeChatStore$);
+  const { data: fileTreeData } = useQuery({
+    queryKey: ['repoData', currentPath],
+    queryFn: async () => {
+      const response = await axios.get(`${config.BASE_URL}/creator/directory-structure?dir=${currentPath}`);
+      return response.data;
+    }
+  });
 
   const handleSplitterDrag = (e: any, data: any) => {
     const newPosition = splitterPosition + (data.deltaX / window.innerWidth) * 100;
@@ -29,33 +39,30 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 
   useEffect(() => {
     if (fileTreeRef.current && fileContentRef.current) {
-      fileTreeRef.current.style.width = `${splitterPosition}%`;
+      const fileTreeStyle = window.getComputedStyle(fileTreeRef.current);
+      fileTreeRef.current.style.width = `calc(${splitterPosition}% - ${fileTreeStyle.paddingLeft} - ${fileTreeStyle.paddingRight})`;
       fileContentRef.current.style.width = `${100 - splitterPosition}%`;
     }
   }, [splitterPosition]);
 
-  const handleRightClick = (event: React.MouseEvent, nodeId: NodeId, filePath: string) => {
-    event.preventDefault();
-    updateCurrentPath(`${currentPath}/${filePath}`);
-    updateSelectedFiles([]); // Clear any selected files
-  };
-
+  // const handleRightClick = (event: React.MouseEvent, nodeId: NodeId, filePath: string) => {
+  //   event.preventDefault();
+  //   updateCurrentPath(`${currentPath}/${filePath}`);
+  //   updateSelectedFiles([]); // Clear any selected files
+  // };
 
   return (
     <div className="file-viewer">
-      <div className="file-tree" ref={fileTreeRef} style={{ overflow: 'auto', height: '100%' }}>
+      <div className="side-panel" ref={fileTreeRef}>
         <FileTree 
-            selectedFiles={selectedFiles} 
-            currentPath={currentPath}
-            activeFile={activeFile}
-            setActiveFile={setActiveFile}
-            onRightClick={handleRightClick} 
+            data={fileTreeData?.children || []}
+            onFileClick={(filePath) => updateFileContentPopup({ filePath, isOpen: true })}
           />
       </div>
       <DraggableCore onDrag={handleSplitterDrag}>
         <div className="splitter" style={{ left: `${splitterPosition}%` }}></div>
       </DraggableCore>
-      <div className="chat-section" ref={fileContentRef} style={{ overflow: 'auto', height: '100%' }}>
+      <div className="chat-section" ref={fileContentRef}>
         {/* Display content for the first selected file (or handle multiple files differently if needed) */}
         {/* {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />}  */}
         <Chat />

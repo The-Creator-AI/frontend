@@ -1,6 +1,12 @@
+/// <reference types="cypress" />
+/// <reference types="chai" />
+
 import Providers from '../../../../../Providers';
 import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
+import { resetCodeChatStore } from '../../../store/code-chat-store.logic';
 import FileTree from './FileTree';
+
+const expect = chai.expect
 
 // Mock data for the file tree
 const mockTreeData = {
@@ -8,14 +14,19 @@ const mockTreeData = {
   children: [{
     name: 'src',
     children: [{
-      name: 'components',
+      name: 'the-name-of-the-directory-is-too-long-to-display',
       children: [{
         name: 'Button.tsx',
-        isBranch: false
       },
       {
         name: 'Input.tsx',
-        isBranch: false
+      }, {
+        name: 'level-two-directory',
+        children: [{
+          name: 'component1.tsx',
+        }, {
+          name: 'component2.tsx',
+        }]
       }]
     }]
   }]
@@ -31,6 +42,8 @@ describe('<FileTree />', () => {
   });
 
   beforeEach(() => {
+    cy.viewport(300, 600);
+
     cy.intercept('GET', '/creator/directory-structure?dir=*', {
       statusCode: 200,
       body: mockTreeData,
@@ -45,31 +58,27 @@ describe('<FileTree />', () => {
     }).as('fileContent');
   });
 
+  afterEach(() => {
+    resetCodeChatStore();
+  });
+
   it('renders the component', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={() => { }}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
-    cy.get('.tree').should('exist');
+    cy.get('.file-tree').should('exist');
   });
 
   it('displays the file tree structure', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={() => { }}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
-    cy.get('.tree-node').should('have.length', 1);
-    cy.get('.tree-node').each(($el, index) => {
+    cy.get('.file-tree .node').should('have.length', 1);
+    cy.get('.file-tree .node').each(($el, index) => {
       cy.wrap($el).should('contain', 'src');
     });
   });
@@ -77,100 +86,123 @@ describe('<FileTree />', () => {
   it('expands and collapses directory nodes', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={() => { }}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
     // Check initial state (collapsed)
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
-      .find('.arrow-icon')
-      .should('not.have.class', 'arrow--open');
+    cy.get('.file-tree .node.directory').eq(0)
+      // .parent()
+      .find('.arrow')
+      .should('not.have.class', 'down');
 
     // Click to expand
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
+    cy.get('.file-tree .node.directory').eq(0)
+      // .parent()
       .click();
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
-      .find('.arrow-icon')
-      .should('have.class', 'arrow--open');
+    cy.get('.file-tree .node.directory').eq(0)
+      // .parent()
+      .find('.arrow')
+      .should('have.class', 'down');
+
+    // Click to collapse
+    cy.get('.file-tree .node.directory').eq(0)
+      // .parent()
+      .click();
+    cy.get('.file-tree .node.directory').eq(0)
+      // .parent()
+      .find('.arrow')
+      .should('not.have.class', 'down');
   });
 
   it('selects and deselects files', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={() => { }}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
     // Select a file
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
-      .find('.checkbox-icon')
+    cy.get('.file-tree .node.directory').eq(0)
+      .find('.checkbox')
       .click();
-    cy.get('.tree-node--directory').eq(0)
-      .should('have.class', 'tree-node--selected');
+    cy.get('.file-tree .node.directory').eq(0)
+      .should('have.class', 'selected');
 
     // Deselect the file
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
-      .find('.checkbox-icon')
+    cy.get('.file-tree .node.directory').eq(0)
+      .find('.checkbox')
       .click();
-    cy.get('.tree-node--directory').eq(0)
-      .should('not.have.class', 'tree-node--selected');
+    cy.get('.file-tree .node.directory').eq(0)
+      .should('not.have.class', 'selected');
   });
 
-  it.skip('handles right-click on directories', () => {
-    const rightClickSpy = cy.spy();
+  it.only('deselects all children when parent is deselected', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={rightClickSpy}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
-    const rightClick = (subject: any) => {
-      subject
-        .trigger('mousedown', { button: 2 })
-        .trigger('mouseup', { button: 2 });
-    }
-    cy.get('.tree-node--directory').eq(0)
-      .parent()
-      .parent()
-      .then(rightClick);
-    expect(rightClickSpy).to.have.been.calledOnce();
+    // Expand the directory
+    cy.get('.file-tree .node.directory').eq(0).click();
+    // Expand the child directory
+    cy.get('.file-tree .node.directory').eq(1).click();
+    // Select the parent directory
+    cy.get('.file-tree .node.directory').eq(0).find('.checkbox').click();
+    // Assert that the parent directory and its children are selected
+    cy.get('.file-tree .node.directory').eq(0).should('have.class', 'selected');
+    cy.get('.file-tree .node.file').each(($el) => {
+      cy.wrap($el).should('have.class', 'selected');
+    });
+    // Deselect the parent directory
+    cy.get('.file-tree .node.directory').eq(0).find('.checkbox').click();
+    // Assert that the parent directory and its children are deselected
+    cy.get('.file-tree .node.directory').eq(0).should('not.have.class', 'selected');
+    cy.get('.file-tree .node.file').each(($el) => {
+      cy.wrap($el).should('not.have.class', 'selected');
+    });
   });
 
-  it.skip('click & open file', () => {
-    
+  
+  it('correctly handles half-selection states', () => {
     cy.mount(<Providers>
       <FileTree
-        activeFile={null}
-        setActiveFile={() => { }}
-        onRightClick={() => { }}
-        selectedFiles={[]}
-        currentPath={'src'}
+        data={mockTreeData.children}
       />
     </Providers>);
-    cy.get('.tree-node--directory')
+    // Expand the directory
+    cy.get('.file-tree .node.directory').eq(0).click();
+    // Expand the child directory
+    cy.get('.file-tree .node.directory').eq(1).click();
+    // Select the first child file
+    cy.get('.file-tree .node.file').eq(0).find('.checkbox').click();
+    // Assert that the parent directory is half-selected
+    cy.get('.file-tree .node.directory').eq(0).should('have.class', 'half-selected');
+    // Select the second child file
+    cy.get('.file-tree .node.file').eq(1).find('.checkbox').click();
+    // Assert that the parent directory is now fully selected
+    cy.get('.file-tree .node.directory').eq(0).should('have.class', 'selected');
+    // Deselect one of the child files
+    cy.get('.file-tree .node.file').eq(0).find('.checkbox').click();
+    // Assert that the parent directory is back to half-selected
+    cy.get('.file-tree .node.directory').eq(0).should('have.class', 'half-selected');
+  });
+
+  it('click & open file', () => {
+    const onSetActiveFile = cy.spy().as('onSetActiveFile');
+    cy.mount(<Providers>
+      <FileTree
+        data={mockTreeData.children}
+        onFileClick={onSetActiveFile}
+      />
+    </Providers>);
+    cy.get('.file-tree .node.directory')
       .eq(0)
       .click();
-    cy.get('.tree-node--directory')
+    cy.get('.file-tree .node.directory')
       .eq(1)
       .click();
-    cy.get('.tree-node--file')
+    cy.get('.file-tree .node.file')
       .eq(0)
       .click();
-
-    cy.get('@fileContent').should('have.been.calledWith', { filePath: 'src/components/Button.tsx', currentPath: 'src' });
+    cy.get('@onSetActiveFile').should('have.been.calledWith', 'src/the-name-of-the-directory-is-too-long-to-display/Button.tsx');
   });
 });

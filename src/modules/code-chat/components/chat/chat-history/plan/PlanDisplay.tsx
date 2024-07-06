@@ -48,7 +48,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan }) => {
             agentInstruction: stubbedCodeAgent?.systemInstructions,
             agentName: stubbedCodeAgent?.name,
             message: `Write me code for ${filePath} as per plan`,
-            selectedFiles: selectedFiles.map((f) => `${currentPath}/${f.filePath}`),
+            selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
     };
 

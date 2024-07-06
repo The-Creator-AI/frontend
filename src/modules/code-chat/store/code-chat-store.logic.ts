@@ -14,10 +14,10 @@ import { sendMessage } from "../../gateway/store/gateway.logic";
 import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
 import { getGatewayListener } from "../../gateway";
 
-export const resetAppStore = () => {
+export const resetCodeChatStore = () => {
   codeChatStoreStateSubject._next(
     initialState,
-    CodeChatActions.RESET_APP_STORE
+    CodeChatActions.RESET_CODE_CHAT_STORE
   );
 };
 
@@ -32,7 +32,7 @@ export const updateCurrentPath = (newPath: string) => {
 };
 
 export const updateSelectedFiles = (
-  newFiles: { nodeId: NodeId; filePath: string }[]
+  newFiles: string[]
 ) => {
   codeChatStoreStateSubject._next(
     {
@@ -44,7 +44,7 @@ export const updateSelectedFiles = (
 };
 
 export const updateRecentFiles = (
-  newFiles: { nodeId: NodeId; filePath: string }[]
+  newFiles: string[]
 ) => {
   codeChatStoreStateSubject._next(
     {

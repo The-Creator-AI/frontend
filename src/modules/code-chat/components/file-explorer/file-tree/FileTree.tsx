@@ -1,222 +1,162 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import TreeView, { INode, NodeId, flattenTree } from "react-accessible-treeview";
-import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
-import config from "../../../../../config";
-import useStore from "../../../../../state/useStore";
-import { updateCurrentPath, updateFileContentPopup, updateRecentFiles, updateSelectedFiles } from "../../../store/code-chat-store.logic";
-import { codeChatStore$, } from "../../../store/code-chat.store";
-import CommandPalette, { Command } from "../../command-palette/CommandPalette";
-import "./FileTree.scss";
-import { buildPath, filterTreeData } from "./FileTree.utils";
-import NodeRenderer from "./NodeRenderer"; // Importing NodeRenderer component
+import React, { useState } from 'react';
+import { MdChevronRight } from 'react-icons/md';
+import './FileTree.scss';
+import useStore from '../../../../../state/useStore';
+import { codeChatStore$ } from '../../../store/code-chat.store';
+import { updateSelectedFiles } from '../../../store/code-chat-store.logic';
 
-interface FileTreeProps {
-  selectedFiles: {
-    nodeId: NodeId;
-    filePath: string;
-  }[];
-  currentPath?: string;
-  activeFile: string | null;
-  setActiveFile: (filePath: string | null) => void;
-  onRightClick: (event: React.MouseEvent, nodeId: NodeId, filePath: string) => void;
+interface FileNode {
+  name: string;
+  children?: FileNode[];
 }
 
-const FileTree: React.FC<FileTreeProps> = ({
-  activeFile,
-  setActiveFile,
-  onRightClick,
-}) => {
-  const [treeData, setTreeData] = useState<INode<IFlatMetadata>[]>([]);
-  const { currentPath, selectedFiles, recentFiles } = useStore(codeChatStore$);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+interface FileTreeProps {
+  data: FileNode[];
+  onFileClick?: (filePath: string) => void;
+}
 
-  // Load selected files from localStorage on component mount and path change
-  useEffect(() => {
-    const storedFiles = localStorage.getItem(`selectedFiles-${currentPath}`);
-    if (storedFiles) {
-      updateSelectedFiles(JSON.parse(storedFiles));
-    }
-    const recentFiles = localStorage.getItem(`recentFiles-${currentPath}`);
-    if (recentFiles) {
-      updateRecentFiles(JSON.parse(recentFiles));
-    }
-  }, [currentPath]);
+const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
+  const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
+  const { selectedFiles } = useStore(codeChatStore$);
 
-  // Save selected files to localStorage whenever it changes
-  useEffect(() => {
-    if (currentPath && selectedFiles.length) {
-      localStorage.setItem(`selectedFiles-${currentPath}`, JSON.stringify(selectedFiles));
+  const handleNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, node: FileNode, path: string) => {
+    if ((e.target as HTMLElement).classList.contains('checkbox')) {
+      return;
     }
-    if (currentPath && recentFiles.length) {
-      localStorage.setItem(`recentFiles-${currentPath}`, JSON.stringify(recentFiles));
+    const isDirectory = Array.isArray(node.children);
+    if (isDirectory) {
+      setExpandedNodes((prevExpandedNodes) => {
+        const isExpanded = !!prevExpandedNodes.find((n) => n === path);
+        return isExpanded
+          ? prevExpandedNodes.filter((n) => n !== path)
+          : [...prevExpandedNodes, path];
+      });
+    } else {
+      onFileClick && onFileClick(path);
     }
-  }, [selectedFiles, recentFiles]);
+  };
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.metaKey &&
-        event.key === 'p'
-      ) {
-        event.preventDefault();
-        setIsCommandPaletteOpen(!isCommandPaletteOpen);
-      }
+  const getNodeByPath = (path: string): FileNode | null => {
+    const pathParts = path.split('/');
+    // let's find the node in the data
+    let node = {
+      name: '',
+      children: data,
+    } as FileNode | undefined;
+    for (const part of pathParts) {
+      if (!node) return null;
+      node = node.children?.find((child) => child.name === part);
+    }
+    return node || null;
+  };
 
-      if (isCommandPaletteOpen) {
-        switch (event.key) {
-          case 'Escape':
-            event.preventDefault();
-            setIsCommandPaletteOpen(false);
-            break;
-          default:
-            break;
+  const handleFileCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, path: string) => {
+    const isSelected = !!selectedFiles?.find(f => f === path);
+    if (isSelected) {
+      // Remove this file from selectedFiles
+      updateSelectedFiles(selectedFiles?.filter(f => f !== path));
+      return;
+    }
+
+    const selectedAncestorPath = selectedFiles.find(f => path.startsWith(f) && f !== path);
+    if (selectedAncestorPath) {
+      // 1. Remove the ancestor from selectedFiles
+      // 2. Add all children of the ancestor to selectedFiles except node which is another ancestor of the selected node
+      // 3. Add all the siblings of the all the nodes between the ancestor and the selected node
+      const pathParts = path.split('/');
+      const ancestorParts = selectedAncestorPath.split('/');
+      // const ancestorNode = getNodeByPath(selectedAncestorPath);
+      // const parentNode = getNodeByPath(pathParts.slice(0, pathParts.length - 1).join('/'));
+      let siblingsAtEveryLevel = [] as string[];
+      for (let i = ancestorParts.length - 1; i < pathParts.length - 1; i++) {
+        const level = pathParts.slice(0, i + 1).join('/');
+        const levelNode = getNodeByPath(level);
+        if (levelNode) {
+          siblingsAtEveryLevel = [
+            ...siblingsAtEveryLevel,
+            ...levelNode.children?.filter(c => c.name !== pathParts[i + 1])?.map(c => `${level}/${c.name}`) || [],
+          ];
         }
       }
-    };
-
-    // Add and remove the event listener
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isCommandPaletteOpen]);
-
-  const { isPending, error, data } = useQuery({
-    queryKey: ['repoData', currentPath],
-    queryFn: async () => {
-      const response = await axios.get(`${config.BASE_URL}/creator/directory-structure?dir=${currentPath}`);
-      return response.data;
+      const newSelectedFiles = [
+        ...selectedFiles.filter(f => !f.includes(selectedAncestorPath)),
+        ...siblingsAtEveryLevel
+      ];
+      updateSelectedFiles(newSelectedFiles);
+      return;
     }
-  });
 
-  useEffect(() => {
-    if (!currentPath && currentPath !== data?.currentPath) {
-      updateCurrentPath(data?.currentPath || '');
-    }
-  }, [data]);
-
-  const handleFileSelect = (nodeId: NodeId, filePath: string) => {
-    if (selectedFiles.find(f => f.nodeId === nodeId)) {
-      updateSelectedFiles(selectedFiles.filter(f => f.nodeId !== nodeId));
-    } else {
-      updateSelectedFiles([...selectedFiles, { nodeId, filePath }]);
-    }
+    // Remove all children and push this file into selectedFiles
+    const newSelectedFiles = isSelected
+    ? selectedFiles?.filter(f => f !== path)
+    : [
+      ...selectedFiles.filter(f => !f.includes(path)),
+      path
+    ];
+    updateSelectedFiles(newSelectedFiles);
   };
 
-  const handleFileClick = useCallback((nodeId: NodeId, filePath: string) => {
-    updateFileContentPopup({ isOpen: true, filePath });
-    const existingRecentFiles = recentFiles.filter(f => f.filePath !== filePath);
-    updateRecentFiles([{ nodeId, filePath }, ...existingRecentFiles || []]);
-  }, [recentFiles]);
-
-  useEffect(() => {
-    if (!isPending && data) {
-      setTreeData(flattenTree({
-        name: '',
-        children: data.children
-      }));
-    }
-  }, [data, isPending]);
-
-  const filteredTreeData = useMemo(() => {
-    if (searchTerm) {
-      return filterTreeData(treeData, searchTerm);
-    }
-    return treeData;
-  }, [treeData, searchTerm]);
-
-  const handleBreadcrumbClick = (dir: string) => {
-    updateCurrentPath(dir);
-    updateSelectedFiles([]); // Clear selected files when changing directories
+  const renderCheckbox = (path: string) => {
+    const isSelected = !!selectedFiles?.find(f => f === path);
+    const selectedChildren = selectedFiles?.filter(f => f.includes(path) && f !== path);
+    const selectedAncestors = selectedFiles?.filter(f => path.startsWith(f) && f !== path);
+    console.log({
+      selectedFiles,
+      selectedChildren,
+      selectedAncestors,
+    });
+    return (
+      <input
+            type="checkbox"
+            className="checkbox"
+            checked={isSelected || !!selectedAncestors?.length}
+            onChange={(e) => handleFileCheckboxChange(e, path)}
+          />
+    );
   };
 
-  const getBreadcrumbs = () => {
-    if (!currentPath) {
-      return [];
-    }
-    const parts = currentPath.split('/');
-    const breadcrumbs = parts.reduce((acc, part) => {
-      const path = acc.length > 0 ? `${acc[acc.length - 1].path}/${part}` : part;
-      return [...acc, { path, part }];
-    }, [] as { path: string; part: string }[]);
-    return breadcrumbs;
-  };
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-  };
+  const renderTreeNodes = (nodes: FileNode[], parentPath = '') => {
+    return nodes?.map((node) => {
+      const path = `${parentPath}${node.name}`; 
+      const isExpanded = expandedNodes.includes(path);
+      const isSelected = selectedFiles?.includes(path);
+      const isDirectory = Array.isArray(node.children);
+      const classes = ['node'];
 
-  const handleCommandPaletteSelect = useCallback(async (file: Command<INode<IFlatMetadata>>) => {
-    // if (file.data?.isBranch || file.data?.children.length) {
-    //   setCommandPaletteParent(file.data);
-    // }
-    file.data && handleFileClick(file.data.id, file.description);
-    setIsCommandPaletteOpen(false);
-  }, [recentFiles]);
+      if (isDirectory) {
+        classes.push('directory');
+      } else {
+        classes.push('file');
+      }
+
+      if (isExpanded) {
+        classes.push('expanded');
+      }
+
+      if (isSelected) {
+        classes.push('selected');
+      }
+      return <li key={path}>
+        <div className={classes.join(' ')} onClick={(e) => handleNodeClick(e, node, path)}>
+          {isDirectory && (
+            <span className={`arrow ${isExpanded ? 'down' : ''}`}>
+              <MdChevronRight />
+            </span>
+          )}
+          {renderCheckbox(path)}
+          <div className='name'>{node.name}</div>
+        </div>
+        {isDirectory && isExpanded && (
+          <ul>{renderTreeNodes(node.children || [], `${path}/`)}</ul>
+        )}
+      </li>;
+    });
+  };
 
   return (
-    <div>
-      <div className="search-container">
-        {/* <Input.Search
-          placeholder="Search files..."
-          onSearch={handleSearch}
-          style={{ width: 300 }}
-        />
-        <div style={{ marginLeft: '10px' }}>
-          {getBreadcrumbs().map((dir, index) => (
-            <span
-              key={index}
-              onClick={() => handleBreadcrumbClick(dir.path)}
-              style={{ cursor: 'pointer' }}
-            >
-              {dir.part}{index < getBreadcrumbs().length - 1 && ' / '}
-            </span>
-          ))}
-        </div> */}
-      </div>
-      {!isPending && filteredTreeData.length ? (
-        <TreeView
-          key={filteredTreeData.length}
-          data={filteredTreeData}
-          aria-label="Checkbox tree"
-          multiSelect
-          selectedIds={selectedFiles.map(f => f.nodeId)}
-          propagateSelect
-          propagateSelectUpwards
-          togglableSelect
-          nodeRenderer={(props) => <NodeRenderer {...props} activeFile={activeFile} handleFileSelect={handleFileSelect} handleFileClick={handleFileClick} onRightClick={onRightClick} selectedFiles={selectedFiles} treeData={treeData} />}
-        />
-      ) : <span>File tree not loaded!</span>}
-      <CommandPalette<INode<IFlatMetadata>>
-        isOpen={isCommandPaletteOpen}
-        placeholder="Search for files..."
-        commands={treeData?.filter(node => !node.isBranch && !node.children?.length)
-          .map(node => ({
-            id: node.name,
-            description: buildPath(treeData || [], node, node.name),
-            title: node.name,
-            data: node
-          }))
-          .sort((a, b) => {
-            const aIdx = recentFiles.findIndex(f => f.filePath === a.description);
-            const bIdx = recentFiles.findIndex(f => f.filePath === b.description);
-            if (aIdx > -1 && bIdx > -1) {
-              return aIdx - bIdx;
-            } else if (aIdx > -1) {
-              return -1;
-            } else if (bIdx > -1) {
-              return 1;
-            } else {
-              return a.description.localeCompare(b.description);
-            }
-          })
-        }
-        onSelect={handleCommandPaletteSelect}
-        position='top'
-      />
+    <div className="file-tree">
+      <ul>{renderTreeNodes(data)}</ul>
     </div>
   );
 };
