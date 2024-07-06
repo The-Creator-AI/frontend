@@ -4,6 +4,7 @@ import './FileTree.scss';
 import useStore from '../../../../../state/useStore';
 import { codeChatStore$ } from '../../../store/code-chat.store';
 import { updateSelectedFiles } from '../../../store/code-chat-store.logic';
+import Checkbox from '../../../../../components/Checkbox';
 
 interface FileNode {
   name: string;
@@ -98,19 +99,14 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
 
   const renderCheckbox = (path: string) => {
     const isSelected = !!selectedFiles?.find(f => f === path);
-    const selectedChildren = selectedFiles?.filter(f => f.includes(path) && f !== path);
+    const isPartiallySelected = selectedFiles?.filter(f => f.includes(path) && f !== path);
     const selectedAncestors = selectedFiles?.filter(f => path.startsWith(f) && f !== path);
-    console.log({
-      selectedFiles,
-      selectedChildren,
-      selectedAncestors,
-    });
     return (
-      <input
-            type="checkbox"
+      <Checkbox
+            indeterminate={isPartiallySelected?.length > 0}
             className="checkbox"
             checked={isSelected || !!selectedAncestors?.length}
-            onChange={(e) => handleFileCheckboxChange(e, path)}
+            onChange={(_, e) => handleFileCheckboxChange(e, path)}
           />
     );
   };
