@@ -1,12 +1,21 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
+import { connectSocket, disconnectSocket } from "../../../gateway/store/gateway.logic";
 import { resetAppStore } from "../../store/code-chat-store.logic";
 import ChatBox from "./ChatBox";
 
 const expect = chai.expect
 
 describe('<ChatBox />', () => {
+  before(() => {
+    connectSocket();    
+  });
+
+  after(() => {
+    disconnectSocket();
+  });
+
   beforeEach(() => {
     resetAppStore();
     cy.mount(<ChatBox setPreviewImage={() => { }} />)

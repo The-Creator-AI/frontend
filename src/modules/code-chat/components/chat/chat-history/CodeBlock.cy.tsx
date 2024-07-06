@@ -1,7 +1,16 @@
 import React from 'react'
 import CodeBlock from './CodeBlock'
+import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
 
 describe('<CodeBlock />', () => {
+  before(() => {
+    connectSocket();    
+  });
+
+  after(() => {
+    disconnectSocket();
+  });
+
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
     cy.mount(<CodeBlock children={`{

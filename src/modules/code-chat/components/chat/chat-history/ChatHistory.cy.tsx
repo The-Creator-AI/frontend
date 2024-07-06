@@ -1,3 +1,4 @@
+import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
 import ChatHistory from './ChatHistory';
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 
@@ -19,6 +20,14 @@ const mockChatHistory: ChatMessageType[] = [
 ];
 
 describe('<ChatHistory />', () => {
+  before(() => {
+    connectSocket();    
+  });
+
+  after(() => {
+    disconnectSocket();
+  });
+
   it('renders chat history correctly', () => {
     cy.mount(<ChatHistory />);
 

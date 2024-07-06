@@ -1,10 +1,19 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
+import { connectSocket, disconnectSocket } from '../gateway/store/gateway.logic';
 import Research from './Research';
 import { resetResearchStore } from './store/research-store.logic';
 
 describe('Research Component', () => {
+    before(() => {
+        connectSocket();
+    });
+
+    after(() => {
+        disconnectSocket();
+    });
+
     beforeEach(() => {
         resetResearchStore();
         cy.mount(<Research />);

@@ -1,4 +1,5 @@
 import Providers from '../../../../../Providers';
+import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
 import { updateCurrentPath } from '../../../store/code-chat-store.logic';
 import FileTree from './FileTree';
 
@@ -21,7 +22,15 @@ const mockTreeData = {
   }]
 }
 
-describe.skip('<FileTree />', () => {
+describe('<FileTree />', () => {
+  before(() => {
+    connectSocket();    
+  });
+
+  after(() => {
+    disconnectSocket();
+  });
+
   beforeEach(() => {
     cy.mount(<Providers>
       <FileTree
@@ -43,7 +52,7 @@ describe.skip('<FileTree />', () => {
     cy.get('.tree').should('exist');
   });
 
-  it.only('displays the file tree structure', () => {
+  it('displays the file tree structure', () => {
     cy.get('.tree-node').should('have.length', 1);
     cy.get('.tree-node').each(($el, index) => {
       cy.wrap($el).should('contain', 'src');
