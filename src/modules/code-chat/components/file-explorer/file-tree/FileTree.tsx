@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import './FileTree.scss';
 import useStore from '../../../../../state/useStore';
 import { codeChatStore$ } from '../../../store/code-chat.store';
-import { updateSelectedFiles } from '../../../store/code-chat-store.logic';
+import { updateRecentFiles, updateSelectedFiles } from '../../../store/code-chat-store.logic';
 import Checkbox from '../../../../../components/Checkbox';
+import CommandPalette, { Command } from '../../command-palette/CommandPalette';
 
 interface FileNode {
   name: string;
@@ -18,10 +19,46 @@ interface FileTreeProps {
 
 const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
-  const { selectedFiles } = useStore(codeChatStore$);
+  const { selectedFiles, recentFiles } = useStore(codeChatStore$);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  const handleCommandPaletteSelect = useCallback(async (file: Command<string>) => {
+    file.description && handleNodeClick({} as any, { name: file.title }, file.description);
+    setIsCommandPaletteOpen(false);
+  }, [recentFiles]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.metaKey &&
+        event.key === 'p'
+      ) {
+        event.preventDefault();
+        setIsCommandPaletteOpen(!isCommandPaletteOpen);
+      }
+
+      if (isCommandPaletteOpen) {
+        switch (event.key) {
+          case 'Escape':
+            event.preventDefault();
+            setIsCommandPaletteOpen(false);
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    // Add and remove the event listener
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCommandPaletteOpen]);
 
   const handleNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, node: FileNode, path: string) => {
-    if ((e.target as HTMLElement).classList.contains('checkbox')) {
+    console.log({ e, node, path });
+    if ((e.target as HTMLElement)?.classList?.contains('checkbox')) {
       return;
     }
     const isDirectory = Array.isArray(node.children);
@@ -34,6 +71,8 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
       });
     } else {
       onFileClick && onFileClick(path);
+      const existingRecentFiles = recentFiles.filter(f => f !== path);
+      updateRecentFiles([path, ...existingRecentFiles || []]);
     }
   };
 
@@ -153,6 +192,17 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   return (
     <div className="file-tree">
       <ul>{renderTreeNodes(data)}</ul>
+      <CommandPalette<string>
+        isOpen={isCommandPaletteOpen}
+        placeholder="Search for files..."
+        commands={recentFiles?.map(f => ({
+          id: f,
+          title: f.split('/').pop() || '',
+          description: f,
+        })) || []}
+        onSelect={handleCommandPaletteSelect}
+        position='top'
+      />
     </div>
   );
 };
