@@ -51,15 +51,12 @@
             }
         }
     
-        // &.user {
-        //     background-color: #3b444e;
-        //     color: white;
-        //     text-align: right;
-        //     font-weight: bold;
-        // }
+        &.user {
+            border: 1px solid #66e8e8;
+        }
     
-        &.bot, &.user {
-         //   
+        &.bot {
+            border: 1px solid #e86666;
         }
 
         .sender-badge {
