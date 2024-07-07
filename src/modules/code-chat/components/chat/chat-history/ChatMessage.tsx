@@ -5,6 +5,7 @@ import useChat from "../useChat";
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 import "./ChatHistory.scss"; // Import your CSS file
 import CodeBlock from "./CodeBlock";
+import { FaUser, FaUserAstronaut } from "react-icons/fa";
 
 
 interface ChatMessageProps {
@@ -41,6 +42,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 }`}
             ref={messageRef}
         >
+            <div className="sender-badge">
+                {message.user === "user" && <FaUser />}
+                {message.user === "bot" && <FaUserAstronaut />}
+            </div>
             <div className="message-content">
                 {message.user === "bot" && (
                     message.model ? (

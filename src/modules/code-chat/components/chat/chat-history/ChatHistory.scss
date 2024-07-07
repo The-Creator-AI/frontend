@@ -18,15 +18,18 @@
     
     .message {
         margin-bottom: 8px;
+        margin-left: 50px;
         padding: 8px 12px;
         border-radius: 4px;
         position: relative; // To position the delete icon
+        background-color: #f0f0f0;
+        text-align: left;
+        margin-bottom: 35px;
 
         .expand-collapse-button {
             position: relative; /* Ensure the button is positioned relative to the message */
             z-index: 1; /* Place the button above the gradient overlay */
             color: black;
-            background-color: white;
         } 
 
         &.collapsed {
@@ -48,19 +51,22 @@
             }
         }
     
-        &.user {
-            background-color: #007bff;
-            color: white;
-            text-align: right;
-        }
+        // &.user {
+        //     background-color: #3b444e;
+        //     color: white;
+        //     text-align: right;
+        //     font-weight: bold;
+        // }
     
-        &.bot {
-            background-color: #f0f0f0;
-            text-align: left;
+        &.bot, &.user {
+         //   
         }
-    
-        .user {
-            font-weight: bold;
+
+        .sender-badge {
+            position: absolute;
+            top: 4px;
+            left: -40px;
+            font-size: 22px;
         }
     
         .message-content {
@@ -73,7 +79,7 @@
             right: 5px; // Adjust horizontal position
             cursor: pointer;
             font-size: 16px; // Adjust icon size
-            color: #888; // Light gray color
+            color: #88888852;
     
             &:hover {
                 color: #333; // Darker gray on hover
