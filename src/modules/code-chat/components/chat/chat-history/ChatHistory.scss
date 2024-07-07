@@ -109,6 +109,7 @@
         word-wrap: break-word; /* Add word-wrap to enable line breaks */
 
         pre {
+            position: relative;
             background-color: #dcdcdc;
             padding: 10px;
             margin: 10px 0;
@@ -122,6 +123,9 @@
 
             .copy-icon {
                 cursor: pointer;
+                position: absolute;
+                bottom: -10px;
+                right: 0;
             }
         }
     

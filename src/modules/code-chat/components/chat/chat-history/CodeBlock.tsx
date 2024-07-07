@@ -18,7 +18,7 @@ const CodeBlock = ({ children, className , node }) => {
 
     return jsonCode?.plan_title ? <PlanDisplay plan={jsonCode} /> : (<pre className={className}>
             <span className="copy-icon" onClick={handleCopy}>
-                <CopyOutlined style={{ fontSize: '16px', color: copied ? '#1890ff' : '#888' }} />
+                <CopyOutlined style={{ fontSize: '22px', color: copied ? '#1890ff' : '#888' }} />
             </span>
             <code>{children}</code>
         </pre>
