@@ -72,14 +72,19 @@
     
         .delete-icon {
             position: absolute;
-            top: 5px; // Adjust vertical position
-            right: 5px; // Adjust horizontal position
+            top: 5px;
+            right: 5px;
             cursor: pointer;
-            font-size: 16px; // Adjust icon size
-            color: #88888852;
+            font-size: 16px;
+            border: 1px solid #00000024;
+            border-radius: 3px;
+            padding: 2px;
+            color: #0000001c;
+            transition: all 0.2s ease-in-out;
     
             &:hover {
-                color: #333; // Darker gray on hover
+                color: #333;
+                border: 1px solid #333;
             }
         }
     }

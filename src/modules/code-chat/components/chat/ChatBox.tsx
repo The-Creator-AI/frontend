@@ -15,8 +15,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
   const { selectedAgent, currentPath, selectedFiles } = useStore(codeChatStore$);
-  const { sendMessage, handleTokenCount, tokenCount, chatHistory } = useChat();
+  const { sendMessage, handleTokenCount, tokenCount, chatHistory, isLoading } = useChat();
   const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
+  const sendDisabled = !message || isLoading;
 
   useEffect(() => {
     (async () => {
@@ -69,7 +70,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   };
 
   const handleSendMessageLocal = () => {
-    if (message || pastedImages.length > 0) {
+    if ((message || pastedImages.length > 0) && !sendDisabled) {
       sendMessage({
         agentInstruction: selectedAgent?.systemInstructions,
         agentName: selectedAgent?.name,
@@ -116,8 +117,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
         />
-        <button onClick={handleSendMessageLocal} disabled={!message}>
-          Send
+        <button onClick={handleSendMessageLocal} disabled={sendDisabled}>
+          {isLoading ? 'Bot typing...' : 'Send'}
         </button>
       </div>
       {pastedImages.length > 0 && (

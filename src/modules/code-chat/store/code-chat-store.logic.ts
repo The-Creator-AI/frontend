@@ -158,8 +158,6 @@ export const sendChatMessage = async (args: {
     });
   } catch (error) {
     console.error("Error sending message:", error);
-  } finally {
-    updateChatIsLoading(false);
   }
 };
 
@@ -192,4 +190,5 @@ export const oneBotMessageChunk = getGatewayListener(ToClient.BOT_MESSAGE_CHUNK,
 
 export const onBotMessage = getGatewayListener(ToClient.BOT_MESSAGE, (message) => {
   addBotMessage(message);
+  updateChatIsLoading(false);
 });
