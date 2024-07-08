@@ -117,7 +117,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
         />
-        <button onClick={handleSendMessageLocal} disabled={sendDisabled}>
+        <button onClick={handleSendMessageLocal} disabled={sendDisabled} title={sendDisabled ? 'Please enter a message!' : ''}>
           {isLoading ? 'Bot typing...' : 'Send'}
         </button>
       </div>
