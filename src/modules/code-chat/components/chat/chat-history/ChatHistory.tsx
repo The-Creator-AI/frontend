@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useChat from "../useChat";
 import "./ChatHistory.scss"; // Import your CSS file
 import ChatMessage from "./ChatMessage";
@@ -9,9 +9,38 @@ interface ChatHistoryProps {
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
 }) => {
-    const { chatHistory, isLoading } = useChat();
+    const { chatHistory } = useChat();
+    const isScrollAtBottom = useRef(false);
+    const chatHistoryRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (chatHistoryRef.current) {
+            chatHistoryRef.current.onscroll = () => {
+                if (chatHistoryRef.current) {
+                    const { scrollTop, scrollHeight, clientHeight } = chatHistoryRef.current;
+                    const foundScrollAtBottom = scrollTop + clientHeight >= scrollHeight;
+                    console.log({
+                        scrollTop,
+                        scrollHeight,
+                        clientHeight,
+                        foundScrollAtBottom
+                    })
+                    isScrollAtBottom.current = foundScrollAtBottom;
+                }
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        // if scroll was already at the bottom, scroll to the bottom
+        if (chatHistoryRef.current && isScrollAtBottom.current) {
+            console.log({ isScrollAtBottom })
+            chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+        }
+    }, [chatHistory]);
+
     return (
-        <div className="chat-history-popup">
+        <div className="chat-history-popup" ref={chatHistoryRef}>
             <div className="chat-history-container">
                 {[...chatHistory]
                 // .concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : [])
