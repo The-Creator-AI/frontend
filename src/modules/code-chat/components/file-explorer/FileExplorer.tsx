@@ -103,7 +103,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
               />
             ),
             collapsed: false,
-            height: 70,
+            height: 100,
           },
         ]}
       />
