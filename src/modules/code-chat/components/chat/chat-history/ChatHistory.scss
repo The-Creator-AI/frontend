@@ -26,13 +26,6 @@
         text-align: left;
         margin-bottom: 35px;
 
-        .expand-collapse-button {
-            position: relative; /* Ensure the button is positioned relative to the message */
-            z-index: 1; /* Place the button above the gradient overlay */
-            color: black;
-            cursor: pointer;
-        } 
-
         &.collapsed {
             .message-content {
                 /* Apply gradient overlay for collapsed messages */
@@ -70,6 +63,15 @@
         .message-content {
             /* No specific styling needed, it just groups the content */
         }
+
+        .expand-collapse-button {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            z-index: 1;
+            color: black;
+            cursor: pointer;
+        } 
     
         .delete-icon {
             position: absolute;
