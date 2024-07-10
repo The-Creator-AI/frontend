@@ -66,7 +66,8 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
       pathParts.forEach((part, index) => {
         currentPath += `${currentPath ? '/' : ''}${part}`;
         const node = getNodeByPath(currentPath);
-        if (node) {
+        const isLast = index === pathParts.length - 1;
+        if (node && !isLast) {
           toExpand.add(currentPath);
         }
       });
