@@ -94,7 +94,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   return (
     <div className={`chat-box`}>
       <div className="chat-box-header">
-        {/* <AgentSelector /> */}
+        <AgentSelector />
         {/* <div className="token-count"> */}
         <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}
         style={{
