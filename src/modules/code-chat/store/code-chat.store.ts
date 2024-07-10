@@ -4,6 +4,7 @@ import { Agent } from '../../../types/agent.type';
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 import { AGENTS } from '../constants';
 import { CodeChatActions } from './code-chat-store.actions';
+import { LOCAL_STORAGE_KEY, getFromLocalStorage } from '../../../utils/local-storage';
 
 
 export interface CodeChatStoreState {
@@ -26,7 +27,7 @@ export interface CodeChatStoreState {
 
 export const initialState: CodeChatStoreState = {
   currentPath: new URL(window.location.href).searchParams.get('path') || '',
-  selectedFiles: [],
+  selectedFiles: getFromLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES) as string[],
   recentFiles: [],
   agents: AGENTS.filter(agent => !agent.hidden),
   selectedAgent: null,

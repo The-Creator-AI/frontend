@@ -1,11 +1,13 @@
 export enum LOCAL_STORAGE_KEY{
   THEME = "theme",
   TIP_SHOWN = "tipShown",
+  SELECTED_FILES = "selectedFiles",
 };
 
 const localStorageDefaults = {
   [LOCAL_STORAGE_KEY.THEME]: "light",
   [LOCAL_STORAGE_KEY.TIP_SHOWN]: "false",
+  [LOCAL_STORAGE_KEY.SELECTED_FILES]: [],
 };
 
 export const getFromLocalStorage = <T>(key: LOCAL_STORAGE_KEY): T | null => {

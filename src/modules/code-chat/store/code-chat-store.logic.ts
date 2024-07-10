@@ -13,6 +13,7 @@ import config from "../../../config";
 import { sendMessage } from "../../gateway/store/gateway.logic";
 import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
 import { getGatewayListener } from "../../gateway";
+import { LOCAL_STORAGE_KEY, saveToLocalStorage } from "../../../utils/local-storage";
 
 export const resetCodeChatStore = () => {
   codeChatStoreStateSubject._next(
@@ -34,6 +35,7 @@ export const updateCurrentPath = (newPath: string) => {
 export const updateSelectedFiles = (
   newFiles: string[]
 ) => {
+  saveToLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES, newFiles);
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
