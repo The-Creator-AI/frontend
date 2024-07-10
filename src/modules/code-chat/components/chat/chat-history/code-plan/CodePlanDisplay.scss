@@ -1,0 +1,55 @@
+.code-plan-display {
+    // Overall container styles
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    user-select: none;
+}
+
+.code-plan-title {
+    // Plan title styles
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.code-plan-summary {
+    // Plan summary styles
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.code-plan-steps {
+    // List of plan steps
+    list-style: none;
+    padding: 0;
+}
+
+.recommendation {
+    // Individual step styles
+    margin-bottom: 25px;
+
+    .recommendation-description {
+        // Description of the step
+        font-size: 1rem;
+        color: #333;
+
+        .filename {
+            font-weight: bold;
+            color: #e9e9e9;
+            background-color: #656565;
+            padding: 5px;
+        }
+    }
+}
+
+.code-plan-recommendation-item {
+    // Item in the changes list
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+}

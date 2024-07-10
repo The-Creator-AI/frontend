@@ -28,7 +28,7 @@ export const initialState: CodeChatStoreState = {
   currentPath: new URL(window.location.href).searchParams.get('path') || '',
   selectedFiles: [],
   recentFiles: [],
-  agents: AGENTS,
+  agents: AGENTS.filter(agent => !agent.hidden),
   selectedAgent: null,
   chat: {
     chatHistory: [],

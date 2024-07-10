@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { CopyOutlined } from '@ant-design/icons';
 import { message } from 'antd';
-import PlanDisplay from "./plan/PlanDisplay"; 
+import PlanDisplay from "./plan/PlanDisplay";
+import CodePlanDisplay from './code-plan/CodePlanDisplay';
 
-const CodeBlock = ({ children, className , node }) => {
+const CodeBlock = ({ children, className, node }) => {
     const [copied, setCopied] = useState(false);
     const isJson = node?.properties?.className?.includes('language-json');
-    const jsonCode = isJson ? JSON.parse(children) : null;
+    const jsonCode = useMemo(() => {
+        try {
+            return isJson ? JSON.parse(children) : null;
+        } catch (error) {
+            return null;
+        }
+    }, [children]);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(children).then(() => {
@@ -16,12 +23,12 @@ const CodeBlock = ({ children, className , node }) => {
         });
     };
 
-    return jsonCode?.plan_title ? <PlanDisplay plan={jsonCode} /> : (<pre className={className}>
-            <span className="copy-icon" onClick={handleCopy}>
-                <CopyOutlined style={{ fontSize: '22px', color: copied ? '#1890ff' : '#888' }} />
-            </span>
-            <code>{children}</code>
-        </pre>
+    return jsonCode?.plan_title ? <PlanDisplay plan={jsonCode} /> : jsonCode?.code_plan ? <CodePlanDisplay plan={jsonCode} /> : (<pre className={className}>
+        <span className="copy-icon" onClick={handleCopy}>
+            <CopyOutlined style={{ fontSize: '22px', color: copied ? '#1890ff' : '#888' }} />
+        </span>
+        <code>{children}</code>
+    </pre>
     );
 };
 
