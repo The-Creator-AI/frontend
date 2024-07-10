@@ -12,7 +12,6 @@ const Tips: React.FC<TipsProps> = ({ onClose }) => {
   // Check if the tip has been shown before
   useEffect(() => {
     const hasShownTip = getFromLocalStorage(LOCAL_STORAGE_KEY.TIP_SHOWN);
-    console.log({ hasShownTip })
     if (hasShownTip === "true") {
       setShowTip(false); // Hide the tip if it has been shown
     } else {

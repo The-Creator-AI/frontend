@@ -56,6 +56,28 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
     };
   }, [isCommandPaletteOpen]);
 
+  useEffect(() => {
+    // If selectedFiles changes, expand the corresponding nodes
+    const toExpand = new Set<string>();
+    selectedFiles?.forEach((selectedFile) => {
+      const pathParts = selectedFile.split('/');
+      // Starting from the root, expand each directory in the path
+      let currentPath = '';
+      pathParts.forEach((part, index) => {
+        currentPath += `${currentPath ? '/' : ''}${part}`;
+        const node = getNodeByPath(currentPath);
+        if (node) {
+          toExpand.add(currentPath);
+        }
+      });
+    });
+
+    setExpandedNodes(prevExpandedNodes => {
+      const newExpandedNodes = [...prevExpandedNodes].filter(path => !toExpand.has(path));
+      return [...newExpandedNodes, ...Array.from(toExpand)];
+    });
+  }, [selectedFiles, data]);
+
   const handleNodeClick = (e: React.MouseEvent<HTMLElement, MouseEvent>, node: FileNode, path: string) => {
     if ((e.target as HTMLElement)?.classList?.contains('checkbox')) {
       return;
@@ -127,11 +149,11 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
 
     // Remove all children and push this file into selectedFiles
     const newSelectedFiles = isSelected
-    ? selectedFiles?.filter(f => f !== path)
-    : [
-      ...selectedFiles.filter(f => !f.includes(path)),
-      path
-    ];
+      ? selectedFiles?.filter(f => f !== path)
+      : [
+        ...selectedFiles.filter(f => !f.includes(path)),
+        path
+      ];
     updateSelectedFiles(newSelectedFiles);
   };
 
@@ -141,18 +163,18 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
     const selectedAncestors = selectedFiles?.filter(f => path.startsWith(f) && f !== path);
     return (
       <Checkbox
-            indeterminate={isPartiallySelected?.length > 0}
-            className="checkbox"
-            checked={isSelected || !!selectedAncestors?.length}
-            onChange={(_, e) => handleFileCheckboxChange(e, path)}
-          />
+        indeterminate={isPartiallySelected?.length > 0}
+        className="checkbox"
+        checked={isSelected || !!selectedAncestors?.length}
+        onChange={(_, e) => handleFileCheckboxChange(e, path)}
+      />
     );
   };
 
 
   const renderTreeNodes = (nodes: FileNode[], parentPath = '') => {
     return nodes?.map((node) => {
-      const path = `${parentPath}${node.name}`; 
+      const path = `${parentPath}${node.name}`;
       const isExpanded = expandedNodes.includes(path);
       const isSelected = selectedFiles?.includes(path);
       const isDirectory = Array.isArray(node.children);
