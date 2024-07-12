@@ -20,6 +20,7 @@ interface CodePlanDisplayProps {
 const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const { agents, selectedFiles, currentPath } = useStore(codeChatStore$);
     const codePlanAgent = agents?.find((agent) => agent.name === "Code Plan");
+    const stubbedCodeAgent = agents?.find((agent) => agent.name === "Stubbed Code");
     const { sendMessage } = useChat();
 
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
@@ -35,6 +36,16 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
             selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
     };
+    // Handler for "Get Code" button
+    const handleGetCode = async (filename: string, index: number) => {
+        console.log(`Requesting code for: ${filename}`);
+        sendMessage({
+            agentInstruction: stubbedCodeAgent?.systemInstructions,
+            agentName: stubbedCodeAgent?.name,
+            message: `Can you give me the code for ${filename}?`,
+            selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
+        });
+    }
     // Handler for editing a recommendation
     const handleEditRecommendation = (indices: [number, number], filename: string, recommendation: string) => {
         setEditingRecommendationIndices(indices);
@@ -86,6 +97,14 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                     icon={<PlusOutlined />}
                                     onClick={() => handleMoreRecommendations(step.filename, stepIndex as number)}
                                     className="more-recommendations-button"
+                                />
+                            </Tooltip>
+                            <Tooltip title="Get Code">
+                                <Button
+                                    type="link"
+                                    icon={<CopyOutlined />}
+                                    onClick={() => handleGetCode(step.filename, stepIndex as number)}
+                                    className="get-code-button"
                                 />
                             </Tooltip>
                         </span>
