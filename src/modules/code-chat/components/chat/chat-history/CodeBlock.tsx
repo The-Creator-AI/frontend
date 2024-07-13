@@ -23,13 +23,35 @@ const CodeBlock = ({ children, className, node }) => {
         });
     };
 
-    return jsonCode?.plan_title ? <PlanDisplay plan={jsonCode} /> : jsonCode?.code_plan ? <CodePlanDisplay plan={jsonCode} /> : (<pre className={className}>
+    const renderDefaultContent = () => {
+        return <pre className={className}>
         <span className="copy-icon" onClick={handleCopy}>
             <CopyOutlined style={{ fontSize: '22px', color: copied ? '#1890ff' : '#888' }} />
         </span>
         <code>{children}</code>
-    </pre>
-    );
+    </pre>;
+    };
+
+    const renderContent = () => {
+        if (jsonCode) {
+            if (jsonCode.plan_title) {
+                return   <PlanDisplay plan={jsonCode} /> ;
+            }
+
+            if (jsonCode.code_plan) {
+                return <CodePlanDisplay plan={jsonCode} />;
+            }
+
+            if (jsonCode.acceptance_criteria) {
+                return renderDefaultContent();
+            }
+
+            return renderDefaultContent();
+        }
+        return renderDefaultContent();
+    }
+
+    return renderContent();
 };
 
 export default CodeBlock;
