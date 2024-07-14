@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.3.0",
     "antd": "^5.18.0",
     "axios": "^1.7.2",
+    "firebase": "^10.12.3",
     "font-awesome": "^4.7.0",
     "react": "^18.3.1",
     "react-accessible-treeview": "^2.9.0",

@@ -3,6 +3,14 @@ import Providers from './Providers';
 import './index.scss';
 import reportWebVitals from './reportWebVitals';
 import RoutesRenderer from './RoutesRenderer';
+import { initializeApp } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
+import { firebaseConfig } from './utils/firebase-app';
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
