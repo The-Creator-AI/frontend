@@ -1,0 +1,12 @@
+{
+    "title": "Tips",
+    "description": "The Tips feature provides helpful and contextual guidance to users, promoting efficient use of the application and familiarizing them with key functionalities.",
+    "acceptance_criteria": [
+        "The Tips feature displays a brief, informative message to the user, highlighting a specific functionality or shortcut.",
+        "Tips are presented in a non-intrusive way, typically as a small popup or overlay.",
+        "Tips are displayed as per the policy or guidelines set by the application owner.",
+        "Users can dismiss the Tips message by clicking on a designated button or by closing the popup.",
+        "Tips are dynamically triggered based on user actions or the current state of the application.",
+        "Tips are contextually relevant, providing guidance that aligns with the user's current activity."
+    ]
+}
