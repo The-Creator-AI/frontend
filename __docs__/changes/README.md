@@ -7,3 +7,4 @@ This section contains documentation for proposed changes to the frontend applica
 * [Code Plan Agent](./code-plan-agent.change.json)
 * [File Tree](./file-tree.change.json)
 * [Save Chat](./save-chat.change.json)
+* [Theme Support](./theme-support.change.json)
