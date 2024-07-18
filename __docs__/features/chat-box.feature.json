@@ -1,0 +1,14 @@
+{
+    "title": "Chat Box",
+    "description": "The Chat Box is a key component within the Chat feature, providing the user interface for interacting with the AI assistant. It facilitates sending messages, viewing message history, and provides feedback on the token count and agent selection.",
+    "acceptance_criteria": [
+        "The chat box has a user-friendly input area for typing messages, including a placeholder for guidance.",
+        "The chat box includes a send button to send messages, indicating the action to the user.",
+        "The send button is disabled when the chat box is empty.",
+        "The send button has text 'Bot Typing...' when loading the response.",
+        "The chat box displays a visual indication of the number of tokens used in the current message.",
+        "The token count color changes to indicate the remaining token limit, providing visual feedback to the user.",
+        "The chat box allows users to paste images into the input area, which will be processed and displayed in the chat history.",
+        "The component supports selecting an agent for specific tasks, with clear visual indication of the selected agent."
+    ]
+}

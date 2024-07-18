@@ -1,0 +1,12 @@
+{
+    "title": "File Tree",
+    "description": "Implement a feature to allow users to search for files within the file tree and copy the path of a selected file to the clipboard.",
+    "acceptance_criteria": [
+        "The component allows users to search for files within the file tree.",
+        "The component provides a mechanism for users to copy the path of a selected file to the clipboard.",
+        "The component handles events such as right-clicking on a file, allowing for additional actions (e.g., opening the file in a new tab, renaming, deleting).",
+        "The component allows users to easily select multiple files or directories using keyboard shortcuts (e.g., Ctrl+A to select all, Shift+click to select multiple files).",
+        "The component supports drag and drop functionality for files and directories, allowing for easy movement and organization within the file tree.",
+        "The component can handle scenarios where the file tree data is initially empty and is loaded dynamically."
+    ]
+}
