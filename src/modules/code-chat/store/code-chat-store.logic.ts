@@ -6,14 +6,21 @@ import {
 } from "./code-chat.store";
 import { Agent } from "../../../types/agent.type";
 import { CodeChatActions } from "./code-chat-store.actions";
-import { BotMessageChunk, ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
+import {
+  BotMessageChunk,
+  ChatMessageType,
+  PlanType,
+} from "@The-Creator-AI/fe-be-common/dist/types";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import config from "../../../config";
 import { sendMessage } from "../../gateway/store/gateway.logic";
 import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
 import { getGatewayListener } from "../../gateway";
-import { LOCAL_STORAGE_KEY, saveToLocalStorage } from "../../../utils/local-storage";
+import {
+  LOCAL_STORAGE_KEY,
+  saveToLocalStorage,
+} from "../../../utils/local-storage";
 
 export const resetCodeChatStore = () => {
   codeChatStoreStateSubject._next(
@@ -32,9 +39,7 @@ export const updateCurrentPath = (newPath: string) => {
   );
 };
 
-export const updateSelectedFiles = (
-  newFiles: string[]
-) => {
+export const updateSelectedFiles = (newFiles: string[]) => {
   saveToLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES, newFiles);
   codeChatStoreStateSubject._next(
     {
@@ -45,9 +50,7 @@ export const updateSelectedFiles = (
   );
 };
 
-export const updateRecentFiles = (
-  newFiles: string[]
-) => {
+export const updateRecentFiles = (newFiles: string[]) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
@@ -163,19 +166,31 @@ export const sendChatMessage = async (args: {
   }
 };
 
+export const updateSavedPlans = (plans: PlanType[]) => {
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      savedPlans: plans,
+    },
+    CodeChatActions.UPDATE_SAVED_PLANS
+  );
+};
+
 const addBotMessageChunk = (message: BotMessageChunk) => {
   console.log("addBotMessageChunk", message);
-  const {chunk, ...messageWithoutChunk } = message;
+  const { chunk, ...messageWithoutChunk } = message;
   const chatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory;
-  const existingMessage = chatHistory.find((message) => message.uuid === messageWithoutChunk.uuid);
-  const newChatHistory = chatHistory.filter((message) => message.uuid !== messageWithoutChunk.uuid);
+  const existingMessage = chatHistory.find(
+    (message) => message.uuid === messageWithoutChunk.uuid
+  );
+  const newChatHistory = chatHistory.filter(
+    (message) => message.uuid !== messageWithoutChunk.uuid
+  );
   newChatHistory.push({
     ...messageWithoutChunk,
-    message: (existingMessage?.message || '') + (chunk || '')
+    message: (existingMessage?.message || "") + (chunk || ""),
   });
-  updateChatHistory([
-    ...newChatHistory,
-  ]);
+  updateChatHistory([...newChatHistory]);
 };
 
 const addBotMessage = (message: ChatMessageType) => {
@@ -186,11 +201,40 @@ const addBotMessage = (message: ChatMessageType) => {
   updateChatHistory([...newChatHistory]);
 };
 
-export const oneBotMessageChunk = getGatewayListener(ToClient.BOT_MESSAGE_CHUNK, (message) => {
-  addBotMessageChunk(message);
-});
+export const oneBotMessageChunk = getGatewayListener(
+  ToClient.BOT_MESSAGE_CHUNK,
+  (message) => {
+    addBotMessageChunk(message);
+  }
+);
 
-export const onBotMessage = getGatewayListener(ToClient.BOT_MESSAGE, (message) => {
-  addBotMessage(message);
-  updateChatIsLoading(false);
-});
+export const onBotMessage = getGatewayListener(
+  ToClient.BOT_MESSAGE,
+  (message) => {
+    addBotMessage(message);
+    updateChatIsLoading(false);
+  }
+);
+
+export const fetchSavedPlans = async () => {
+  try {
+    sendMessage(ToServer.GET_PLANS, {});
+  } catch (error) {
+    console.error("Error fetching saved plans:", error);
+  }
+}
+
+export const savePlan = async (plan: Omit<PlanType, 'id'> & { id?: number }) => {
+  try {
+    sendMessage(ToServer.SAVE_PLAN, plan);
+  } catch (error) {
+    console.error("Error saving plan:", error);
+  }
+}
+
+export const onPlans = getGatewayListener(
+  ToClient.PLANS,
+  (plans: PlanType[]) => {
+    updateSavedPlans(plans);
+  }
+);

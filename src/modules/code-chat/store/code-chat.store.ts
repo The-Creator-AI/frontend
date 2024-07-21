@@ -1,7 +1,7 @@
 import { NodeId } from 'react-accessible-treeview';
 import { Store } from '../../../state/store';
 import { Agent } from '../../../types/agent.type';
-import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
+import { ChatMessageType, PlanType } from '@The-Creator-AI/fe-be-common/dist/types';
 import { AGENTS } from '../constants';
 import { CodeChatActions } from './code-chat-store.actions';
 import { LOCAL_STORAGE_KEY, getFromLocalStorage } from '../../../utils/local-storage';
@@ -23,6 +23,7 @@ export interface CodeChatStoreState {
     filePath?: string;
     content?: string;
   };
+  savedPlans: PlanType[];
 }
 
 export const initialState: CodeChatStoreState = {
@@ -38,7 +39,8 @@ export const initialState: CodeChatStoreState = {
   tokenCount: 0,
   fileContentPopup: {
     isOpen: false,
-  }
+  },
+  savedPlans: []
 };
 
 export const codeChatStoreStateSubject = new Store<CodeChatStoreState, CodeChatActions>(initialState);

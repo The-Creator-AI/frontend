@@ -218,6 +218,10 @@ You will receive a text description of the desired code change. This description
   "description": "A description of the desired code change.",
   "code_plan": [
     {
+      command: "[command to execute]",
+      description: "[description of the command will do what it is supposed to do]",
+    },
+    {
       "filename": "[Name of the file]",
       "operation": "[Add, Modify, or Remove]",
       "recommendations": [
@@ -244,6 +248,10 @@ You will receive a text description of the desired code change. This description
   "title": "Add a sort_by_modified_date function to the data fetching utility",
   "description": "Add a \`sort_by_modified_date\` function to the data fetching utility.",
   "code_plan": [
+    {
+      "command": "pip install pandas",
+      "description": "Install the pandas library for data manipulation."
+    }.
     {
       "filename": "data_fetcher.py",
       "operation": "Add",

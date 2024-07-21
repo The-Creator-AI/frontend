@@ -1,19 +1,23 @@
 import { Button, message, Tooltip } from "antd";
 import React, { useState, useEffect } from "react";
-import { CopyOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
 import useStore from "../../../../../../state/useStore";
 import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { savePlan } from "../../../../store/code-chat-store.logic";
 
 interface CodePlanDisplayProps {
     plan: {
         title: string;
         description: string;
-        code_plan: {
+        code_plan: ({
             filename: string;
             recommendations: string[];
-        }[];
+        } | {
+            command: string;
+            description: string;
+        })[];
     };
 }
 
@@ -22,9 +26,16 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const codePlanAgent = agents?.find((agent) => agent.name === "Code Plan");
     const stubbedCodeAgent = agents?.find((agent) => agent.name === "Stubbed Code");
     const { sendMessage } = useChat();
-
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
-    const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map(step => step.recommendations || [])); // Store recommendations as a 2D array
+    const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map((step: any) => step.recommendations || [])); // Store recommendations as a 2D array
+
+    useEffect(() => {
+        savePlan({
+            title: plan.title,
+            description: plan.description,
+            code_plan: JSON.stringify(plan.code_plan, null, 2)
+        });
+    }, [plan]);
 
     // Handler for "More Recommendations" button
     const handleMoreRecommendations = async (filename: string, index: number) => {
@@ -42,7 +53,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
         sendMessage({
             agentInstruction: stubbedCodeAgent?.systemInstructions,
             agentName: stubbedCodeAgent?.name,
-            message: `Can you give me the code for ${filename}?`,
+            message: `Can you give me the updated code (as per the recommendations) for ${filename}?`,
             selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
     }
@@ -77,15 +88,33 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     // Handler for cancelling editing a recommendation
     const handleCancelEdit = () => {
         setEditingRecommendationIndices(null); // Reset the editing index
-        setRecommendations(plan.code_plan.map(step => step.recommendations || [])); // Reset the recommendations to the original plan
+        setRecommendations(plan.code_plan.map((step: any) => step.recommendations || [])); // Reset the recommendations to the original plan
     };
+
+    const handleCopy = (text: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            message.success('Code copied to clipboard!');
+        });
+    };
+
     return (
         <div className="code-plan-display">
             <h2 className="code-plan-title">{plan.title}</h2>
             <p className="code-plan-summary">{plan.description}</p>
             <ul className="recommendations">
-                {plan.code_plan.map((step, stepIndex) => (
-                    <li key={stepIndex} className="recommendation">
+                {plan.code_plan.map((step: any, stepIndex) => (
+                    step.command ? <li key={stepIndex} className="command">
+                        <span className="command-code">{step.command}</span>
+                        <Tooltip title="Copy Command">
+                                <Button
+                                    type="link"
+                                    icon={<CopyOutlined />}
+                                    onClick={() => handleCopy(step.command)}
+                                    className="get-code-button"
+                                />
+                        </Tooltip>
+                    </li>
+                    : <li key={stepIndex} className="recommendation">
                         <span className="recommendation-description">
                             <span className="filename">
                                 {step.filename}
@@ -102,7 +131,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                             <Tooltip title="Get Code">
                                 <Button
                                     type="link"
-                                    icon={<CopyOutlined />}
+                                    icon={<FileTextOutlined />}
                                     onClick={() => handleGetCode(step.filename, stepIndex as number)}
                                     className="get-code-button"
                                 />

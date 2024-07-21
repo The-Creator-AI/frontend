@@ -5,6 +5,7 @@ import FileExplorer from './components/file-explorer/FileExplorer';
 import Tips from './components/tips/Tips';
 import useStore from '../../state/useStore';
 import { codeChatStore$ } from './store/code-chat.store';
+import { fetchSavedPlans } from './store/code-chat-store.logic';
 
 
 function CodeChat() {
@@ -14,6 +15,7 @@ function CodeChat() {
   useEffect(() => {
     const paramsObject = Object.fromEntries(searchParams.entries());
     setSearchParams({ ...paramsObject, path: currentPath });
+    fetchSavedPlans();
   }, [currentPath, searchParams, setSearchParams]);
 
   return (
