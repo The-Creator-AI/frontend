@@ -26,7 +26,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
             // Add the plan content in JSON format
             {
                 user: "bot",
-                message: `\`\`\`json\n${typeof plan === 'string' ? plan : JSON.stringify(plan, null, 2)}\`\`\``,
+                message: `\`\`\`json\n${typeof plan === 'string' ? plan : JSON.stringify(plan, null, 2)}\n\`\`\``,
                 model: "gpt-3.5-turbo",
                 uuid: uuidv4(),
             },

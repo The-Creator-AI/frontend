@@ -18,13 +18,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             chatHistoryRef.current.onscroll = () => {
                 if (chatHistoryRef.current) {
                     const { scrollTop, scrollHeight, clientHeight } = chatHistoryRef.current;
-                    const foundScrollAtBottom = scrollTop + clientHeight >= scrollHeight;
-                    console.log({
-                        scrollTop,
-                        scrollHeight,
-                        clientHeight,
-                        foundScrollAtBottom
-                    })
+                    const foundScrollAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
                     isScrollAtBottom.current = foundScrollAtBottom;
                 }
             }
@@ -34,7 +28,6 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
     useEffect(() => {
         // if scroll was already at the bottom, scroll to the bottom
         if (chatHistoryRef.current && isScrollAtBottom.current) {
-            console.log({ isScrollAtBottom })
             chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
         }
     }, [chatHistory]);
