@@ -15,7 +15,7 @@ const AgentSelector: React.FC = () => {
 
     return (
         <div className="agent-selector-container"> 
-            <label htmlFor="agentSelect">Choose an Agent:</label>
+            {/* <label htmlFor="agentSelect">Choose an Agent:</label> */}
             <select id="agentSelect" value={selectedAgent?.id || ''} onChange={handleAgentChange}>
                 <option value="">None</option>
                 {agents?.map((agent) => (
