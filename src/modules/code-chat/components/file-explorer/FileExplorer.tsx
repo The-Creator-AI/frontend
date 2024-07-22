@@ -13,6 +13,7 @@ import FileContentPopup from "./FileContentPopup";
 import "./FileExplorer.scss";
 import FileExplorerSidebar from "./FileExplorerSidebar";
 import FileTree from "./file-tree/FileTree";
+import SavedPlans from "./saved-plans/SavedPlans";
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
@@ -83,13 +84,13 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       <FileExplorerSidebar
         ref={sideBarRef}
         sections={[
-          // {
-          //   id: "settings",
-          //   title: "Selections History",
-          //   content: <div>Selections History</div>,
-          //   collapsed: false,
-          //   height: 30,
-          // },
+          {
+            id: "saved-plans",
+            title: "Saved Plans",
+            content: <SavedPlans />,
+            collapsed: false,
+            height: 30,
+          },
           {
             id: "files",
             title: "File Explorer",
@@ -103,7 +104,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
               />
             ),
             collapsed: false,
-            height: 100,
+            height: 70,
           },
         ]}
       />
