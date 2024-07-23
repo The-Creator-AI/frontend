@@ -11,7 +11,7 @@ import {
     deletePlan,
     savePlan,
     updateChatHistory,
-    updateFileContentPopup,
+    updateStage,
 } from "../../../store/code-chat-store.logic";
 import { codeChatStore$ } from "../../../store/code-chat.store";
 import "./SavedPlans.scss";

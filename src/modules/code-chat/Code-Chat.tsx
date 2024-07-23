@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './Code-Chat.scss';
-import FileExplorer from './components/file-explorer/FileExplorer';
+import Arena from './components/arena/Arena';
 import Tips from './components/tips/Tips';
 import useStore from '../../state/useStore';
 import { codeChatStore$ } from './store/code-chat.store';
@@ -22,7 +22,7 @@ function CodeChat() {
   return (
     <div className="CodeChat">
       <Tips />
-      <FileExplorer />
+      <Arena />
     </div>
   );
 }

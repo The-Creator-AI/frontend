@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { DraggableCore, DraggableEventHandler } from "react-draggable";
 import { MdChevronRight } from "react-icons/md";
-import "./FileExplorerSidebar.scss";
+import "./ArenaSidebar.scss";
 
-interface FileExplorerSidebarProps {
+interface ArenaSidebarProps {
   sections: {
     id: string;
     title: string;
@@ -13,10 +13,10 @@ interface FileExplorerSidebarProps {
   }[];
 }
 
-const FileExplorerSidebar = React.forwardRef<
+const ArenaSidebar = React.forwardRef<
   HTMLDivElement,
-  FileExplorerSidebarProps
->((props: FileExplorerSidebarProps, ref) => {
+  ArenaSidebarProps
+>((props: ArenaSidebarProps, ref) => {
   const [sections, setSections] = useState(props.sections);
   const sectionRefs = sections.map(() => React.createRef<HTMLDivElement>());
 
@@ -124,4 +124,4 @@ const FileExplorerSidebar = React.forwardRef<
   );
 });
 
-export default FileExplorerSidebar;
+export default ArenaSidebar;

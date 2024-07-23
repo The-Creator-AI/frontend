@@ -109,14 +109,14 @@ export const updateChatIsLoading = (isLoading: boolean) => {
   );
 };
 
-export const updateFileContentPopup = (
-  newState: Partial<CodeChatStoreState["fileContentPopup"]>
+export const updateStage = (
+  newState: Partial<CodeChatStoreState["stage"]>
 ) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
-      fileContentPopup: {
-        ...codeChatStoreStateSubject.getValue().fileContentPopup,
+      stage: {
+        ...codeChatStoreStateSubject.getValue().stage,
         ...newState,
       },
     },

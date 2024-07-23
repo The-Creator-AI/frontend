@@ -1,9 +1,9 @@
 import React from 'react'
-import FileExplorer from './FileExplorer'
+import Arena from './Arena'
 import Providers from '../../../../Providers'
 import { connectSocket, disconnectSocket } from '../../../gateway/store/gateway.logic';
 
-describe('<FileExplorer />', () => {
+describe('<Arena />', () => {
   before(() => {
     connectSocket();    
   });
@@ -14,6 +14,6 @@ describe('<FileExplorer />', () => {
 
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.mount(<Providers><FileExplorer /></Providers>)
+    cy.mount(<Providers><Arena /></Providers>)
   })
 })

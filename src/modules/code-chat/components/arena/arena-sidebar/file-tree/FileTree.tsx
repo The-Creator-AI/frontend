@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import './FileTree.scss';
-import useStore from '../../../../../state/useStore';
-import { codeChatStore$ } from '../../../store/code-chat.store';
-import { updateRecentFiles, updateSelectedFiles } from '../../../store/code-chat-store.logic';
-import Checkbox from '../../../../../components/Checkbox';
-import CommandPalette, { Command } from '../../command-palette/CommandPalette';
+import useStore from '../../../../../../state/useStore';
+import { codeChatStore$ } from '../../../../store/code-chat.store';
+import { updateRecentFiles, updateSelectedFiles } from '../../../../store/code-chat-store.logic';
+import Checkbox from '../../../../../../components/Checkbox';
+import CommandPalette, { Command } from '../../../command-palette/CommandPalette';
 
 interface FileNode {
   name: string;

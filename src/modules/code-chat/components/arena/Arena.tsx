@@ -5,22 +5,22 @@ import { DraggableCore } from "react-draggable";
 import config from "../../../../config";
 import useStore from "../../../../state/useStore";
 import {
-  updateFileContentPopup
+  updateStage
 } from "../../store/code-chat-store.logic";
 import { codeChatStore$ } from "../../store/code-chat.store";
 import Chat from "../chat/Chat";
-import FileContentPopup from "./FileContentPopup";
-import "./FileExplorer.scss";
-import FileExplorerSidebar from "./FileExplorerSidebar";
-import FileTree from "./file-tree/FileTree";
-import SavedPlans from "./saved-plans/SavedPlans";
-import SavedChats from "./saved-chats/SavedChats";
+import FileContentPopup from "./file-content-popup/FileContentPopup";
+import "./Arena.scss";
+import ArenaSidebar from "./arena-sidebar/ArenaSidebar";
+import FileTree from "./arena-sidebar/file-tree/FileTree";
+import SavedPlans from "./arena-sidebar/saved-plans/SavedPlans";
+import SavedChats from "./arena-sidebar/saved-chats/SavedChats";
 
-interface FileExplorerProps {
+interface ArenaProps {
   initialSplitterPosition?: number;
 }
 
-const FileExplorer: React.FC<FileExplorerProps> = ({
+const Arena: React.FC<ArenaProps> = ({
   initialSplitterPosition = 20,
 }) => {
   // State to manage the splitter position between file explorer and chat
@@ -30,11 +30,10 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   // Refs for sidebar and file content sections
   const sideBarRef = useRef<HTMLDivElement>(null);
   const fileContentRef = useRef<HTMLDivElement>(null);
-
   // State to track the currently active file (not in use currently)
   // const [activeFile, setActiveFile] = useState<string | null>(null);
 
-  const { currentPath, selectedFiles } = useStore(codeChatStore$);
+  const { currentPath, stage } = useStore(codeChatStore$);
 
   // Fetch file tree data based on the current path using react-query
   const { data: fileTreeData } = useQuery({
@@ -79,10 +78,21 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   //   updateSelectedFiles([]); // Clear any selected files
   // };
 
+  const renderStage = () => {
+    switch(stage?.type) {
+      case 'file':
+        return <FileContentPopup/>
+      case 'chat':
+      case 'plan':
+      default:
+        return <Chat/>
+    }
+  };
+
   return (
     <div className="file-viewer">
       {/* Sidebar component with file explorer and other sections */}
-      <FileExplorerSidebar
+      <ArenaSidebar
         ref={sideBarRef}
         sections={[
           {
@@ -107,7 +117,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
               <FileTree
                 data={fileTreeData?.children || []}
                 onFileClick={(filePath) =>
-                  updateFileContentPopup({ filePath, isOpen: true })
+                  updateStage({ type: 'file', filePath })
                 }
               />
             ),
@@ -127,12 +137,11 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       <div className="chat-section" ref={fileContentRef}>
         {/* Display content for the first selected file (or handle multiple files differently if needed) */}
         {/* {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />}  */}
-        <Chat />
+        {renderStage()}
       </div>
       {/* Popup to display file content */}
-      <FileContentPopup />
     </div>
   );
 };
 
-export default FileExplorer;
+export default Arena;

@@ -2,13 +2,14 @@ import { ChatType } from "@The-Creator-AI/fe-be-common/dist/types";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Input, List, Popconfirm, Typography, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import useStore from "../../../../../state/useStore";
+import useStore from "../../../../../../state/useStore";
 import {
   deleteChat,
   saveChat,
   updateChatHistory,
-} from "../../../store/code-chat-store.logic";
-import { codeChatStore$ } from "../../../store/code-chat.store";
+  updateStage,
+} from "../../../../store/code-chat-store.logic";
+import { codeChatStore$ } from "../../../../store/code-chat.store";
 import "./SavedChats.scss";
 
 interface SavedChatsProps {}
@@ -41,7 +42,8 @@ useEffect(() => {
 
   // Function to handle clicking on a saved chat
   const handleChatClick = (chat: ChatType) => {
-    updateChatHistory(chat.chat_history); // Update chat history with the chat
+    updateChatHistory(chat.chat_history);
+    updateStage({ type: 'chat' });
   };
 
   // Function to handle deleting a saved chat

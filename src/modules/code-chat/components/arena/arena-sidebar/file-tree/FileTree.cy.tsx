@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
-import Providers from '../../../../../Providers';
-import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
-import { resetCodeChatStore } from '../../../store/code-chat-store.logic';
+import Providers from '../../../../../../Providers';
+import { connectSocket, disconnectSocket } from '../../../../../gateway/store/gateway.logic';
+import { resetCodeChatStore } from '../../../../store/code-chat-store.logic';
 import FileTree from './FileTree';
 
 const expect = chai.expect

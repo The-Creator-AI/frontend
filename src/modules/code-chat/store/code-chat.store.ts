@@ -24,10 +24,12 @@ export interface CodeChatStoreState {
     isLoading: boolean;
   };
   tokenCount: number;
-  fileContentPopup: {
-    isOpen: boolean;
+  stage: {
+    type: 'file',
     filePath?: string;
     content?: string;
+  } | {
+    type: 'plan' | 'chat'
   };
   savedPlans: PlanType[];
   savedChats: ChatType[];
@@ -46,8 +48,8 @@ export const initialState: CodeChatStoreState = {
     isLoading: false,
   },
   tokenCount: 0,
-  fileContentPopup: {
-    isOpen: false,
+  stage: {
+    type: 'chat'
   },
   savedPlans: [],
   savedChats: [],
