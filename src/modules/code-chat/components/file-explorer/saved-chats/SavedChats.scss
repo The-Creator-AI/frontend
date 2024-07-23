@@ -17,11 +17,13 @@
     }
 
     .delete-chat {
+        transition: all 0.2s ease-in-out;
         // Style the delete link
         color: #ff4d4d; // Red color for delete
         font-weight: bold;
         margin-right: 8px;
-        opacity: 0.3;
+        font-size: 20px;
+        opacity: 0.2;
 
         &:hover {
             opacity: 1; // Reduce opacity on hover

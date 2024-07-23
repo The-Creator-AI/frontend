@@ -38,7 +38,14 @@ const SavedChats: React.FC<SavedChatsProps> = () => {
             renderItem={(item) => (
                 <List.Item
                     className="saved-chat-item"
-                    onClick={() => handleChatClick(item)}
+                    onClick={(e) => {
+                        console.log({ e });
+                        // Prevent handleChatClick from being called when clicking the delete icon
+                        if ((e.target as HTMLElement).parentElement?.classList.contains('delete-chat')) {
+                            return;
+                        }
+                        handleChatClick(item);
+                    }}
                 >
                     <List.Item.Meta
                         title={<Typography.Text className="saved-chat-title" title={item.title}>{item.title}</Typography.Text>}

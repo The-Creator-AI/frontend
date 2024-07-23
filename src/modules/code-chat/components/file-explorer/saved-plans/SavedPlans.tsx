@@ -1,11 +1,12 @@
 import React from "react";
-import { List, Typography } from "antd";
+import { List, Popconfirm, Typography, message } from "antd";
 import { codeChatStore$ } from "../../../store/code-chat.store";
 import useStore from "../../../../../state/useStore";
 import { v4 as uuidv4 } from "uuid";
 import './SavedPlans.scss';
-import { updateChatHistory } from "../../../store/code-chat-store.logic";
+import { deletePlan, updateChatHistory } from "../../../store/code-chat-store.logic";
 import { ChatMessageType, PlanType } from "@The-Creator-AI/fe-be-common/dist/types";
+import { DeleteOutlined } from '@ant-design/icons';
 
 interface SavedPlansProps {
 }
@@ -35,6 +36,18 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
         updateChatHistory(chatHistory); // Update chat history with the plan
     };
 
+
+    // Function to handle deleting a saved plan
+    const handleDeletePlan = async (id: number) => {
+        try {
+            await deletePlan(id);
+            message.success("Chat deleted successfully!");
+        } catch (error) {
+            console.error("Error deleting chat:", error);
+            message.error("Failed to delete chat.");
+        }
+    };
+
     return (
         <List
             itemLayout="horizontal"
@@ -42,12 +55,32 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
             renderItem={(item) => (
                 <List.Item
                     className="saved-plan-item"
-                    onClick={() => handlePlanClick(item)}
+                    onClick={(e) => {
+                        // Prevent handlePlanClick from being called when clicking the delete icon
+                        if ((e.target as HTMLElement).parentElement?.classList.contains('delete-plan')) {
+                            return;
+                        }
+                        handlePlanClick(item);
+                    }}
                 >
                     <List.Item.Meta
                         title={<Typography.Text className="saved-plan-title" title={item.title}>{item.title}</Typography.Text>}
                     // description={item.description}
                     />
+                    {/* Delete button with confirmation */}
+                    <Popconfirm
+                        title="Are you sure delete this plan?"
+                        onConfirm={(e) => {
+                            e?.stopPropagation();
+                            e?.preventDefault();
+                            item.id && handleDeletePlan(item.id);
+                        }}
+                        onCancel={() => { }}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <DeleteOutlined className="delete-plan"/>
+                    </Popconfirm>
                 </List.Item>
             )}
         />
@@ -55,4 +88,3 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
 };
 
 export default SavedPlans;
-
