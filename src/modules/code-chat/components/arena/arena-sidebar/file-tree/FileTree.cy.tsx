@@ -49,7 +49,7 @@ describe('<FileTree />', () => {
       body: mockTreeData,
     }).as('repoData');
 
-    // set alias for updateFileContentPopup
+    // set alias for updateFileEditor
     cy.intercept('POST', '/creator/file-content', {
       statusCode: 200,
       body: {

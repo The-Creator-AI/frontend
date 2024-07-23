@@ -5,13 +5,13 @@ import config from '../../../../../config';
 import MonacoEditor from '@monaco-editor/react';
 import { codeChatStore$, initialState } from '../../../store/code-chat.store';
 import useStore from '../../../../../state/useStore';
-import './FileContentPopup.scss';
+import './FileEditor.scss';
 import { updateStage } from '../../../store/code-chat-store.logic';
 
-interface FileContentPopupProps {
+interface FileEditorProps {
 }
 
-const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
+const FileEditor: React.FC<FileEditorProps> = ({ }) => {
     const { currentPath, stage } = useStore(codeChatStore$, initialState);
     const filePath = stage.type === 'file' && stage.filePath;
     const content = stage.type === 'file' && stage.content;
@@ -57,5 +57,5 @@ const FileContentPopup: React.FC<FileContentPopupProps> = ({ }) => {
     );
 };
 
-export default FileContentPopup;
+export default FileEditor;
 

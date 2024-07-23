@@ -4,9 +4,9 @@ import ChatBox from './ChatBox';
 import './Chat.scss';
 import { SaveOutlined } from '@ant-design/icons';
 import { message } from 'antd';
-import useStore from '../../../../state/useStore';
-import { codeChatStore$ } from '../../store/code-chat.store';
-import { saveChat } from '../../store/code-chat-store.logic';
+import useStore from '../../../../../state/useStore';
+import { codeChatStore$ } from '../../../store/code-chat.store';
+import { saveChat } from '../../../store/code-chat-store.logic';
 
 interface ChatProps {
 }

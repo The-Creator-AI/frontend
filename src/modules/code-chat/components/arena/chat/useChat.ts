@@ -1,10 +1,10 @@
 import axios from 'axios';
-import config from '../../../../config';
-import { codeChatStore$ } from '../../store/code-chat.store';
-import useStore from '../../../../state/useStore';
+import config from '../../../../../config';
+import { codeChatStore$ } from '../../../store/code-chat.store';
+import useStore from '../../../../../state/useStore';
 import { v4 as uuidv4 } from 'uuid';
-import useDebounce from '../../../../hooks/useDebounce';
-import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../store/code-chat-store.logic';
+import useDebounce from '../../../../../hooks/useDebounce';
+import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat-store.logic';
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 
 const useChat = () => {

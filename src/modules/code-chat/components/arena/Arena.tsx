@@ -8,8 +8,8 @@ import {
   updateStage
 } from "../../store/code-chat-store.logic";
 import { codeChatStore$ } from "../../store/code-chat.store";
-import Chat from "../chat/Chat";
-import FileContentPopup from "./file-content-popup/FileContentPopup";
+import Chat from "./chat/Chat";
+import FileEditor from "./file-editor/FileEditor";
 import "./Arena.scss";
 import ArenaSidebar from "./arena-sidebar/ArenaSidebar";
 import FileTree from "./arena-sidebar/file-tree/FileTree";
@@ -81,7 +81,7 @@ const Arena: React.FC<ArenaProps> = ({
   const renderStage = () => {
     switch(stage?.type) {
       case 'file':
-        return <FileContentPopup/>
+        return <FileEditor/>
       case 'chat':
       case 'plan':
       default:

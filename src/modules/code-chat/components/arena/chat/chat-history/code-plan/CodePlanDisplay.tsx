@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
-import useStore from "../../../../../../state/useStore";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
-import { savePlan } from "../../../../store/code-chat-store.logic";
+import useStore from "../../../../../../../state/useStore";
+import { codeChatStore$ } from "../../../../../store/code-chat.store";
+import { savePlan } from "../../../../../store/code-chat-store.logic";
 
 interface CodePlanDisplayProps {
     plan: {

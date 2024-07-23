@@ -1,4 +1,4 @@
-import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
+import { connectSocket, disconnectSocket } from '../../../../../gateway/store/gateway.logic';
 import ChatHistory from './ChatHistory';
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 

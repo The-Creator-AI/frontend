@@ -4,8 +4,8 @@ import { Button } from "antd";
 import React, { useState } from "react";
 import { message } from 'antd';
 
-import { codeChatStore$ } from "../../../../store/code-chat.store";
-import useStore from "../../../../../../state/useStore";
+import { codeChatStore$ } from "../../../../../store/code-chat.store";
+import useStore from "../../../../../../../state/useStore";
 import useChat from "../../useChat";
 import "./PlanDisplay.scss"; // Add this line to import the stylesheet
 import { CopyOutlined } from '@ant-design/icons';

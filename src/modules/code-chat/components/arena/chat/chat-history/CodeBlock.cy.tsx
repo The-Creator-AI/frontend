@@ -1,6 +1,6 @@
 import React from 'react'
 import CodeBlock from './CodeBlock'
-import { connectSocket, disconnectSocket } from '../../../../gateway/store/gateway.logic';
+import { connectSocket, disconnectSocket } from '../../../../../gateway/store/gateway.logic';
 
 describe('<CodeBlock />', () => {
   before(() => {

@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 /// <reference types="chai" />
 
-import { connectSocket, disconnectSocket } from "../../../gateway/store/gateway.logic";
-import { resetCodeChatStore } from "../../store/code-chat-store.logic";
+import { connectSocket, disconnectSocket } from "../../../../gateway/store/gateway.logic";
+import { resetCodeChatStore } from "../../../store/code-chat-store.logic";
 import Chat from "./Chat";
 
 const expect = chai.expect

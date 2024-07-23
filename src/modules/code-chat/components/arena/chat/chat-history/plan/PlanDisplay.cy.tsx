@@ -1,6 +1,6 @@
 import React from 'react'
 import PlanDisplay from './PlanDisplay'
-import { connectSocket, disconnectSocket } from '../../../../../gateway/store/gateway.logic';
+import { connectSocket, disconnectSocket } from '../../../../../../gateway/store/gateway.logic';
 
 describe('<PlanDisplay />', () => {
   before(() => {

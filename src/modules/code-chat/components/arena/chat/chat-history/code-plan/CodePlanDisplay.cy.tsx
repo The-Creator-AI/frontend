@@ -2,8 +2,8 @@
 /// <reference types="chai" />
 
 import { ToServer } from '@The-Creator-AI/fe-be-common';
-import config from '../../../../../../config';
-import * as gateway from '../../../../../gateway/store/gateway.logic';
+import config from '../../../../../../../config';
+import * as gateway from '../../../../../../gateway/store/gateway.logic';
 import CodePlanDisplay from './CodePlanDisplay';
 
 const expect = chai.expect;
