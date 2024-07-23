@@ -1,7 +1,7 @@
 import { ChatType } from "@The-Creator-AI/fe-be-common/dist/types";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Input, List, Popconfirm, Typography, message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useStore from "../../../../../state/useStore";
 import {
   deleteChat,
@@ -17,6 +17,7 @@ const SavedChats: React.FC<SavedChatsProps> = () => {
   const { savedChats } = useStore(codeChatStore$);
   const [editingChatId, setEditingChatId] = useState<number | null>(null);
   const [newChatTitle, setNewChatTitle] = useState<string>("");
+  const inputRef = useRef(null);
 
 useEffect(() => {
     // On Esc key press, clear the editing state
@@ -31,6 +32,12 @@ useEffect(() => {
         document.removeEventListener("keydown", handleEscapeKey);
     }
 }, []);
+
+useEffect(() => {
+    if (inputRef.current) {
+        (inputRef.current as HTMLInputElement).focus();
+    }
+}, [editingChatId]);
 
   // Function to handle clicking on a saved chat
   const handleChatClick = (chat: ChatType) => {
@@ -97,6 +104,7 @@ useEffect(() => {
               editingChatId === item.id ? (
                 // If editing, show the input field
                 <Input
+                  ref={inputRef}
                   type="text"
                   className="saved-chat-title-input"
                   value={newChatTitle}

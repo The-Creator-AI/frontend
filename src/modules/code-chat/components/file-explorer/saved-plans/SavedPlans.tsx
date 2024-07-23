@@ -4,7 +4,7 @@ import {
 } from "@The-Creator-AI/fe-be-common/dist/types";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Input, List, Popconfirm, Typography, message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import useStore from "../../../../../state/useStore";
 import {
@@ -23,6 +23,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
 
     const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
     const [newPlanTitle, setNewPlanTitle] = useState<string>("");
+    const inputRef = useRef(null);
 
     useEffect(() => {
         // On Esc key press, clear the editing state
@@ -37,6 +38,12 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
             document.removeEventListener("keydown", handleEscapeKey);
         }
     }, []);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            (inputRef.current as HTMLInputElement).focus();
+        }
+    }, [editingPlanId]);
 
     // Function to handle clicking on a saved plan
     const handlePlanClick = (plan: PlanType) => {
@@ -122,6 +129,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
                         title={
                             editingPlanId === item.id ? (
                                 <Input
+                                    ref={inputRef}
                                     type="text"
                                     className="saved-plan-title-input"
                                     value={newPlanTitle}
