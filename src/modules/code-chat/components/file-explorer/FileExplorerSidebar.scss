@@ -1,8 +1,10 @@
 .flie-explorer-sidebar {
-    width: 300px;
     /* Adjust as needed */
     background-color: #f0f0f0;
     user-select: none;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 
     .section-resizer {
         transition: all 0.2s ease-in-out;

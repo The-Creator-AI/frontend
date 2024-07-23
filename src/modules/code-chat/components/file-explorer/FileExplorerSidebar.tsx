@@ -95,7 +95,8 @@ const FileExplorerSidebar = React.forwardRef<
             key={section.id}
             className="section"
             style={{
-              height: section.collapsed ? "40px" : `${section.height}%`,
+              // height: section.collapsed ? "40px" : `${section.height}%`,
+              // flexGrow: section.collapsed ? 0 : 1,
             }}
             ref={sectionRefs[index]}
           >
