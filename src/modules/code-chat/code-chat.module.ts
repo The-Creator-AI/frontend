@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { ModulConfig } from "../modules.types";
 import { routesPaths } from "../routes-paths";
-import { onBotMessage, onPlans, oneBotMessageChunk } from "./store/code-chat-store.logic";
+import { onBotMessage, onChats, onPlans, oneBotMessageChunk } from "./store/code-chat-store.logic";
 
 const moduleConfigs: ModulConfig[] = [{
   route: {
@@ -19,7 +19,7 @@ const moduleConfigs: ModulConfig[] = [{
       },
     },
     component: lazy(() => import("./Code-Chat")),
-    gatewayListeners: [oneBotMessageChunk, onBotMessage, onPlans]
+    gatewayListeners: [oneBotMessageChunk, onBotMessage, onPlans, onChats]
   }];
 
 export default moduleConfigs;

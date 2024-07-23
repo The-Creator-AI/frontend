@@ -1,0 +1,16 @@
+.saved-chat-item {
+    cursor: pointer;
+    padding: 0 !important;
+
+    &:hover {
+        background-color: #f5f5f5; // Light gray background on hover
+    }
+
+    .saved-chat-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        font-weight: 400;
+    }
+}

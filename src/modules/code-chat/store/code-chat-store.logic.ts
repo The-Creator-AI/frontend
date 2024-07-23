@@ -9,6 +9,7 @@ import { CodeChatActions } from "./code-chat-store.actions";
 import {
   BotMessageChunk,
   ChatMessageType,
+  ChatType,
   PlanType,
 } from "@The-Creator-AI/fe-be-common/dist/types";
 import { v4 as uuidv4 } from "uuid";
@@ -176,6 +177,16 @@ export const updateSavedPlans = (plans: PlanType[]) => {
   );
 };
 
+export const updateSavedChats = (chats: ChatType[]) => {
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      savedChats: chats,
+    },
+    CodeChatActions.UPDATE_SAVED_CHATS
+  );
+}
+
 const addBotMessageChunk = (message: BotMessageChunk) => {
   console.log("addBotMessageChunk", message);
   const { chunk, ...messageWithoutChunk } = message;
@@ -222,19 +233,46 @@ export const fetchSavedPlans = async () => {
   } catch (error) {
     console.error("Error fetching saved plans:", error);
   }
-}
+};
 
-export const savePlan = async (plan: Omit<PlanType, 'id'> & { id?: number }) => {
+export const savePlan = async (
+  plan: Omit<PlanType, "id"> & { id?: number }
+) => {
   try {
     sendMessage(ToServer.SAVE_PLAN, plan);
   } catch (error) {
     console.error("Error saving plan:", error);
   }
-}
+};
 
 export const onPlans = getGatewayListener(
   ToClient.PLANS,
   (plans: PlanType[]) => {
     updateSavedPlans(plans);
+  }
+);
+
+export const fetchSavedChats = async () => {
+  try {
+    sendMessage(ToServer.GET_CHATS, {});
+  } catch (error) {
+    console.error("Error fetching saved chats:", error);
+  }
+};
+
+export const saveChat = async (
+  chat: Omit<ChatType, "id"> & { id?: number }
+) => {
+  try {
+    sendMessage(ToServer.SAVE_CHAT, chat);
+  } catch (error) {
+    console.error("Error saving chat:", error);
+  }
+};
+
+export const onChats = getGatewayListener(
+  ToClient.CHATS,
+  (chats: ChatType[]) => {
+    updateSavedChats(chats);
   }
 );

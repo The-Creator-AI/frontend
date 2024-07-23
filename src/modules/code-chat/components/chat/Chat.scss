@@ -10,6 +10,21 @@
     flex-direction: column;
     // z-index: 2;
     /* Add any transitions or other styles for the container */
+
+    .save-chat-button {
+        position: absolute;
+        bottom: 170px;
+        right: 20px;
+        font-size: 40px;
+        z-index: 3;
+        color: #007bff;
+        cursor: pointer;
+        opacity: 0.3;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
 }
 
 .image-preview-modal {

@@ -1,11 +1,17 @@
-import { NodeId } from 'react-accessible-treeview';
-import { Store } from '../../../state/store';
-import { Agent } from '../../../types/agent.type';
-import { ChatMessageType, PlanType } from '@The-Creator-AI/fe-be-common/dist/types';
-import { AGENTS } from '../constants';
-import { CodeChatActions } from './code-chat-store.actions';
-import { LOCAL_STORAGE_KEY, getFromLocalStorage } from '../../../utils/local-storage';
-
+import { NodeId } from "react-accessible-treeview";
+import { Store } from "../../../state/store";
+import { Agent } from "../../../types/agent.type";
+import {
+  ChatMessageType,
+  PlanType,
+  ChatType,
+} from "@The-Creator-AI/fe-be-common/dist/types";
+import { AGENTS } from "../constants";
+import { CodeChatActions } from "./code-chat-store.actions";
+import {
+  LOCAL_STORAGE_KEY,
+  getFromLocalStorage,
+} from "../../../utils/local-storage";
 
 export interface CodeChatStoreState {
   currentPath: string;
@@ -24,25 +30,31 @@ export interface CodeChatStoreState {
     content?: string;
   };
   savedPlans: PlanType[];
+  savedChats: ChatType[];
 }
 
 export const initialState: CodeChatStoreState = {
-  currentPath: new URL(window.location.href).searchParams.get('path') || '',
-  selectedFiles: getFromLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES) as string[],
+  currentPath: new URL(window.location.href).searchParams.get("path") || "",
+  selectedFiles: getFromLocalStorage(
+    LOCAL_STORAGE_KEY.SELECTED_FILES
+  ) as string[],
   recentFiles: [],
-  agents: AGENTS.filter(agent => !agent.hidden),
+  agents: AGENTS.filter((agent) => !agent.hidden),
   selectedAgent: null,
   chat: {
     chatHistory: [],
-    isLoading: false
+    isLoading: false,
   },
   tokenCount: 0,
   fileContentPopup: {
     isOpen: false,
   },
-  savedPlans: []
+  savedPlans: [],
+  savedChats: [],
 };
 
-export const codeChatStoreStateSubject = new Store<CodeChatStoreState, CodeChatActions>(initialState);
+export const codeChatStoreStateSubject = new Store<
+  CodeChatStoreState,
+  CodeChatActions
+>(initialState);
 export const codeChatStore$ = codeChatStoreStateSubject.asObservable();
-

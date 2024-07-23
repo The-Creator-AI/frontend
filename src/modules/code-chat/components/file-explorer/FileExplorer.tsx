@@ -14,6 +14,7 @@ import "./FileExplorer.scss";
 import FileExplorerSidebar from "./FileExplorerSidebar";
 import FileTree from "./file-tree/FileTree";
 import SavedPlans from "./saved-plans/SavedPlans";
+import SavedChats from "./saved-chats/SavedChats";
 
 interface FileExplorerProps {
   initialSplitterPosition?: number;
@@ -85,6 +86,13 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
         ref={sideBarRef}
         sections={[
           {
+            id: "saved-chats",
+            title: "Saved Chats",
+            content: <SavedChats />,
+            collapsed: false,
+            height: 30,
+          },
+          {
             id: "saved-plans",
             title: "Saved Plans",
             content: <SavedPlans />,
@@ -104,7 +112,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
               />
             ),
             collapsed: false,
-            height: 70,
+            height: 40,
           },
         ]}
       />
