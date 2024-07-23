@@ -16,11 +16,28 @@
         font-weight: 400;
     }
 
+    .saved-chat-title-input {
+    }
+
     .delete-chat {
         transition: all 0.2s ease-in-out;
         // Style the delete link
         color: #ff4d4d; // Red color for delete
         font-weight: bold;
+        font-size: 20px;
+        opacity: 0.2;
+
+        &:hover {
+            opacity: 1; // Reduce opacity on hover
+        }
+    }
+
+    .edit-chat {
+        transition: all 0.2s ease-in-out;
+        // Style the delete link
+        color: #3d659c; // Red color for delete
+        font-weight: bold;
+        margin-left: 8px;
         margin-right: 8px;
         font-size: 20px;
         opacity: 0.2;
