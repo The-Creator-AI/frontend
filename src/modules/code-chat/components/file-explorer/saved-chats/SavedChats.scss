@@ -1,6 +1,8 @@
 .saved-chat-item {
     cursor: pointer;
     padding: 0 !important;
+    display: flex;
+    align-items: center;
 
     &:hover {
         background-color: #f5f5f5; // Light gray background on hover
@@ -12,5 +14,17 @@
         white-space: nowrap;
         display: block;
         font-weight: 400;
+    }
+
+    .delete-chat {
+        // Style the delete link
+        color: #ff4d4d; // Red color for delete
+        font-weight: bold;
+        margin-right: 8px;
+        opacity: 0.3;
+
+        &:hover {
+            opacity: 1; // Reduce opacity on hover
+        }
     }
 }

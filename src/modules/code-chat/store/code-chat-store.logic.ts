@@ -252,6 +252,14 @@ export const onPlans = getGatewayListener(
   }
 );
 
+export const deletePlan = async (id: number) => {
+  try {
+    sendMessage(ToServer.DELETE_PLAN, { id });
+  } catch (error) {
+    console.error("Error deleting plan:", error);
+  }
+};
+
 export const fetchSavedChats = async () => {
   try {
     sendMessage(ToServer.GET_CHATS, {});
@@ -267,6 +275,14 @@ export const saveChat = async (
     sendMessage(ToServer.SAVE_CHAT, chat);
   } catch (error) {
     console.error("Error saving chat:", error);
+  }
+};
+
+export const deleteChat = async (id: number) => {
+  try {
+    sendMessage(ToServer.DELETE_CHAT, { id });
+  } catch (error) {
+    console.error("Error deleting chat:", error);
   }
 };
 
