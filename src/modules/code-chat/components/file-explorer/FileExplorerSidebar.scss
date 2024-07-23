@@ -5,11 +5,13 @@
     user-select: none;
 
     .section-resizer {
-        height: 5px;
+        transition: all 0.2s ease-in-out;
+        height: 2px;
         cursor: ns-resize; 
-        background-color: #ccc; // Light gray background
+        background-color: #eae9e9;
         &:hover {
-            background-color: #999; // Darker gray on hover
+            height: 5px;
+            background-color: #3d659c;
         }
     }
 
