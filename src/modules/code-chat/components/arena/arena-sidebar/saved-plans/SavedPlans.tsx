@@ -19,7 +19,7 @@ import "./SavedPlans.scss";
 interface SavedPlansProps { }
 
 const SavedPlans: React.FC<SavedPlansProps> = () => {
-    const { savedPlans } = useStore(codeChatStore$);
+    const { savedPlans, stage } = useStore(codeChatStore$);
 
     const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
     const [newPlanTitle, setNewPlanTitle] = useState<string>("");
@@ -66,7 +66,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
         ];
 
         updateChatHistory(chatHistory);
-        updateStage({ type: 'plan' });
+        updateStage({ type: 'plan', activeChatId: plan.id, title: plan.title });
     };
 
     // Function to handle renaming a saved plan
@@ -144,7 +144,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
                                 />
                             ) : (
                                 <Typography.Text
-                                    className="saved-plan-title"
+                                    className={`saved-plan-title ${stage.type === "plan" && stage.activeChatId === item.id ? "active-plan-item" : ""}`}
                                     title={item.title}
                                 >
                                     {item.title}

@@ -29,7 +29,9 @@ export interface CodeChatStoreState {
     filePath?: string;
     content?: string;
   } | {
-    type: 'plan' | 'chat'
+    type: 'plan' | 'chat';
+    activeChatId?: number;
+    title?: string;
   };
   savedPlans: PlanType[];
   savedChats: ChatType[];

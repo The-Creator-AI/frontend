@@ -12,6 +12,10 @@
         white-space: nowrap;
         display: block;
         font-weight: 400;
+
+        &.active-plan-item {
+            color: #8670ff;
+        }
     }
 
     .saved-plan-title-input {

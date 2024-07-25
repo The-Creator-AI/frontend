@@ -14,6 +14,10 @@
         white-space: nowrap;
         display: block;
         font-weight: 400;
+
+        &.active-chat-item {
+            color: #8670ff;
+        }
     }
 
     .saved-chat-title-input {

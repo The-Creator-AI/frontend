@@ -14,7 +14,7 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = () => {
   const ref = useRef<HTMLDivElement>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const { chat: { chatHistory } = { chatHistory: [] } } = useStore(codeChatStore$);
+  const { chat: { chatHistory } = { chatHistory: [] }, stage } = useStore(codeChatStore$);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -43,11 +43,12 @@ const Chat: React.FC<ChatProps> = () => {
 }, [previewImage]);
 
   const handleSaveChat = () => {
-    const chatTitle = 'Chat ' + new Date().toUTCString(); // You can customize the chat title
+    const newChatTitle = 'Chat ' + new Date().toUTCString(); // You can customize the chat title
     const chatDescription = 'This chat is about...'; // You can customize the chat description
     saveChat({
+      id: stage.type === 'chat' || stage.type === 'plan' ? stage.activeChatId : undefined,
       chat_history: chatHistory,
-      title: chatTitle,
+      title: stage.type === 'chat' || stage.type === 'plan' ? (stage.title || newChatTitle) : newChatTitle,
       description: chatDescription,
     }).then(() => {
       message.success('Chat saved successfully!');
