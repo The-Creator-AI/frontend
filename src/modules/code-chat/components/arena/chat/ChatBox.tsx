@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss'; // Import your updated CSS
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import AgentSelector from './AgentSelector';
 import useStore from '../../../../../state/useStore';
 import { codeChatStore$ } from '../../../store/code-chat.store';
 import useChat from './useChat';
+import { saveChat } from '../../../store/code-chat-store.logic';
+import { message as Message } from 'antd';
 
 interface ChatBoxProps {
   setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
@@ -14,7 +16,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
-  const { selectedAgent, currentPath, selectedFiles } = useStore(codeChatStore$);
+  const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStore$);
   const { sendMessage, handleTokenCount, tokenCount, chatHistory, isLoading } = useChat();
   const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
   const sendDisabled = !message || isLoading;
@@ -41,6 +43,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
       textarea.style.height = `${textarea.scrollHeight}px`;
     }
   }, [message]);
+
+  const handleSaveChat = () => {
+    const newChatTitle = 'Chat ' + new Date().toUTCString(); // You can customize the chat title
+    const chatDescription = 'This chat is about...'; // You can customize the chat description
+    saveChat({
+      id: stage.type === 'chat' || stage.type === 'plan' ? stage.activeChatId : undefined,
+      chat_history: chatHistory,
+      title: stage.type === 'chat' || stage.type === 'plan' ? (stage.title || newChatTitle) : newChatTitle,
+      description: chatDescription,
+    }).then(() => {
+      Message.success('Chat saved successfully!');
+    }).catch((error) => {
+      console.error('Error saving chat:', error);
+      Message.error('Failed to save chat.');
+    });
+  };
 
   const handleRemoveImage = (indexToRemove: number) => {
     setPastedImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
@@ -94,15 +112,22 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   return (
     <div className={`chat-box`}>
       <div className="chat-box-header">
-        <AgentSelector />
-        {/* <div className="token-count"> */}
-        <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}
-        style={{
-          color: `rgb(${(tokenCount / 1000) * 2.55}, ${(100 - (tokenCount / 1000)) * 2.55}, 0)`,
-        }}
-        >
-        {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
-      </div>
+        <div className="chat-box-header-left">
+          <AgentSelector />
+          {/* <div className="token-count"> */}
+          <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}
+          style={{
+            color: `rgb(${(tokenCount / 1000) * 2.55}, ${(100 - (tokenCount / 1000)) * 2.55}, 0)`,
+          }}
+          >
+          {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
+        </div>
+        </div>
+        <div className="chat-box-header-right">
+          <button onClick={handleSaveChat} title="Save Chat" className="save-chat-button">
+            <SaveOutlined />
+          </button>
+        </div>
       </div>
       <div className="chat-input">
         <label htmlFor="chat-textarea" className="visually-hidden">
