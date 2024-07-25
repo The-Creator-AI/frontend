@@ -131,7 +131,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
           </div>
         </div>
         <div className="chat-box-header-right">
-          <button onClick={handleNewChat} title="New Chat" className="save-chat-button">
+          <button onClick={handleNewChat} title="New Chat" className="new-chat-button">
             <PlusOutlined />
           </button>
           <button onClick={handleSaveChat} title="Save Chat" className="save-chat-button">

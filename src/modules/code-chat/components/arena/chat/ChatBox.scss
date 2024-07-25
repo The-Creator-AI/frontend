@@ -54,6 +54,17 @@
             cursor: pointer; // Change cursor to pointer on hover
             margin-left: 10px; // Add some space to the left
         }
+
+        .new-chat-button {
+            // Styling for the save chat icon
+            background-color: #007bff; // Example: Blue background
+            color: white; // White text color
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px; // Round the corners
+            cursor: pointer; // Change cursor to pointer on hover
+            margin-left: 10px; // Add some space to the left
+        }
     }
 
     .chat-input {
