@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBox.scss'; // Import your updated CSS
-import { CloseOutlined, SaveOutlined } from '@ant-design/icons';
+import { CloseOutlined, SaveOutlined, PlusOutlined } from '@ant-design/icons';
 import AgentSelector from './AgentSelector';
 import useStore from '../../../../../state/useStore';
 import { codeChatStore$ } from '../../../store/code-chat.store';
 import useChat from './useChat';
-import { saveChat } from '../../../store/code-chat-store.logic';
+import { saveChat, updateChatHistory, updateStage } from '../../../store/code-chat-store.logic';
 import { message as Message } from 'antd';
 
 interface ChatBoxProps {
@@ -58,6 +58,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
       console.error('Error saving chat:', error);
       Message.error('Failed to save chat.');
     });
+  };
+
+  const handleNewChat = () => {
+    updateStage({ type: 'chat', activeChatId: undefined });
+    updateChatHistory([]);
+    setMessage('');
+    setPastedImages([]);
   };
 
   const handleRemoveImage = (indexToRemove: number) => {
@@ -116,14 +123,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
           <AgentSelector />
           {/* <div className="token-count"> */}
           <div className={`token-count ${isLoadingTokenCount ? 'loading' : ''}`}
-          style={{
-            color: `rgb(${(tokenCount / 1000) * 2.55}, ${(100 - (tokenCount / 1000)) * 2.55}, 0)`,
-          }}
+            style={{
+              color: `rgb(${(tokenCount / 1000) * 2.55}, ${(100 - (tokenCount / 1000)) * 2.55}, 0)`,
+            }}
           >
-          {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
-        </div>
+            {tokenCount ? `Tokens: ${(tokenCount / 1024).toFixed(2)} k` : null}
+          </div>
         </div>
         <div className="chat-box-header-right">
+          <button onClick={handleNewChat} title="New Chat" className="save-chat-button">
+            <PlusOutlined />
+          </button>
           <button onClick={handleSaveChat} title="Save Chat" className="save-chat-button">
             <SaveOutlined />
           </button>

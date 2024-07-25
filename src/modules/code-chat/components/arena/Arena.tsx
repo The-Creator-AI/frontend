@@ -102,13 +102,13 @@ const Arena: React.FC<ArenaProps> = ({
             collapsed: false,
             height: 30,
           },
-          {
-            id: "saved-plans",
-            title: "Saved Plans",
-            content: <SavedPlans />,
-            collapsed: false,
-            height: 30,
-          },
+          // {
+          //   id: "saved-plans",
+          //   title: "Saved Plans",
+          //   content: <SavedPlans />,
+          //   collapsed: false,
+          //   height: 30,
+          // },
           {
             id: "files",
             title: "File Explorer",
@@ -122,7 +122,7 @@ const Arena: React.FC<ArenaProps> = ({
               />
             ),
             collapsed: false,
-            height: 40,
+            height: 70,
           },
         ]}
       />
