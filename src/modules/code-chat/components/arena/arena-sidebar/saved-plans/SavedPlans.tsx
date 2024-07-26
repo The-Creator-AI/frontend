@@ -144,7 +144,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
                                 />
                             ) : (
                                 <Typography.Text
-                                    className={`saved-plan-title ${stage.type === "plan" && stage.activeChatId === item.id ? "active-plan-item" : ""}`}
+                                    className={`saved-plan-title ${stage?.type === "plan" && stage.activeChatId === item.id ? "active-plan-item" : ""}`}
                                     title={item.title}
                                 >
                                     {item.title}

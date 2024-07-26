@@ -17,21 +17,25 @@ export interface CodeChatStoreState {
   currentPath: string;
   selectedFiles: string[];
   recentFiles: string[];
-  agents: Agent[];
+  agents: (Agent & { editable: boolean })[];
   selectedAgent: Agent | null;
   chat: {
     chatHistory: ChatMessageType[];
     isLoading: boolean;
   };
   tokenCount: number;
-  stage: {
-    type: 'file',
+  stage?: {
+    type: 'file';
     filePath?: string;
     content?: string;
   } | {
     type: 'plan' | 'chat';
     activeChatId?: number;
     title?: string;
+  } | {
+    type: 'settings';
+    pageId: string;
+    agentId?: string;
   };
   savedPlans: PlanType[];
   savedChats: ChatType[];
@@ -43,7 +47,10 @@ export const initialState: CodeChatStoreState = {
     LOCAL_STORAGE_KEY.SELECTED_FILES
   ) as string[],
   recentFiles: [],
-  agents: AGENTS.filter((agent) => !agent.hidden),
+  agents: AGENTS.filter((agent) => !agent.hidden).map((agent) =>({
+    ...agent,
+    editable: false
+  })),
   selectedAgent: null,
   chat: {
     chatHistory: [],
@@ -51,7 +58,7 @@ export const initialState: CodeChatStoreState = {
   },
   tokenCount: 0,
   stage: {
-    type: 'chat'
+    type: 'chat',
   },
   savedPlans: [],
   savedChats: [],
@@ -62,3 +69,4 @@ export const codeChatStoreStateSubject = new Store<
   CodeChatActions
 >(initialState);
 export const codeChatStore$ = codeChatStoreStateSubject.asObservable();
+

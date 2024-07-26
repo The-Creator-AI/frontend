@@ -1,0 +1,61 @@
+.agents-settings-container {
+    .agents-settings-item {
+      cursor: pointer;
+      padding: 0 !important;
+      display: flex;
+      align-items: center;
+  
+      &:hover {
+        background-color: #f5f5f5; // Light gray background on hover
+      }
+  
+      .agents-settings-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        font-weight: 400;
+  
+        &.active {
+          color: #8670ff;
+        }
+      }
+  
+      .agents-settings-name-input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 14px;
+      }
+  
+      .edit-agent {
+        transition: all 0.2s ease-in-out;
+        // Style the delete link
+        color: #3d659c; // Red color for delete
+        font-weight: bold;
+        margin-left: 8px;
+        margin-right: 8px;
+        font-size: 20px;
+        opacity: 0.2;
+  
+        &:hover {
+          opacity: 1; // Reduce opacity on hover
+        }
+      }
+  
+      .delete-agent {
+        transition: all 0.2s ease-in-out;
+        // Style the delete link
+        color: #ff4d4d; // Red color for delete
+        font-weight: bold;
+        font-size: 20px;
+        opacity: 0.2;
+  
+        &:hover {
+          opacity: 1; // Reduce opacity on hover
+        }
+      }
+    }
+  }
+  

@@ -1,25 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
-import './ChatBox.scss'; // Import your updated CSS
-import { CloseOutlined, SaveOutlined, PlusOutlined } from '@ant-design/icons';
-import AgentSelector from './AgentSelector';
-import useStore from '../../../../../state/useStore';
-import { codeChatStore$ } from '../../../store/code-chat.store';
-import useChat from './useChat';
-import { saveChat, updateChatHistory, updateStage } from '../../../store/code-chat-store.logic';
+import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { message as Message } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
+import useStore from '../../../../../state/useStore';
+import { saveChat, updateChatHistory, updateStage } from '../../../store/code-chat-store.logic';
+import { codeChatStore$ } from '../../../store/code-chat.store';
+import AgentSelector from './AgentSelector';
+import './ChatBox.scss';
+import ChatInput from './ChatInput';
+import useChat from './useChat';
 
 interface ChatBoxProps {
   setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
+  const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStore$);
+  const { handleTokenCount, tokenCount, chatHistory } = useChat();
+  const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [pastedImages, setPastedImages] = useState<File[]>([]);
-  const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStore$);
-  const { sendMessage, handleTokenCount, tokenCount, chatHistory, isLoading } = useChat();
-  const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
-  const sendDisabled = !message || isLoading;
 
   useEffect(() => {
     (async () => {
@@ -27,13 +27,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
       await handleTokenCount({
         agentInstruction: selectedAgent?.systemInstructions,
         agentName: selectedAgent?.name,
-        message,
-        imageFiles: pastedImages,
+        message: '',
+        imageFiles: [], // Handle image files when the backend is ready for it
         selectedFiles: selectedFiles?.map(filePath => `${currentPath}/${filePath}`),
       });
       setIsLoadingTokenCount(false);
     })();
-  }, [message, selectedFiles, chatHistory]);
+  }, [selectedFiles, chatHistory]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -48,9 +48,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
     const newChatTitle = 'Chat ' + new Date().toUTCString(); // You can customize the chat title
     const chatDescription = 'This chat is about...'; // You can customize the chat description
     saveChat({
-      id: stage.type === 'chat' || stage.type === 'plan' ? stage.activeChatId : undefined,
+      id: stage?.type === 'chat' || stage?.type === 'plan' ? stage.activeChatId : undefined,
       chat_history: chatHistory,
-      title: stage.type === 'chat' || stage.type === 'plan' ? (stage.title || newChatTitle) : newChatTitle,
+      title: stage?.type === 'chat' || stage?.type === 'plan' ? (stage.title || newChatTitle) : newChatTitle,
       description: chatDescription,
     }).then(() => {
       Message.success('Chat saved successfully!');
@@ -63,57 +63,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const handleNewChat = () => {
     updateStage({ type: 'chat', activeChatId: undefined });
     updateChatHistory([]);
-    setMessage('');
-    setPastedImages([]);
-  };
-
-  const handleRemoveImage = (indexToRemove: number) => {
-    setPastedImages(prevImages => prevImages.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleImageClick = (imageUrl: string) => {
-    setPreviewImage(imageUrl);
-  };
-
-  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    const items = event.clipboardData?.items;
-
-    if (items) {
-      for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-          const file = items[i].getAsFile();
-          if (file) {
-            setPastedImages(prevImages => [...prevImages, file]);
-          }
-        }
-      }
-    }
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(event.target.value);
-  };
-
-  const handleSendMessageLocal = () => {
-    if ((message || pastedImages.length > 0) && !sendDisabled) {
-      sendMessage({
-        agentInstruction: selectedAgent?.systemInstructions,
-        agentName: selectedAgent?.name,
-        message,
-        imageFiles: pastedImages,
-        selectedFiles: selectedFiles.map(filePath => `${currentPath}/${filePath}`),
-      });
-      setMessage('');
-      setPastedImages([]);
-    }
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Check for Ctrl + Enter or Cmd + Enter
-    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-      event.preventDefault();
-      handleSendMessageLocal();
-    }
   };
 
   return (
@@ -139,46 +88,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
           </button>
         </div>
       </div>
-      <div className="chat-input">
-        <label htmlFor="chat-textarea" className="visually-hidden">
-          Type your message
-        </label>
-        <textarea
-          id="chat-textarea" // Add ID for label association
-          ref={textareaRef} // Add ref for auto-resize
-          placeholder="Type your message..."
-          value={message}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
-        />
-        <button onClick={handleSendMessageLocal} disabled={sendDisabled} title={sendDisabled ? 'Please enter a message!' : ''}>
-          {isLoading ? 'Bot typing...' : 'Send'}
-        </button>
-      </div>
-      {pastedImages.length > 0 && (
-        <div className="image-previews">
-          {pastedImages.map((image, index) => (
-            <div key={index} className="image-preview-wrapper">
-              <div
-                className="image-preview"
-                onClick={() => handleImageClick(URL.createObjectURL(image))}
-                style={{ backgroundImage: `url(${URL.createObjectURL(image)})` }} // Set background image
-              >
-                <CloseOutlined
-                  className="close-icon"
-                  onClick={(event) => {
-                    event.stopPropagation(); // Prevent click event from bubbling to parent
-                    handleRemoveImage(index);
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <ChatInput setPreviewImage={setPreviewImage}/>
     </div>
   );
 };
 
 export default ChatBox;
+

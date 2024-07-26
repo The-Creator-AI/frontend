@@ -1,30 +1,30 @@
-.file-viewer {
+.arena-container {
     width: 100%;
     height: 100%;
     display: flex;
-}
 
-.chat-section {
-    position: relative;
-    overflow: auto;
-    height: 100%;
-    background-color: #1e1e1e;
-}
-
-.splitter {
-    transition: width, background-color 0.2s ease-in-out;
-    background-color: #eae9e9;
-    width: 2px;
-    height: 100%;
-    position: absolute;
-    right: 0;
-    top: 0;
-    cursor: col-resize;
-    z-index: 1;
-}
-
-.splitter:hover {
-    background-color: #3d659c;
-    width: 5px;
-    cursor: col-resize;
+    .arena-stage {
+        position: relative;
+        overflow: auto;
+        height: 100%;
+        // background-color: #1e1e1e;
+    }
+    
+    .splitter {
+        transition: width, background-color 0.2s ease-in-out;
+        background-color: #eae9e9;
+        width: 2px;
+        height: 100%;
+        position: absolute;
+        right: 0;
+        top: 0;
+        cursor: col-resize;
+        z-index: 1;
+    }
+    
+    .splitter:hover {
+        background-color: #3d659c;
+        width: 5px;
+        cursor: col-resize;
+    }
 }

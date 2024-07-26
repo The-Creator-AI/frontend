@@ -122,7 +122,7 @@ useEffect(() => {
               ) : (
                 // Otherwise, show the chat title
                 <Typography.Text
-                  className={`saved-chat-title ${stage.type === "chat" && stage.activeChatId === item.id ? "active-chat-item" : ""}`}
+                  className={`saved-chat-title ${stage?.type === "chat" && stage.activeChatId === item.id ? "active-chat-item" : ""}`}
                   title={item.title}
                 >
                   {item.title}

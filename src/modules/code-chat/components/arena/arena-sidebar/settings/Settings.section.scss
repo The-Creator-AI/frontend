@@ -1,0 +1,28 @@
+.settings-section {
+    cursor: pointer;
+    padding: 0 !important;
+
+    &:hover {
+        background-color: #f5f5f5; // Light gray background on hover
+    }
+
+    .item {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+        font-weight: 400;
+
+        .title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            font-weight: 400;
+
+            &.active {
+                color: #8670ff;
+            }
+        }
+    }
+}

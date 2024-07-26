@@ -1,0 +1,27 @@
+.settings-container {
+    display: flex;
+    flex-direction: column;
+    padding: 25px;
+
+    .settings-nav {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+
+        .settings-nav-item {
+            padding: 8px 12px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+
+            &.active {
+                border-bottom-color: #8670ff;
+            }
+        }
+    }
+
+    .settings-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 10px;
+    }
+}

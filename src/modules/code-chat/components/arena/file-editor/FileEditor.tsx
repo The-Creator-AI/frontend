@@ -13,8 +13,8 @@ interface FileEditorProps {
 
 const FileEditor: React.FC<FileEditorProps> = ({ }) => {
     const { currentPath, stage } = useStore(codeChatStore$, initialState);
-    const filePath = stage.type === 'file' && stage.filePath;
-    const content = stage.type === 'file' && stage.content;
+    const filePath = stage?.type === 'file' && stage.filePath;
+    const content = stage?.type === 'file' && stage.content;
 
     const { isLoading, error } = useQuery({
         queryKey: ['fileContent', filePath],

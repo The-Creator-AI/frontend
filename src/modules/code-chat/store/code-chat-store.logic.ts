@@ -109,16 +109,14 @@ export const updateChatIsLoading = (isLoading: boolean) => {
   );
 };
 
-export const updateStage = (
-  newState: Partial<CodeChatStoreState["stage"]>
-) => {
+export const updateStage = (newState: Partial<CodeChatStoreState["stage"]>) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
       stage: {
         ...codeChatStoreStateSubject.getValue().stage,
         ...newState,
-      },
+      } as any,
     },
     CodeChatActions.UPDATE_FILE_CONTENT_POPUP
   );
@@ -185,7 +183,17 @@ export const updateSavedChats = (chats: ChatType[]) => {
     },
     CodeChatActions.UPDATE_SAVED_CHATS
   );
-}
+};
+
+export const updateAgents = (agents: Agent[]) => {
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      agents,
+    } as any,
+    CodeChatActions.UPDATE_SELECTED_AGENT
+  );
+};
 
 const addBotMessageChunk = (message: BotMessageChunk) => {
   console.log("addBotMessageChunk", message);
@@ -290,5 +298,36 @@ export const onChats = getGatewayListener(
   ToClient.CHATS,
   (chats: ChatType[]) => {
     updateSavedChats(chats);
+  }
+);
+
+export const fetchAgents = async () => {
+  try {
+    sendMessage(ToServer.GET_AGENTS, {});
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+  }
+};
+
+export const saveAgent = async (agent: Agent & { id?: string }) => {
+  try {
+    sendMessage(ToServer.SAVE_AGENT, agent);
+  } catch (error) {
+    console.error("Error saving agent:", error);
+  }
+};
+
+export const deleteAgent = async (id: string) => {
+  try {
+    sendMessage(ToServer.DELETE_AGENT, { id });
+  } catch (error) {
+    console.error("Error deleting agent:", error);
+  }
+};
+
+export const onAgents = getGatewayListener(
+  ToClient.AGENTS,
+  (agents: Agent[]) => {
+    updateAgents(agents);
   }
 );

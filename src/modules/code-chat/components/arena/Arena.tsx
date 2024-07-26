@@ -8,13 +8,14 @@ import {
   updateStage
 } from "../../store/code-chat-store.logic";
 import { codeChatStore$ } from "../../store/code-chat.store";
-import Chat from "./chat/Chat";
-import FileEditor from "./file-editor/FileEditor";
 import "./Arena.scss";
 import ArenaSidebar from "./arena-sidebar/ArenaSidebar";
 import FileTree from "./arena-sidebar/file-tree/FileTree";
-import SavedPlans from "./arena-sidebar/saved-plans/SavedPlans";
 import SavedChats from "./arena-sidebar/saved-chats/SavedChats";
+import SettingsSection from "./arena-sidebar/settings/Settings.section";
+import Chat from "./chat/Chat";
+import FileEditor from "./file-editor/FileEditor";
+import Settings from "./settings/Settings";
 
 interface ArenaProps {
   initialSplitterPosition?: number;
@@ -82,6 +83,8 @@ const Arena: React.FC<ArenaProps> = ({
     switch(stage?.type) {
       case 'file':
         return <FileEditor/>
+      case 'settings':
+        return <Settings/>
       case 'chat':
       case 'plan':
       default:
@@ -90,7 +93,7 @@ const Arena: React.FC<ArenaProps> = ({
   };
 
   return (
-    <div className="file-viewer">
+    <div className="arena-container">
       {/* Sidebar component with file explorer and other sections */}
       <ArenaSidebar
         ref={sideBarRef}
@@ -122,7 +125,15 @@ const Arena: React.FC<ArenaProps> = ({
               />
             ),
             collapsed: false,
-            height: 70,
+            height: 40,
+          },
+          {
+            id: "settings",
+            title: "Settings",
+            // Settings component to display the settings UI
+            content: <SettingsSection />,
+            collapsed: false,
+            height: 30,
           },
         ]}
       />
@@ -134,7 +145,7 @@ const Arena: React.FC<ArenaProps> = ({
         ></div>
       </DraggableCore>
       {/* Chat section */}
-      <div className="chat-section" ref={fileContentRef}>
+      <div className="arena-stage" ref={fileContentRef}>
         {/* Display content for the first selected file (or handle multiple files differently if needed) */}
         {/* {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />}  */}
         {renderStage()}
