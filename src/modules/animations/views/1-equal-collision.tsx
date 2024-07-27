@@ -13,16 +13,18 @@ const BallCollisionAnimation = () => {
             return;
         }
 
-        canvas.width = 400;
-        canvas.height = 300;
+        // Increase canvas size
+        canvas.width = 900; // Adjust as needed
+        canvas.height = 600; // Adjust as needed
 
         const centerX = canvas.width / 2;
-        const ball1 = { x: 50, y: 150, radius: 20, dx: 0.5, color: 'red', visible: true };
-        const ball2 = { x: 350, y: 150, radius: 20, dx: -0.5, color: 'blue', visible: true };
+        // Adjust initial positions of balls and camera
+        const ball1 = { x: 50, y: 200, radius: 20, dx: 0.5, color: 'red', visible: true };
+        const ball2 = { x: 850, y: 200, radius: 20, dx: -0.5, color: 'blue', visible: true };
 
         const camera = {
             x: 50,
-            y: 50,
+            y: 100,
             width: 30,
             height: 20,
             lensWidth: 15,
@@ -147,21 +149,23 @@ const BallCollisionAnimation = () => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-            <canvas ref={canvasRef} className="border border-gray-300 rounded-lg shadow-lg mb-4"></canvas>
-            <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 rounded-full bg-red-500"></div>
-                <span>Red Ball</span>
-                <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-                <span>Blue Ball</span>
-                <FaCamera size={16} className="text-green-500" />
-                <span>Camera</span>
-            </div>
-            {animationComplete && (
-                <div className="mt-4 text-lg font-semibold text-gray-700">
-                    Animation Complete
+        <div className="EqualCollision">
+            <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+                <canvas ref={canvasRef} className="border border-gray-300 rounded-lg shadow-lg mb-4"></canvas>
+                <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 rounded-full bg-red-500"></div>
+                    <span>Red Ball</span>
+                    <div className="w-4 h-4 rounded-full bg-blue-500"></div>
+                    <span>Blue Ball</span>
+                    <FaCamera size={16} className="text-green-500" />
+                    <span>Camera</span>
                 </div>
-            )}
+                {animationComplete && (
+                    <div className="mt-4 text-lg font-semibold text-gray-700">
+                        Animation Complete
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

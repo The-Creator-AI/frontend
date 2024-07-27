@@ -1,6 +1,7 @@
 .Animations {
     display: flex;
     height: 100vh;
+    overflow: hidden;
 
     .current-animation {
         flex: 1;
