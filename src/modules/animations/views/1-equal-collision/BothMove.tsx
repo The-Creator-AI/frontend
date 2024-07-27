@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './1-equal-collision.scss';
+import './style.scss';
 import { FaCamera } from "react-icons/fa";
 
 const BallCollisionAnimation = () => {
@@ -23,7 +23,7 @@ const BallCollisionAnimation = () => {
         const ball2 = { x: 850, y: 200, radius: 20, dx: -0.5, color: 'blue', visible: true };
 
         const camera = {
-            x: 50,
+            x: 850,
             y: 100,
             width: 30,
             height: 20,
@@ -31,7 +31,7 @@ const BallCollisionAnimation = () => {
             lensHeight: 10,
             color: 'green',
             lensColor: 'darkgreen',
-            dx: 0.5  // Same speed as the initial red ball
+            dx: -0.5  // Same speed as the initial red ball
         };
 
         let collided = false;
