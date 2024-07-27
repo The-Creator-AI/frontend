@@ -1,11 +1,4 @@
-import { NodeId } from "react-accessible-treeview";
-import {
-  CodeChatStoreState,
-  codeChatStoreStateSubject,
-  initialState,
-} from "./code-chat.store";
-import { Agent } from "../../../types/agent.type";
-import { CodeChatActions } from "./code-chat-store.actions";
+import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
 import {
   BotMessageChunk,
   ChatMessageType,
@@ -13,15 +6,19 @@ import {
   PlanType,
 } from "@The-Creator-AI/fe-be-common/dist/types";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import config from "../../../config";
-import { sendMessage } from "../../gateway/store/gateway.logic";
-import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
-import { getGatewayListener } from "../../gateway";
+import { Agent } from "../../../types/agent.type";
 import {
   LOCAL_STORAGE_KEY,
   saveToLocalStorage,
 } from "../../../utils/local-storage";
+import { getGatewayListener } from "../../gateway";
+import { sendMessage } from "../../gateway/store/gateway.logic";
+import { CodeChatActions } from "./code-chat-store.actions";
+import {
+  CodeChatStoreState,
+  codeChatStoreStateSubject,
+  initialState,
+} from "./code-chat.store";
 
 export const resetCodeChatStore = () => {
   codeChatStoreStateSubject._next(
@@ -109,16 +106,23 @@ export const updateChatIsLoading = (isLoading: boolean) => {
   );
 };
 
-export const updateStage = (newState: Partial<CodeChatStoreState["stage"]>) => {
+export const updateStage = (newState: {
+  stage: Partial<CodeChatStoreState["stage"]>;
+  breadcrumb: Partial<CodeChatStoreState["breadcrumb"]>;
+}) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
       stage: {
         ...codeChatStoreStateSubject.getValue().stage,
-        ...newState,
+        ...newState.stage
       } as any,
+      breadcrumb: {
+        ...codeChatStoreStateSubject.getValue().breadcrumb,
+        ...newState.breadcrumb,
+      } as any
     },
-    CodeChatActions.UPDATE_FILE_CONTENT_POPUP
+    CodeChatActions.UPDATE_STAGE
   );
 };
 

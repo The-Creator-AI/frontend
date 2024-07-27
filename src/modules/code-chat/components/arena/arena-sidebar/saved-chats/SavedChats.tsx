@@ -43,7 +43,10 @@ useEffect(() => {
   // Function to handle clicking on a saved chat
   const handleChatClick = (chat: ChatType) => {
     updateChatHistory(chat.chat_history);
-    updateStage({ type: 'chat', activeChatId: chat.id, title: chat.title });
+    updateStage({
+      stage: { type: 'chat', activeChatId: chat.id, title: chat.title },
+      breadcrumb: { items: [{ label: 'Chats', href: '/chats' }, { label: chat.title, href: `/${chat.id}` }] },
+    });
   };
 
   // Function to handle deleting a saved chat

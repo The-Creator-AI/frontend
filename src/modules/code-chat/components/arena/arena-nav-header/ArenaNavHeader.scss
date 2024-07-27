@@ -1,0 +1,53 @@
+.arena-nav-header {
+    position: absolute;
+    top: 0; /* Ensure this is where you want it */
+    left: 0; /* Aligns to the left of the parent container */
+    right: 0; /* Makes it span the full width of the parent */
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 10px;
+    border-bottom: 1px solid #ddd; /* Subtle bottom border */
+    box-sizing: border-box; /* Ensures padding doesn't increase width */
+    overflow: hidden; /* Prevents horizontal scroll if content overflows */
+
+    .breadcrumb {
+        overflow-x: auto;
+        display: flex;
+        align-items: center;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+
+        .breadcrumb-link {
+            font-size: 15px;
+            color: #333; /* Dark gray link color */
+            text-decoration: none; /* No text decoration */
+            text-wrap: nowrap;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            margin-right: 10px; /* Space between breadcrumb items */
+            
+            &:last-child {
+                margin-right: 0; /* Remove margin for the last item */
+            }
+
+            .separator {
+                margin-left: 10px;
+                font-size: 12px;
+            }
+
+            a {
+                color: #333; /* Dark gray link color */
+                text-decoration: none; /* No text decoration */
+
+                &:hover {
+                    text-decoration: underline; /* Underline on hover */
+                }
+            }
+        }
+    }
+}

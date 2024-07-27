@@ -29,7 +29,16 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
                 <List.Item
                     className="item"
                     onClick={(e) => {
-                        updateStage({ type: "settings", pageId: item.pageId });
+                        updateStage({
+                            stage: { type: "settings", pageId: item.pageId },
+                            breadcrumb: { items: [{
+                                label: "Settings",
+                                href: "/settings",
+                            }, {
+                                label: item.title,
+                                href: `/${item.pageId}`,
+                            }]},
+                        });
                     }}
                 >
                     <List.Item.Meta

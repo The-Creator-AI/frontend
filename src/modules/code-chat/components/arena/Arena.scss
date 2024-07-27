@@ -8,6 +8,11 @@
         overflow: auto;
         height: 100%;
         // background-color: #1e1e1e;
+
+        .stage-content {
+            margin-top: 38px;
+            height: calc(100% - 38px);
+        }
     }
     
     .splitter {

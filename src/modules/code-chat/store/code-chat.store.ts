@@ -24,6 +24,14 @@ export interface CodeChatStoreState {
     isLoading: boolean;
   };
   tokenCount: number;
+  breadcrumb?: {
+    items: {
+      label: string;
+      href: string;
+      disabled?: boolean;
+      onClick?: () => void;
+    }[];
+  },
   stage?: {
     type: 'file';
     filePath?: string;
@@ -57,6 +65,16 @@ export const initialState: CodeChatStoreState = {
     isLoading: false,
   },
   tokenCount: 0,
+  breadcrumb: {
+    items: [{
+      label: 'Chat',
+      href: '/chat',
+      disabled: true
+    }, {
+      label: 'New Chat',
+      href: '/new-chat'
+    }],
+  },
   stage: {
     type: 'chat',
   },

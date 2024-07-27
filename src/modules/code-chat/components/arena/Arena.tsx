@@ -16,6 +16,7 @@ import SettingsSection from "./arena-sidebar/settings/Settings.section";
 import Chat from "./chat/Chat";
 import FileEditor from "./file-editor/FileEditor";
 import Settings from "./settings/Settings";
+import ArenaNavHeader from "./arena-nav-header/ArenaNavHeader";
 
 interface ArenaProps {
   initialSplitterPosition?: number;
@@ -120,7 +121,19 @@ const Arena: React.FC<ArenaProps> = ({
               <FileTree
                 data={fileTreeData?.children || []}
                 onFileClick={(filePath) =>
-                  updateStage({ type: 'file', filePath })
+                  // updateStage({ type: 'file', filePath })
+                  // updateStage({
+                  //   stage: { type: 'chat', activeChatId: chat.id, title: chat.title },
+                  //   breadcrumb: { items: [{ label: 'Chats', href: '/chats' }, { label: chat.title, href: `/${chat.id}` }] },
+                  // });
+                  updateStage({
+                    stage: { type: 'file', filePath },
+                    breadcrumb: { items: [{
+                      label: 'Files', href: '/file-explorer',
+                    },
+                    ...filePath.split('/').map((path) => ({ label: path, href: `/${path}` }))
+                  ]},
+                  })
                 }
               />
             ),
@@ -146,9 +159,12 @@ const Arena: React.FC<ArenaProps> = ({
       </DraggableCore>
       {/* Chat section */}
       <div className="arena-stage" ref={fileContentRef}>
+        <ArenaNavHeader />
         {/* Display content for the first selected file (or handle multiple files differently if needed) */}
         {/* {activeFile && <FileContent currentPath={currentPath} filePath={activeFile} />}  */}
-        {renderStage()}
+        <div className="stage-content">
+          {renderStage()}
+        </div>
       </div>
       {/* Popup to display file content */}
     </div>

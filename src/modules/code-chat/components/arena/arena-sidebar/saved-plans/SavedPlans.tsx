@@ -66,7 +66,11 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
         ];
 
         updateChatHistory(chatHistory);
-        updateStage({ type: 'plan', activeChatId: plan.id, title: plan.title });
+        // updateStage({ type: 'plan', activeChatId: plan.id, title: plan.title });
+        updateStage({
+            stage: { type: 'plan', activeChatId: plan.id, title: plan.title },
+            breadcrumb: { items: [{ label: 'Plans', href: '/plans' }, { label: plan.title, href: `/${plan.id}` }] },
+          });
     };
 
     // Function to handle renaming a saved plan

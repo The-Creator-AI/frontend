@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { codeChatStore$ } from "../../../store/code-chat.store";
 import useStore from "../../../../../state/useStore";
-import { updateStage } from "../../../store/code-chat-store.logic";
 import AgentsSettings from "./agents-settings/AgentsSettings";
 import "./Settings.scss";
 import { SETTINGS_ITEMS } from "../arena-sidebar/settings/Settings.section";
+import { Typography } from "antd";
 
 interface SettingsProps { }
 
@@ -18,10 +18,6 @@ const Settings: React.FC<SettingsProps> = () => {
     }, [stage]);
 
 
-    const handlePageChange = (pageId: string) => {
-        updateStage({ type: "settings", pageId });
-    };
-
     const renderContent = () => {
         switch (currentPage?.pageId) {
             case SETTINGS_ITEMS.AGENTS.pageId:
@@ -33,16 +29,6 @@ const Settings: React.FC<SettingsProps> = () => {
 
     return (
         <div className="settings-container">
-            <div className="settings-nav">
-                <button
-                    className={`settings-nav-item ${stage?.type === 'settings' && currentPage?.pageId === stage.pageId ? "active" : ""
-                        }`}
-                    onClick={() => handlePageChange("agents")}
-                >
-                    {currentPage?.title}
-                </button>
-                {/* Add more settings pages here as needed */}
-            </div>
             <div className="settings-content">
                 {renderContent()}
             </div>

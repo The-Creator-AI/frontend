@@ -25,14 +25,16 @@ const FileEditor: React.FC<FileEditorProps> = ({ }) => {
             const { data } = await axios.get(`${config.BASE_URL}/creator/file/content?path=${currentPath}/${filePath}`, {
                 responseType: 'text'
             });
-            updateStage({ content: data });
+            updateStage({
+                stage: { content: data },
+                breadcrumb: {}
+            });
         },
         enabled: !!filePath, // Only fetch when the popup is open and filePath exists
     });
 
     return (
         <div className="file-content-popup-inner">
-            <h2>{filePath}</h2>
             {isLoading && <div>Loading...</div>}
             {error && !content && <div>Error: {error.message}</div>}
             {content && filePath ? (

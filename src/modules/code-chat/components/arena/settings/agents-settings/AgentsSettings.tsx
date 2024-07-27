@@ -1,17 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { List, Popconfirm, Typography, message, Button, Input } from "antd";
+import { ToServer } from "@The-Creator-AI/fe-be-common";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Agent } from "../../../../../../types/agent.type";
+import MonacoEditor from "@monaco-editor/react";
+import { Button, Input, List, Popconfirm, Typography, message } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import useStore from "../../../../../../state/useStore";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { Agent } from "../../../../../../types/agent.type";
+import { sendMessage } from "../../../../../gateway/store/gateway.logic";
 import {
     updateSelectedAgent,
 } from "../../../../store/code-chat-store.logic";
-import { sendMessage } from "../../../../../gateway/store/gateway.logic";
+import { codeChatStore$ } from "../../../../store/code-chat.store";
 import "./AgentsSettings.scss";
-import MonacoEditor from "@monaco-editor/react";
-import { updateStage } from "../../../../store/code-chat-store.logic";
-import { ToServer } from "@The-Creator-AI/fe-be-common";
 
 interface AgentsSettingsProps { }
 
@@ -70,7 +69,7 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
         setEditingAgent(agent);
         setNewAgentName(agent.name);
         setNewAgentSystemInstructions(agent.systemInstructions);
-        updateStage({ type: "settings", pageId: "agent-editor", agentId: agent.id }); // Open Monaco editor for agent editing
+        // updateStage({ type: "settings", pageId: "agent-editor", agentId: agent.id }); // Open Monaco editor for agent editing
     };
 
     // Function to update the system instructions in the Monaco editor

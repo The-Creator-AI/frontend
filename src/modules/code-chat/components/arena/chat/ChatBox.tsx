@@ -61,7 +61,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   };
 
   const handleNewChat = () => {
-    updateStage({ type: 'chat', activeChatId: undefined });
+    updateStage({
+      stage: { type: 'chat', activeChatId: undefined },
+      breadcrumb: {
+        items: [{
+          label: 'Chat',
+          href: '/chat',
+          disabled: true
+        }, {
+          label: 'New Chat',
+          href: '/new-chat'
+        }],
+      },
+  });
     updateChatHistory([]);
   };
 
