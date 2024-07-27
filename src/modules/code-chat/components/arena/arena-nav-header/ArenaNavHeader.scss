@@ -8,6 +8,8 @@
     border-bottom: 1px solid #ddd; /* Subtle bottom border */
     box-sizing: border-box; /* Ensures padding doesn't increase width */
     overflow: hidden; /* Prevents horizontal scroll if content overflows */
+    box-shadow: 0px 1px 18px rgba(0, 0, 0, 0.3);
+    z-index: 1;
 
     .breadcrumb {
         overflow-x: auto;
