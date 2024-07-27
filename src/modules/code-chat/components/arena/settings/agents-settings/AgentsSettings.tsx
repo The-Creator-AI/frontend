@@ -1,39 +1,44 @@
 import { ToServer } from "@The-Creator-AI/fe-be-common";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import MonacoEditor from "@monaco-editor/react";
-import { Button, Input, List, Popconfirm, Typography, message } from "antd";
+import { Button, Input, List, Popconfirm, Typography, message, Radio } from "antd"; // Import Radio from Ant Design
 import React, { useEffect, useRef, useState } from "react";
 import useStore from "../../../../../../state/useStore";
-import { Agent } from "../../../../../../types/agent.type";
 import { sendMessage } from "../../../../../gateway/store/gateway.logic";
 import {
+    saveAgent,
     updateSelectedAgent,
 } from "../../../../store/code-chat-store.logic";
 import { codeChatStore$ } from "../../../../store/code-chat.store";
 import "./AgentsSettings.scss";
+import { AgentType } from "@The-Creator-AI/fe-be-common/dist/types";
 
+// Interface for the props of the AgentsSettings component
 interface AgentsSettingsProps { }
 
+// Functional component for the AgentsSettings
 const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
+    // Use custom hook to get the state of agents from the store
     const { agents } = useStore(codeChatStore$);
-    const [editingAgent, setEditingAgent] = useState<Partial<Agent> & { editable: boolean } | null>(null);
+
+    // State variables for managing the current editing agent, new agent name, and instructions
+    const [editingAgent, setEditingAgent] = useState<Omit<AgentType, 'id'> | null>(null);
     const [newAgentName, setNewAgentName] = useState<string>("");
-    const [newAgentSystemInstructions, setNewAgentSystemInstructions] =
-        useState<string>("");
+    const [newAgentSystemInstructions, setNewAgentSystemInstructions] = useState<string>("");
     const inputRef = useRef(null);
 
+    // Fetch agents when the component mounts
     useEffect(() => {
-        // Fetch agents when the component mounts
         sendMessage(ToServer.GET_AGENTS, {});
     }, []);
 
-    // Handle clicking on an agent
-    const handleAgentClick = (agent: Agent) => {
+    // Handle clicking on an agent to update the selected agent in the store
+    const handleAgentClick = (agent: AgentType) => {
         updateSelectedAgent(agent);
     };
 
-    // Handle deleting an agent
-    const handleDeleteAgent = async (id: string) => {
+    // Handle deleting an agent by sending a DELETE_AGENT message
+    const handleDeleteAgent = async (id: number) => {
         try {
             await sendMessage(ToServer.DELETE_AGENT, { id });
             message.success("Agent deleted successfully!");
@@ -43,38 +48,30 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
         }
     };
 
-    // Handle renaming an agent
-    const handleRenameAgent = async (agent: Agent) => {
-        try {
-            if (agent.id && newAgentName !== agent.name) {
-                await sendMessage(ToServer.SAVE_AGENT, {
-                    ...agent,
-                    name: newAgentName,
-                    systemInstructions: newAgentSystemInstructions,
-                });
-                message.success("Agent renamed successfully!");
-            }
-        } catch (error) {
-            console.error("Error renaming agent:", error);
-            message.error("Failed to rename agent.");
-        } finally {
-            setEditingAgent(null);
-            setNewAgentName("");
-            setNewAgentSystemInstructions("");
-        }
-    };
-
-    // Handle editing the agent's details
-    const handleEditAgent = (agent: Agent & { editable: boolean }) => {
+    // Handle editing an agent's details
+    const handleEditAgent = (agent: AgentType) => {
         setEditingAgent(agent);
         setNewAgentName(agent.name);
         setNewAgentSystemInstructions(agent.systemInstructions);
-        // updateStage({ type: "settings", pageId: "agent-editor", agentId: agent.id }); // Open Monaco editor for agent editing
     };
 
-    // Function to update the system instructions in the Monaco editor
+    // Update the system instructions using the Monaco editor
     const handleMonacoChange = (value?: string) => {
         value && setNewAgentSystemInstructions(value);
+    };
+
+    // Handle changing the hidden state of an agent
+    const handleHiddenChange = async (agent: AgentType, hidden: boolean) => {
+        try {
+            await saveAgent({
+                ...agent,
+                hidden,
+            });
+            message.success(`Agent ${hidden ? "hidden" : "visible"} successfully!`);
+        } catch (error) {
+            console.error("Error updating agent visibility:", error);
+            message.error("Failed to update agent visibility.");
+        }
     };
 
     return (
@@ -82,7 +79,7 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
             <List
                 itemLayout="horizontal"
                 dataSource={agents}
-                renderItem={(item) => (
+                renderItem={(item: AgentType) => (
                     <List.Item
                         className="agents-settings-item"
                         onClick={() => handleAgentClick(item)}
@@ -96,8 +93,15 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                                     {item.name}
                                 </Typography.Text>
                             }
-                        // description={item.systemInstructions}
                         />
+                        <Radio.Group
+                            onChange={(e) => handleHiddenChange(item, e.target.value)}
+                            value={item.hidden}
+                            style={{ marginRight: 8 }} // Add some margin
+                        >
+                            <Radio value={false}>Visible</Radio>
+                            <Radio value={true}>Hidden</Radio>
+                        </Radio.Group>
                         <span
                             className="edit-agent"
                             onClick={() => item.id && handleEditAgent(item)}
@@ -121,7 +125,12 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                 )}
             />
             {/* Button to add new agent */}
-            <Button type="primary" onClick={() => setEditingAgent({ name: "new agent", editable: true, systemInstructions: '' })}>
+            <Button
+                type="primary"
+                onClick={() =>
+                    setEditingAgent({ name: "new agent", editable: true, systemInstructions: '' })
+                }
+            >
                 Add New Agent
             </Button>
 
@@ -134,15 +143,8 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                         className="agents-settings-name-input"
                         value={newAgentName}
                         onChange={(e) => setNewAgentName(e.target.value)}
-                        // onBlur={() => handleRenameAgent(editingAgent)}
-                        // onKeyDown={(e) => {
-                        //     if (e.key === "Enter") {
-                        //         handleRenameAgent(editingAgent);
-                        //     }
-                        // }}
                     />
                     <MonacoEditor
-                        //   ref={monacoRef} // Add the ref to the Monaco editor component
                         height="600px"
                         width="100%"
                         value={newAgentSystemInstructions}
@@ -151,7 +153,6 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                         onChange={handleMonacoChange}
                         options={{
                             readOnly: !editingAgent?.editable, // Set to false for editing
-                            // ...other Monaco editor options
                         }}
                     />
                 </div>
@@ -161,4 +162,3 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
 };
 
 export default AgentsSettings;
-

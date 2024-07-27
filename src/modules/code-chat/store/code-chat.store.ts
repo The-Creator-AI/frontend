@@ -1,24 +1,22 @@
-import { NodeId } from "react-accessible-treeview";
-import { Store } from "../../../state/store";
-import { Agent } from "../../../types/agent.type";
 import {
+  AgentType,
   ChatMessageType,
-  PlanType,
   ChatType,
+  PlanType,
 } from "@The-Creator-AI/fe-be-common/dist/types";
-import { AGENTS } from "../constants";
-import { CodeChatActions } from "./code-chat-store.actions";
+import { Store } from "../../../state/store";
 import {
   LOCAL_STORAGE_KEY,
   getFromLocalStorage,
 } from "../../../utils/local-storage";
+import { CodeChatActions } from "./code-chat-store.actions";
 
 export interface CodeChatStoreState {
   currentPath: string;
   selectedFiles: string[];
   recentFiles: string[];
-  agents: (Agent & { editable: boolean })[];
-  selectedAgent: Agent | null;
+  agents: AgentType[];
+  selectedAgent: AgentType | null;
   chat: {
     chatHistory: ChatMessageType[];
     isLoading: boolean;
@@ -55,10 +53,7 @@ export const initialState: CodeChatStoreState = {
     LOCAL_STORAGE_KEY.SELECTED_FILES
   ) as string[],
   recentFiles: [],
-  agents: AGENTS.filter((agent) => !agent.hidden).map((agent) =>({
-    ...agent,
-    editable: false
-  })),
+  agents: [],
   selectedAgent: null,
   chat: {
     chatHistory: [],

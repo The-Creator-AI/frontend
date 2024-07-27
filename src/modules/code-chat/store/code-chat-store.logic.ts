@@ -1,12 +1,12 @@
 import { ToClient, ToServer } from "@The-Creator-AI/fe-be-common";
 import {
+  AgentType,
   BotMessageChunk,
   ChatMessageType,
   ChatType,
   PlanType,
 } from "@The-Creator-AI/fe-be-common/dist/types";
 import { v4 as uuidv4 } from "uuid";
-import { Agent } from "../../../types/agent.type";
 import {
   LOCAL_STORAGE_KEY,
   saveToLocalStorage,
@@ -58,7 +58,7 @@ export const updateRecentFiles = (newFiles: string[]) => {
   );
 };
 
-export const updateSelectedAgent = (agent: Agent | null) => {
+export const updateSelectedAgent = (agent: AgentType | null) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
@@ -189,7 +189,7 @@ export const updateSavedChats = (chats: ChatType[]) => {
   );
 };
 
-export const updateAgents = (agents: Agent[]) => {
+export const updateAgents = (agents: AgentType[]) => {
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
@@ -313,7 +313,7 @@ export const fetchAgents = async () => {
   }
 };
 
-export const saveAgent = async (agent: Agent & { id?: string }) => {
+export const saveAgent = async (agent: Omit<AgentType, 'id'> & { id?: number }) => {
   try {
     sendMessage(ToServer.SAVE_AGENT, agent);
   } catch (error) {
@@ -321,7 +321,7 @@ export const saveAgent = async (agent: Agent & { id?: string }) => {
   }
 };
 
-export const deleteAgent = async (id: string) => {
+export const deleteAgent = async (id: number) => {
   try {
     sendMessage(ToServer.DELETE_AGENT, { id });
   } catch (error) {
@@ -331,7 +331,7 @@ export const deleteAgent = async (id: string) => {
 
 export const onAgents = getGatewayListener(
   ToClient.AGENTS,
-  (agents: Agent[]) => {
+  (agents: AgentType[]) => {
     updateAgents(agents);
   }
 );
