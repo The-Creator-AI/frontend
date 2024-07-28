@@ -116,7 +116,7 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
         <div className="agents-settings-container">
             <List
                 itemLayout="horizontal"
-                dataSource={agents}
+                dataSource={agents?.sort((a, b) => (!!a.editable > !!b.editable ? 1 : -1))}
                 renderItem={(item: AgentType) => (
                     <List.Item
                         className="agents-settings-item"

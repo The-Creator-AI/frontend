@@ -57,7 +57,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
                     theme="vs-dark"
                     onChange={onSystemInstructionsChange as any}
                     options={{
-                        readOnly: !agent?.editable, // Set to false for editing
+                        readOnly: !(agent?.editable ?? true), // Set to false for editing
                     }}
                 />
             </div>
