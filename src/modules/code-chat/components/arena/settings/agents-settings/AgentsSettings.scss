@@ -15,6 +15,7 @@
         white-space: nowrap;
         display: block;
         font-weight: 400;
+        margin-left: 8px;
   
         &.active {
           color: #8670ff;
@@ -51,11 +52,16 @@
         font-weight: bold;
         font-size: 20px;
         opacity: 0.2;
+        margin-right: 8px;
   
         &:hover {
           opacity: 1; // Reduce opacity on hover
         }
       }
+    }
+
+    .add-agent-button {
+      margin-top: 50px;
     }
   }
   

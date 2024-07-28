@@ -122,6 +122,11 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                         className="agents-settings-item"
                         onClick={() => handleAgentClick(item)}
                     >
+                        <Switch
+                            checked={!item.hidden} // Switch state based on hidden property
+                            onChange={(checked) => handleHiddenChange(item, !checked)} // Invert checked state to match hidden property
+                            style={{ marginRight: 8 }} // Add some margin
+                        />
                         <List.Item.Meta
                             title={
                                 <Typography.Text
@@ -132,18 +137,6 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                                 </Typography.Text>
                             }
                         />
-                        {/* Replace Radio.Group with Switch */}
-                        <Switch
-                            checked={!item.hidden} // Switch state based on hidden property
-                            onChange={(checked) => handleHiddenChange(item, !checked)} // Invert checked state to match hidden property
-                            style={{ marginRight: 8 }} // Add some margin
-                        />
-                        <span
-                            className="edit-agent"
-                            onClick={() => item.id && handleEditAgent(item)}
-                        >
-                            <EditOutlined />
-                        </span>
                         {item.editable ? <Popconfirm
                             title="Are you sure delete this agent?"
                             onConfirm={(e) => {
@@ -157,6 +150,12 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
                         >
                             <DeleteOutlined className="delete-agent" />
                         </Popconfirm> : null}
+                        <span
+                            className="edit-agent"
+                            onClick={() => item.id && handleEditAgent(item)}
+                        >
+                            <EditOutlined />
+                        </span>
                     </List.Item>
                 )}
             />
@@ -164,6 +163,7 @@ const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
             <Button
                 type="primary"
                 onClick={handleAddAgent}
+                className="add-agent-button"
             >
                 Add New Agent
             </Button>
