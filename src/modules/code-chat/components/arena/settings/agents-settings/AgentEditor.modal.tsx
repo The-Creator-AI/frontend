@@ -48,6 +48,7 @@ const AgentEditorModal: React.FC<AgentEditorModalProps> = ({
                     value={name}
                     placeholder="Agent Name"
                     onChange={(e) => onNameChange(e.target.value)}
+                    disabled={!(agent?.editable ?? true)}
                 />
                 <MonacoEditor
                     height="600px"
