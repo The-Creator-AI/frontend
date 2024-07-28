@@ -83,3 +83,4 @@ export const codeChatStoreStateSubject = new Store<
 >(initialState);
 export const codeChatStore$ = codeChatStoreStateSubject.asObservable();
 
+export const getCurrentPath = () => codeChatStoreStateSubject.getValue().currentPath;

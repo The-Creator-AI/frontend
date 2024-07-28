@@ -18,7 +18,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
             chatHistoryRef.current.onscroll = () => {
                 if (chatHistoryRef.current) {
                     const { scrollTop, scrollHeight, clientHeight } = chatHistoryRef.current;
-                    const foundScrollAtBottom = scrollTop + clientHeight >= scrollHeight - 10;
+                    const foundScrollAtBottom = scrollTop + clientHeight >= scrollHeight - 20;
                     isScrollAtBottom.current = foundScrollAtBottom;
                 }
             }

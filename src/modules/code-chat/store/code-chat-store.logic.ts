@@ -339,7 +339,7 @@ export const onAgents = getGatewayListener(
 export const saveCodeToFile = async (filePath: string, code: string) => {
   try {
     console.log({ filePath, code });
-    // sendMessage(ToServer.SAVE_CODE_TO_FILE, { code });
+    sendMessage(ToServer.SAVE_CODE_TO_FILE, { filePath, code });
   } catch (error) {
     console.error("Error saving code to file:", error);
   }

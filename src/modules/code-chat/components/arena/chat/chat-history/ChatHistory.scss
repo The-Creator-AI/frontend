@@ -116,6 +116,21 @@
     .markdown-container {
         word-wrap: break-word; /* Add word-wrap to enable line breaks */
 
+        .file-path {
+            position: relative;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            background: #bcbcbc;
+
+            .save-icon {
+                cursor: pointer;
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+            }            
+        }
+
         pre {
             position: relative;
             background-color: #dcdcdc;

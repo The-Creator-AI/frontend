@@ -1,4 +1,4 @@
-import { CloseOutlined, DownOutlined, UpOutlined } from "@ant-design/icons";
+import { CloseOutlined, DownOutlined, UpOutlined, SaveOutlined } from "@ant-design/icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import useChat from "../useChat";
@@ -7,6 +7,7 @@ import "./ChatHistory.scss";
 import CodeBlock from "./CodeBlock";
 import { FaUser, FaUserAstronaut } from "react-icons/fa";
 import { saveCodeToFile } from "../../../../store/code-chat-store.logic";
+import { getCurrentPath } from "../../../../store/code-chat.store";
 
 interface ChatMessageProps {
     message: ChatMessageType;
@@ -29,7 +30,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         code: null,
         remainingMessage: message.message
     });
-    console.log({ parsedMessage });
 
     useEffect(() => {
         const parseMessage = (msg: string): ParsedMessage => {
@@ -54,9 +54,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             }
 
             // Try to extract code block
-            const codeMatch = result.remainingMessage.match(/```[\s\S]*?```/);
-            if (codeMatch) {
-                result.code = codeMatch[0];
+            const codeMatch = result.remainingMessage.match(/```(?:\w+\n)?(.+?)```/s);
+            if (codeMatch?.[1]) {
+                result.code = codeMatch[1];
                 result.remainingMessage = result.remainingMessage.replace(codeMatch[0], '').trim();
             }
 
@@ -73,7 +73,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     const handleSaveCode = async () => {
         if (parsedMessage.filePath && parsedMessage.code) {
             try {
-                await saveCodeToFile(parsedMessage.filePath, parsedMessage.code);
+                await saveCodeToFile(`${getCurrentPath()}/${parsedMessage.filePath}`, parsedMessage.code);
             } catch (error) {
                 console.error('Failed to save code:', error);
                 alert('Failed to save code. Please try again.');
@@ -105,7 +105,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     <div className="markdown-container">
                         {parsedMessage.filePath && (
                             <div className="file-path">
-                                File path: {parsedMessage.filePath}
+                                {parsedMessage.filePath}
+                                <span className='save-icon' onClick={handleSaveCode}>
+                                    <SaveOutlined style={{
+                                        fontSize: '22px',
+                                    }} title="Save code to file"/>
+                                </span>
                             </div>
                         )}
                         {parsedMessage.code && (

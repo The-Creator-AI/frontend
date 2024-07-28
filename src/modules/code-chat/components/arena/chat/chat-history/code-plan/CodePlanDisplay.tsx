@@ -24,17 +24,17 @@ interface CodePlanDisplayProps {
 const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const { agents, selectedFiles, currentPath } = useStore(codeChatStore$);
     const codePlanAgent = agents?.find((agent) => agent.name === "Code Plan");
-    const stubbedCodeAgent = agents?.find((agent) => agent.name === "Stubbed Code");
+    const developerAgent = agents?.find((agent) => agent.name === "Developer");
     const { sendMessage } = useChat();
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
     const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map((step: any) => step.recommendations || [])); // Store recommendations as a 2D array
 
     useEffect(() => {
-        savePlan({
-            title: plan.title,
-            description: plan.description,
-            code_plan: JSON.stringify(plan.code_plan, null, 2)
-        });
+        // savePlan({
+        //     title: plan.title,
+        //     description: plan.description,
+        //     code_plan: JSON.stringify(plan.code_plan, null, 2)
+        // });
     }, [plan]);
 
     // Handler for "More Recommendations" button
@@ -51,8 +51,8 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const handleGetCode = async (filename: string, index: number) => {
         console.log(`Requesting code for: ${filename}`);
         sendMessage({
-            agentInstruction: stubbedCodeAgent?.systemInstructions,
-            agentName: stubbedCodeAgent?.name,
+            agentInstruction: developerAgent?.systemInstructions,
+            agentName: developerAgent?.name,
             message: `Can you give me the updated code (as per the recommendations) for ${filename}?`,
             selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
