@@ -67,10 +67,23 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     }, [message.message]);
 
     useEffect(() => {
-        // ... (ResizeObserver logic remains the same)
-    }, []);
+        // use ResizeObserver to detect changes in the height of the message
+        const resizeObserver = new ResizeObserver(() => {
+            if (messageRef.current) {
+                if (messageRef.current.clientHeight >= 250) {
+                    setShowCollapse(true);
+                }
+            }
+        });
+
+        if (messageRef.current) {
+            resizeObserver.observe(messageRef.current);
+        }
+    }, [message]);
 
     const handleSaveCode = async () => {
+        console.log('parsedmessage');
+        console.log({ parsedMessage });
         if (parsedMessage.filePath && parsedMessage.code) {
             try {
                 await saveCodeToFile(`${getCurrentPath()}/${parsedMessage.filePath}`, parsedMessage.code);
@@ -121,7 +134,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                                     ) as any,
                                 }}
                             >
-                                {parsedMessage.code}
+                                 {message.message}
                             </ReactMarkdown>
                         )}
                         <ReactMarkdown components={{ code: CodeBlock as any }}>
