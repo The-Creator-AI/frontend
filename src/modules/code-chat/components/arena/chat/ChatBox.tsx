@@ -47,10 +47,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
   const handleSaveChat = () => {
     const newChatTitle = 'Chat ' + new Date().toUTCString(); // You can customize the chat title
     const chatDescription = 'This chat is about...'; // You can customize the chat description
+    console.log({ stage });
     saveChat({
-      id: stage?.type === 'chat' || stage?.type === 'plan' ? stage.activeChatId : undefined,
+      id: (stage?.type === 'chat' || stage?.type === 'plan') && stage.activeChatId ? stage.activeChatId : undefined,
       chat_history: chatHistory,
-      title: stage?.type === 'chat' || stage?.type === 'plan' ? (stage.title || newChatTitle) : newChatTitle,
+      title: (stage?.type === 'chat' || stage?.type === 'plan') && stage.activeChatId ? (stage.title || newChatTitle) : newChatTitle,
       description: chatDescription,
     }).then(() => {
       Message.success('Chat saved successfully!');
