@@ -2,7 +2,7 @@ import { PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { message as Message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import useStore from '../../../../../state/useStore';
-import { saveChat, updateChatHistory, updateStage } from '../../../store/code-chat-store.logic';
+import { clearChats, saveChat, updateChatHistory, updateStage } from '../../../store/code-chat-store.logic';
 import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
 import AgentSelector from './AgentSelector';
 import './ChatBox.scss';
@@ -75,7 +75,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
         }],
       },
   });
-    updateChatHistory(getChatIdForFirstChat(), []);
+    clearChats()
   };
 
   return (

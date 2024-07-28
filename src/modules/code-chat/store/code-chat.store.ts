@@ -94,6 +94,7 @@ export const getChatById = (id: number): CodeChatStoreState["chats"][0] | undefi
   codeChatStoreStateSubject.getValue().chats.find((chat) => chat.id === id);
 export const getChatByTitle = (title: string): CodeChatStoreState["chats"][0] | undefined =>
   codeChatStoreStateSubject.getValue().chats.find((chat) => chat.title === title);
+export const getFirstChat = () => codeChatStoreStateSubject.getValue().chats[0];
 export const getChatIdForFirstChat = () => codeChatStoreStateSubject.getValue().chats[0]?.id || generateChatIdForIndex(0);
 export const CHAT_ID_OFFSET = 100000000;
 export const generateChatIdForIndex = (index: number) => CHAT_ID_OFFSET + index;

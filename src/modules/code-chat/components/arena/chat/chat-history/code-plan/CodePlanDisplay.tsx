@@ -4,7 +4,7 @@ import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined, FileTextFil
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
 import useStore from "../../../../../../../state/useStore";
-import { codeChatStore$, getChatIdForNewChat } from "../../../../../store/code-chat.store";
+import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from "../../../../../store/code-chat.store";
 import { saveCodeToFileFromDeveloperResponse, savePlan } from "../../../../../store/code-chat-store.logic";
 import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
 import CodeFileModal from "./components/CodeFile.modal";
@@ -52,7 +52,8 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
             agentInstruction: codePlanAgent?.systemInstructions,
             agentName: codePlanAgent?.name,
             message: promptForRecommendations(filename),
-            selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
+            selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
+            chatHistory: getFirstChat()?.chat_history
         });
     };
     // Handler for "Get Code" button
@@ -64,7 +65,8 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
             agentInstruction: developerAgent?.systemInstructions,
             agentName: developerAgent?.name,
             message: promptForCodeFile(filename),
-            selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
+            selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
+            chatHistory: getFirstChat()?.chat_history
         });
     }
     // Handler for editing a recommendation
@@ -74,10 +76,6 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
         updatedRecommendations[indices[0]][indices[1]] = recommendation;
         setRecommendations(updatedRecommendations);
     };
-    // Handle recommendation changes after it's saved
-    useEffect(() => {
-        console.log("recommendations changed:", recommendations);
-    }, [recommendations]);
 
     // Handler for saving a recommendation after editing
     const handleSaveRecommendation = (index: number, filename: string, newRecommendation: string) => {

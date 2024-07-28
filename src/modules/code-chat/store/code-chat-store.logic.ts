@@ -91,6 +91,16 @@ export const updateChatTitle = (chatId: number, newTitle: string) => {
   );
 }
 
+export const clearChats = () => {
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      chats: [],
+    },
+    CodeChatActions.CLEAR_CHATS
+  );
+}
+
 export const updateChatHistory = (
   chatId: number,
   newChatHistory: CodeChatStoreState["chats"][0]["chat_history"]
@@ -180,11 +190,12 @@ export const sendChatMessage = async (args: {
   message: string;
   selectedFiles: string[];
   imageFiles?: File[];
+  chatHistory?: CodeChatStoreState["chats"][0]["chat_history"]
 }) => {
   console.log({ args });
   const { chatId, chatTitle, agentName, agentInstruction, message, selectedFiles } = args;
   const chat = getChatById(chatId);
-  const chatHistory = chat?.chat_history || [];
+  const chatHistory = (chat?.chat_history.length ? chat?.chat_history : args.chatHistory) || [];
   const messages: ChatMessageType[] = [];
   if (agentInstruction) {
     messages.push({
