@@ -22,6 +22,7 @@ describe('<CodeBlock />', () => {
           \"working_directory\": \".\"
         }]
     }`} node={{ properties: { className: 'language-json' } }}
-    className={''}/>)
+    className={''}
+    onSave={() => {}}/>)
   })
 })

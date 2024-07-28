@@ -1,0 +1,13 @@
+.save-icon, .copy-icon {
+    cursor: pointer;
+    position: absolute;
+    bottom: -10px;
+}
+
+.copy-icon {
+    right: 0;
+}
+
+.save-icon {
+    right: 30px;
+}

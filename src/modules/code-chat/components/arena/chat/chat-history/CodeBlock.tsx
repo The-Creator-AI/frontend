@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { CopyOutlined } from '@ant-design/icons';
+import { CopyOutlined, SaveOutlined } from '@ant-design/icons';
 import { message } from 'antd';
 import PlanDisplay from "./plan/PlanDisplay";
 import CodePlanDisplay from './code-plan/CodePlanDisplay';
+import './CodeBlock.scss';
 
-const CodeBlock = ({ children, className, node }) => {
+const CodeBlock = ({ children, className, node, onSave }) => {
     const [copied, setCopied] = useState(false);
     const isJson = node?.properties?.className?.includes('language-json');
     const jsonCode = useMemo(() => {
@@ -27,6 +28,11 @@ const CodeBlock = ({ children, className, node }) => {
         return <pre className={className}>
         <span className="copy-icon" onClick={handleCopy}>
             <CopyOutlined style={{ fontSize: '22px', color: copied ? '#1890ff' : '#888' }} />
+        </span>
+        <span className='save-icon' onClick={onSave}>
+            <SaveOutlined style={{
+                fontSize: '22px',
+            }} title="Save code to file"/>
         </span>
         <code>{children}</code>
     </pre>;

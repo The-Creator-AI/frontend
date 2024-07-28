@@ -335,3 +335,12 @@ export const onAgents = getGatewayListener(
     updateAgents(agents);
   }
 );
+
+export const saveCodeToFile = async (filePath: string, code: string) => {
+  try {
+    console.log({ filePath, code });
+    // sendMessage(ToServer.SAVE_CODE_TO_FILE, { code });
+  } catch (error) {
+    console.error("Error saving code to file:", error);
+  }
+};

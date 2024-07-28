@@ -3,43 +3,88 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import useChat from "../useChat";
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
-import "./ChatHistory.scss"; // Import your CSS file
+import "./ChatHistory.scss";
 import CodeBlock from "./CodeBlock";
 import { FaUser, FaUserAstronaut } from "react-icons/fa";
-
+import { saveCodeToFile } from "../../../../store/code-chat-store.logic";
 
 interface ChatMessageProps {
     message: ChatMessageType;
+}
+
+interface ParsedMessage {
+    filePath: string | null;
+    code: string | null;
+    remainingMessage: string;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
     message,
 }) => {
     const messageRef = useRef<HTMLDivElement>(null);
-    const { deleteMessage, setMessageCollapsed } =  useChat();
+    const { deleteMessage, setMessageCollapsed } = useChat();
     const [showCollapse, setShowCollapse] = useState(false);
+    const [parsedMessage, setParsedMessage] = useState<ParsedMessage>({
+        filePath: null,
+        code: null,
+        remainingMessage: message.message
+    });
+    console.log({ parsedMessage });
 
     useEffect(() => {
-        // use ResizeObserver to detect changes in the height of the message
-        const resizeObserver = new ResizeObserver(() => {
-            if (messageRef.current) {
-                if (messageRef.current.clientHeight >= 250) {
-                    setShowCollapse(true);
+        const parseMessage = (msg: string): ParsedMessage => {
+            const result: ParsedMessage = {
+                filePath: null,
+                code: null,
+                remainingMessage: msg
+            };
+
+            // Try to parse file_path from JSON
+            const filePathMatch = msg.match(/```json\s*(\{[^}]*\})\s*```/);
+            if (filePathMatch) {
+                try {
+                    const jsonObj = JSON.parse(filePathMatch[1]);
+                    if (jsonObj.file_path) {
+                        result.filePath = jsonObj.file_path;
+                        result.remainingMessage = msg.replace(filePathMatch[0], '').trim();
+                    }
+                } catch (e) {
+                    console.error("Failed to parse JSON:", e);
                 }
             }
-        });
 
-        if (messageRef.current) {
-            resizeObserver.observe(messageRef.current);
+            // Try to extract code block
+            const codeMatch = result.remainingMessage.match(/```[\s\S]*?```/);
+            if (codeMatch) {
+                result.code = codeMatch[0];
+                result.remainingMessage = result.remainingMessage.replace(codeMatch[0], '').trim();
+            }
+
+            return result;
+        };
+
+        setParsedMessage(parseMessage(message.message));
+    }, [message.message]);
+
+    useEffect(() => {
+        // ... (ResizeObserver logic remains the same)
+    }, []);
+
+    const handleSaveCode = async () => {
+        if (parsedMessage.filePath && parsedMessage.code) {
+            try {
+                await saveCodeToFile(parsedMessage.filePath, parsedMessage.code);
+            } catch (error) {
+                console.error('Failed to save code:', error);
+                alert('Failed to save code. Please try again.');
+            }
         }
-    }, [message]);
-
+    };
 
     return (
         <div
             key={message.uuid}
-            className={`message ${message.user} ${message.isCollapsed ? "collapsed" : ""
-                }`}
+            className={`message ${message.user} ${message.isCollapsed ? "collapsed" : ""}`}
             ref={messageRef}
         >
             <div className="sender-badge">
@@ -47,31 +92,35 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 {message.user === "bot" && <FaUserAstronaut />}
             </div>
             <div className="message-content">
-                {message.user === "bot" && (
-                    message.model ? (
-                        <span
-                            className="model-badge"
-                            aria-label={message.model}
-                        >
-                            {message.model}
-                        </span>
-                    ) : null
+                {message.user === "bot" && message.model && (
+                    <span className="model-badge" aria-label={message.model}>
+                        {message.model}
+                    </span>
                 )}
                 {message.user === "instructor" ? (
-                    <span
-                        className="agent-badge"
-                        aria-label={message.message}
-                    >
+                    <span className="agent-badge" aria-label={message.message}>
                         {message.agentName}
                     </span>
                 ) : (
                     <div className="markdown-container">
-                        <ReactMarkdown
-                            components={{
-                                code: CodeBlock as any,
-                            }}
-                        >
-                            {message.message}
+                        {parsedMessage.filePath && (
+                            <div className="file-path">
+                                File path: {parsedMessage.filePath}
+                            </div>
+                        )}
+                        {parsedMessage.code && (
+                            <ReactMarkdown
+                                components={{
+                                    code: ({ ...props }) => (
+                                        <CodeBlock {...props as any} onSave={handleSaveCode} />
+                                    ) as any,
+                                }}
+                            >
+                                {parsedMessage.code}
+                            </ReactMarkdown>
+                        )}
+                        <ReactMarkdown components={{ code: CodeBlock as any }}>
+                            {parsedMessage.remainingMessage}
                         </ReactMarkdown>
                     </div>
                 )}
@@ -81,11 +130,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                     onClick={() => setMessageCollapsed(message.uuid, !message.isCollapsed)}
                     className="expand-collapse-button"
                 >
-                    {message.isCollapsed ? (
-                        <DownOutlined />
-                    ) : (
-                        <UpOutlined />
-                    )}
+                    {message.isCollapsed ? <DownOutlined /> : <UpOutlined />}
                 </button>
             )}
             <CloseOutlined
