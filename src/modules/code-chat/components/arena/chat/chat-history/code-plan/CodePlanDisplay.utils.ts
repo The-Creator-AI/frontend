@@ -31,3 +31,40 @@ export const fileCode = (filename: string) => {
 export const isFileCodeLoading = (filename: string) => {
     return chatForCodeFile(filename)?.isLoading || false;
 };
+
+export interface ParsedMessage {
+    filePath: string | null;
+    code: string | null;
+    remainingMessage: string;
+}
+
+export const parseDeveloperResponse = (msg: string): ParsedMessage => {
+    const result: ParsedMessage = {
+        filePath: null,
+        code: null,
+        remainingMessage: msg
+    };
+
+    // Try to parse file_path from JSON
+    const filePathMatch = msg.match(/```json\s*(\{[^}]*\})\s*```/);
+    if (filePathMatch) {
+        try {
+            const jsonObj = JSON.parse(filePathMatch[1]);
+            if (jsonObj.file_path) {
+                result.filePath = jsonObj.file_path;
+                result.remainingMessage = msg.replace(filePathMatch[0], '').trim();
+            }
+        } catch (e) {
+            console.error("Failed to parse JSON:", e);
+        }
+    }
+
+    // Try to extract code block
+    const codeMatch = result.remainingMessage.match(/```(?:\w+\n)?(.+?)```/s);
+    if (codeMatch?.[1]) {
+        result.code = codeMatch[1];
+        result.remainingMessage = result.remainingMessage.replace(codeMatch[0], '').trim();
+    }
+
+    return result;
+};

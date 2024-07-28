@@ -19,8 +19,10 @@ import {
   CodeChatStoreState,
   codeChatStoreStateSubject,
   getChatById,
+  getCurrentPath,
   initialState,
 } from "./code-chat.store";
+import { ParsedMessage } from "../components/arena/chat/chat-history/code-plan/CodePlanDisplay.utils";
 
 export const resetCodeChatStore = () => {
   codeChatStoreStateSubject._next(
@@ -390,5 +392,17 @@ export const saveCodeToFile = async (filePath: string, code: string) => {
     sendMessage(ToServer.SAVE_CODE_TO_FILE, { filePath, code });
   } catch (error) {
     console.error("Error saving code to file:", error);
+  }
+};
+
+export const saveCodeToFileFromDeveloperResponse = async (parsedMessage: ParsedMessage) => {
+  console.log({ parsedMessage });
+  if (parsedMessage.filePath && parsedMessage.code) {
+      try {
+          await saveCodeToFile(`${getCurrentPath()}/${parsedMessage.filePath}`, parsedMessage.code);
+      } catch (error) {
+          console.error('Failed to save code:', error);
+          alert('Failed to save code. Please try again.');
+      }
   }
 };

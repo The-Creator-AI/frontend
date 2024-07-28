@@ -1,12 +1,12 @@
 import { Button, message, Tooltip } from "antd";
 import React, { useState, useEffect } from "react";
-import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined } from '@ant-design/icons';
+import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined, FileTextFilled } from '@ant-design/icons';
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
 import useStore from "../../../../../../../state/useStore";
 import { codeChatStore$, getChatIdForNewChat } from "../../../../../store/code-chat.store";
-import { savePlan } from "../../../../../store/code-chat-store.logic";
-import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
+import { saveCodeToFileFromDeveloperResponse, savePlan } from "../../../../../store/code-chat-store.logic";
+import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
 import CodeFileModal from "./components/CodeFile.modal";
 
 interface CodePlanDisplayProps {
@@ -30,7 +30,10 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const { sendMessage } = useChat();
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
     const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map((step: any) => step.recommendations || [])); // Store recommendations as a 2D array
-    const [isCodeFileModalOpen, setIsCodeFileModalOpen] = useState(false);
+    const [codeFileModal, setCodeFileModal] = useState({
+        filename: '',
+        isOpen: false
+    });
 
     useEffect(() => {
         // savePlan({
@@ -135,12 +138,15 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                         className="more-recommendations-button"
                                     />
                                 </Tooltip>
-                                <Tooltip title="Get Code">
+                                <Tooltip title={isFileCodeLoading(step.filename) ? "Loading..." : fileCode(step.filename) ? "View Code" : "Get Code"}>
                                     <Button
                                         type="link"
-                                        icon={<FileTextOutlined />}
+                                        icon={fileCode(step.filename) ? <FileTextFilled /> : <FileTextOutlined />}
                                         loading={isFileCodeLoading(step.filename)}
-                                        onClick={() => fileCode(step.filename) ? setIsCodeFileModalOpen(true) : handleGetCode(step.filename, stepIndex as number)}
+                                        onClick={() => fileCode(step.filename) ? setCodeFileModal({
+                                            filename: step.filename,
+                                            isOpen: true
+                                        }) : handleGetCode(step.filename, stepIndex as number)}
                                         className="get-code-button"
                                     />
                                 </Tooltip>
@@ -172,15 +178,26 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                     )}
                                 </div>
                             ))}
-                            <CodeFileModal isOpen={isCodeFileModalOpen}
-                                name={step.filename}
-                                code={fileCode(step.filename)}
-                                onApply={() => setIsCodeFileModalOpen(false)}
-                                onClose={() => setIsCodeFileModalOpen(false)}
-                            />
                         </li>
                 ))}
             </ul>
+            {codeFileModal ? <CodeFileModal isOpen={codeFileModal.isOpen}
+                key={codeFileModal.filename}
+                name={codeFileModal.filename}
+                code={parseDeveloperResponse(fileCode(codeFileModal.filename)).code || ''}
+                onApply={() => {
+                    const parsedMessage = parseDeveloperResponse(fileCode(codeFileModal.filename));
+                    saveCodeToFileFromDeveloperResponse(parsedMessage);
+                    setCodeFileModal({
+                        filename: '',
+                        isOpen: false
+                    });
+                }}
+                onClose={() => setCodeFileModal({
+                    filename: '',
+                    isOpen: false
+                })}
+            /> : null}
         </div>
     );
 };

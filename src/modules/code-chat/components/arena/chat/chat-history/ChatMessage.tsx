@@ -6,17 +6,12 @@ import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 import "./ChatHistory.scss";
 import CodeBlock from "./CodeBlock";
 import { FaUser, FaUserAstronaut } from "react-icons/fa";
-import { saveCodeToFile } from "../../../../store/code-chat-store.logic";
+import { saveCodeToFile, saveCodeToFileFromDeveloperResponse } from "../../../../store/code-chat-store.logic";
 import { getCurrentPath } from "../../../../store/code-chat.store";
+import { ParsedMessage, parseDeveloperResponse } from "./code-plan/CodePlanDisplay.utils";
 
 interface ChatMessageProps {
     message: ChatMessageType;
-}
-
-interface ParsedMessage {
-    filePath: string | null;
-    code: string | null;
-    remainingMessage: string;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
@@ -32,38 +27,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     });
 
     useEffect(() => {
-        const parseMessage = (msg: string): ParsedMessage => {
-            const result: ParsedMessage = {
-                filePath: null,
-                code: null,
-                remainingMessage: msg
-            };
-
-            // Try to parse file_path from JSON
-            const filePathMatch = msg.match(/```json\s*(\{[^}]*\})\s*```/);
-            if (filePathMatch) {
-                try {
-                    const jsonObj = JSON.parse(filePathMatch[1]);
-                    if (jsonObj.file_path) {
-                        result.filePath = jsonObj.file_path;
-                        result.remainingMessage = msg.replace(filePathMatch[0], '').trim();
-                    }
-                } catch (e) {
-                    console.error("Failed to parse JSON:", e);
-                }
-            }
-
-            // Try to extract code block
-            const codeMatch = result.remainingMessage.match(/```(?:\w+\n)?(.+?)```/s);
-            if (codeMatch?.[1]) {
-                result.code = codeMatch[1];
-                result.remainingMessage = result.remainingMessage.replace(codeMatch[0], '').trim();
-            }
-
-            return result;
-        };
-
-        setParsedMessage(parseMessage(message.message));
+        setParsedMessage(parseDeveloperResponse(message.message));
     }, [message.message]);
 
     useEffect(() => {
@@ -80,19 +44,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             resizeObserver.observe(messageRef.current);
         }
     }, [message]);
-
-    const handleSaveCode = async () => {
-        console.log('parsedmessage');
-        console.log({ parsedMessage });
-        if (parsedMessage.filePath && parsedMessage.code) {
-            try {
-                await saveCodeToFile(`${getCurrentPath()}/${parsedMessage.filePath}`, parsedMessage.code);
-            } catch (error) {
-                console.error('Failed to save code:', error);
-                alert('Failed to save code. Please try again.');
-            }
-        }
-    };
 
     return (
         <div
@@ -119,7 +70,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                         {parsedMessage.filePath && (
                             <div className="file-path">
                                 {parsedMessage.filePath}
-                                <span className='save-icon' onClick={handleSaveCode}>
+                                <span className='save-icon' onClick={() => saveCodeToFileFromDeveloperResponse(parsedMessage)}>
                                     <SaveOutlined style={{
                                         fontSize: '22px',
                                     }} title="Save code to file"/>
@@ -130,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                             <ReactMarkdown
                                 components={{
                                     code: ({ ...props }) => (
-                                        <CodeBlock {...props as any} onSave={handleSaveCode} />
+                                        <CodeBlock {...props as any} onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage)} />
                                     ) as any,
                                 }}
                             >

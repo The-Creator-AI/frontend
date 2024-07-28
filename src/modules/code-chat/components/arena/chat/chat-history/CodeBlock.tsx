@@ -41,7 +41,7 @@ const CodeBlock = ({ children, className, node, onSave }) => {
     const renderContent = () => {
         if (jsonCode) {
             if (jsonCode.plan_title) {
-                return   <PlanDisplay plan={jsonCode} /> ;
+                return <PlanDisplay plan={jsonCode} /> ;
             }
 
             if (jsonCode.code_plan) {
@@ -60,4 +60,4 @@ const CodeBlock = ({ children, className, node, onSave }) => {
     return renderContent();
 };
 
-export default CodeBlock;
+export default React.memo(CodeBlock);

@@ -18,7 +18,6 @@ const CodeFileModal: React.FC<CodeFileModalProps> = ({
     onApply,
     onClose
 }) => {
-    console.log({ code });
     return (
         <Modal
             title={<Typography.Text title={name || "Code File"}>
@@ -40,11 +39,11 @@ const CodeFileModal: React.FC<CodeFileModalProps> = ({
                 <MonacoEditor
                     height="600px"
                     width="100%"
-                    value={code}
+                    value={code || ""}
                     language="json"
                     theme="vs-dark"
                     options={{
-                        readOnly: true,
+                        readOnly: false,
                     }}
                 />
             </div>
