@@ -4,7 +4,7 @@ import { Button } from "antd";
 import React, { useState } from "react";
 import { message } from 'antd';
 
-import { codeChatStore$ } from "../../../../../store/code-chat.store";
+import { codeChatStore$, getChatIdForNewChat } from "../../../../../store/code-chat.store";
 import useStore from "../../../../../../../state/useStore";
 import useChat from "../../useChat";
 import "./PlanDisplay.scss"; // Add this line to import the stylesheet
@@ -45,6 +45,7 @@ const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan }) => {
 
     const handleWriteCode = async (filePath: string) => {
         sendMessage({
+            chatId: getChatIdForNewChat(),
             agentInstruction: stubbedCodeAgent?.systemInstructions,
             agentName: stubbedCodeAgent?.name,
             message: `Write me code for ${filePath} as per plan`,

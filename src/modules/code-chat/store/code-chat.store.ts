@@ -17,10 +17,9 @@ export interface CodeChatStoreState {
   recentFiles: string[];
   agents: AgentType[];
   selectedAgent: AgentType | null;
-  chat: {
-    chatHistory: ChatMessageType[];
+  chats: (ChatType & {
     isLoading: boolean;
-  };
+  })[];
   tokenCount: number;
   breadcrumb?: {
     items: {
@@ -29,20 +28,23 @@ export interface CodeChatStoreState {
       disabled?: boolean;
       onClick?: () => void;
     }[];
-  },
-  stage?: {
-    type: 'file';
-    filePath?: string;
-    content?: string;
-  } | {
-    type: 'plan' | 'chat';
-    activeChatId?: number;
-    title?: string;
-  } | {
-    type: 'settings';
-    pageId: string;
-    agentId?: string;
   };
+  stage?:
+    | {
+        type: "file";
+        filePath?: string;
+        content?: string;
+      }
+    | {
+        type: "plan" | "chat";
+        activeChatId?: number;
+        title?: string;
+      }
+    | {
+        type: "settings";
+        pageId: string;
+        agentId?: string;
+      };
   savedPlans: PlanType[];
   savedChats: ChatType[];
 }
@@ -55,23 +57,23 @@ export const initialState: CodeChatStoreState = {
   recentFiles: [],
   agents: [],
   selectedAgent: null,
-  chat: {
-    chatHistory: [],
-    isLoading: false,
-  },
+  chats: [],
   tokenCount: 0,
   breadcrumb: {
-    items: [{
-      label: 'Chat',
-      href: '/chat',
-      disabled: true
-    }, {
-      label: 'New Chat',
-      href: '/new-chat'
-    }],
+    items: [
+      {
+        label: "Chat",
+        href: "/chat",
+        disabled: true,
+      },
+      {
+        label: "New Chat",
+        href: "/new-chat",
+      },
+    ],
   },
   stage: {
-    type: 'chat',
+    type: "chat",
   },
   savedPlans: [],
   savedChats: [],
@@ -83,4 +85,16 @@ export const codeChatStoreStateSubject = new Store<
 >(initialState);
 export const codeChatStore$ = codeChatStoreStateSubject.asObservable();
 
-export const getCurrentPath = () => codeChatStoreStateSubject.getValue().currentPath;
+export const getCurrentPath = () =>
+  codeChatStoreStateSubject.getValue().currentPath;
+export const getChats = () => codeChatStoreStateSubject.getValue().chats;
+export const getChatsReversed = () =>
+  [...codeChatStoreStateSubject.getValue().chats].reverse();
+export const getChatById = (id: number): CodeChatStoreState["chats"][0] | undefined =>
+  codeChatStoreStateSubject.getValue().chats.find((chat) => chat.id === id);
+export const getChatByTitle = (title: string): CodeChatStoreState["chats"][0] | undefined =>
+  codeChatStoreStateSubject.getValue().chats.find((chat) => chat.title === title);
+export const getChatIdForFirstChat = () => codeChatStoreStateSubject.getValue().chats[0]?.id || generateChatIdForIndex(0);
+export const CHAT_ID_OFFSET = 100000000;
+export const generateChatIdForIndex = (index: number) => CHAT_ID_OFFSET + index;
+export const getChatIdForNewChat = () => generateChatIdForIndex(codeChatStoreStateSubject.getValue().chats.length);

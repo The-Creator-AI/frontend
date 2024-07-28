@@ -15,8 +15,10 @@ import { getGatewayListener } from "../../gateway";
 import { sendMessage } from "../../gateway/store/gateway.logic";
 import { CodeChatActions } from "./code-chat-store.actions";
 import {
+  CHAT_ID_OFFSET,
   CodeChatStoreState,
   codeChatStoreStateSubject,
+  getChatById,
   initialState,
 } from "./code-chat.store";
 
@@ -68,16 +70,52 @@ export const updateSelectedAgent = (agent: AgentType | null) => {
   );
 };
 
-export const updateChatHistory = (
-  newChatHistory: CodeChatStoreState["chat"]["chatHistory"]
-) => {
+export const updateChatTitle = (chatId: number, newTitle: string) => {
+  const newChats = codeChatStoreStateSubject.getValue().chats.map((chat) => {
+    if (chat.id === chatId) {
+      return {
+        ...chat,
+        title: newTitle,
+      };
+    }
+    return chat;
+  });
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
-      chat: {
-        ...codeChatStoreStateSubject.getValue().chat,
-        chatHistory: newChatHistory,
-      },
+      chats: newChats,
+    },
+    CodeChatActions.UPDATE_CHAT_HISTORY
+  );
+}
+
+export const updateChatHistory = (
+  chatId: number,
+  newChatHistory: CodeChatStoreState["chats"][0]["chat_history"]
+) => {
+  const newChats = codeChatStoreStateSubject.getValue().chats.map((chat) => {
+    if (chat.id === chatId) {
+      return {
+        ...chat,
+        chat_history: newChatHistory,
+      };
+    }
+    return chat;
+  });
+  const matchingChat = getChatById(chatId);
+  if (!matchingChat) {
+    newChats.push({
+      id: chatId,
+      title: "",
+      description: "",
+      isLoading: false,
+      chat_history: newChatHistory,
+    })
+  }
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      chats: newChats,
     },
     CodeChatActions.UPDATE_CHAT_HISTORY
   );
@@ -93,14 +131,19 @@ export const updateTokenCount = (newTokenCount: number) => {
   );
 };
 
-export const updateChatIsLoading = (isLoading: boolean) => {
+export const updateChatIsLoading = (chatId: number, isLoading: boolean) => {
+  const chat = getChatById(chatId);
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
-      chat: {
-        ...codeChatStoreStateSubject.getValue().chat,
-        isLoading,
-      },
+      chats: [
+        ...codeChatStoreStateSubject.getValue().chats.filter(
+          (chat) => chat.id !== chatId
+        ),{
+          ...chat,
+          isLoading
+        } as any
+      ],
     },
     CodeChatActions.UPDATE_CHAT_IS_LOADING
   );
@@ -128,19 +171,22 @@ export const updateStage = (newState: {
 
 // TODO: imageFiles still need to be handled once backend is ready for it
 export const sendChatMessage = async (args: {
+  chatId: number;
+  chatTitle?: string;
   agentName?: string;
   agentInstruction?: string;
   message: string;
   selectedFiles: string[];
   imageFiles?: File[];
 }) => {
-  const { agentName, agentInstruction, message, selectedFiles } = args;
-  const {
-    chat: { chatHistory },
-  } = codeChatStoreStateSubject.getValue();
+  console.log({ args });
+  const { chatId, chatTitle, agentName, agentInstruction, message, selectedFiles } = args;
+  const chat = getChatById(chatId);
+  const chatHistory = chat?.chat_history || [];
   const messages: ChatMessageType[] = [];
   if (agentInstruction) {
     messages.push({
+      chatId,
       user: "instructor",
       message: agentInstruction,
       agentName,
@@ -148,16 +194,18 @@ export const sendChatMessage = async (args: {
     });
   }
   messages.push({
+    chatId,
     user: "user",
     message,
     uuid: uuidv4(),
   });
-  updateChatHistory([...chatHistory, ...messages]);
-
-  updateChatIsLoading(true);
+  updateChatHistory(chatId, [...chatHistory, ...messages]);
+  updateChatTitle(chatId, chatTitle || chat?.title || "Untitled Chat");
+  updateChatIsLoading(chatId, true);
 
   try {
     sendMessage(ToServer.USER_MESSAGE, {
+      chatId,
       chatHistory: [
         ...chatHistory.filter((message) => message.user !== "instructor"),
         ...messages,
@@ -199,10 +247,9 @@ export const updateAgents = (agents: AgentType[]) => {
   );
 };
 
-const addBotMessageChunk = (message: BotMessageChunk) => {
-  console.log("addBotMessageChunk", message);
+const addBotMessageChunk = (chatId: number, message: BotMessageChunk) => {
   const { chunk, ...messageWithoutChunk } = message;
-  const chatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory;
+  const chatHistory = getChatById(chatId)?.chat_history || [];
   const existingMessage = chatHistory.find(
     (message) => message.uuid === messageWithoutChunk.uuid
   );
@@ -213,29 +260,28 @@ const addBotMessageChunk = (message: BotMessageChunk) => {
     ...messageWithoutChunk,
     message: (existingMessage?.message || "") + (chunk || ""),
   });
-  updateChatHistory([...newChatHistory]);
+  updateChatHistory(chatId, [...newChatHistory]);
 };
 
-const addBotMessage = (message: ChatMessageType) => {
-  const chatHistory = codeChatStoreStateSubject.getValue().chat.chatHistory;
+const addBotMessage = (chatId: number, message: ChatMessageType) => {
+  const chatHistory = getChatById(chatId)?.chat_history || [];
   const newChatHistory = chatHistory.filter((msg) => msg.uuid !== message.uuid);
-  console.log({ chatHistory, message, newChatHistory });
   newChatHistory.push(message);
-  updateChatHistory([...newChatHistory]);
+  updateChatHistory(chatId, [...newChatHistory]);
 };
 
-export const oneBotMessageChunk = getGatewayListener(
+export const onBotMessageChunk = getGatewayListener(
   ToClient.BOT_MESSAGE_CHUNK,
   (message) => {
-    addBotMessageChunk(message);
+    addBotMessageChunk(message.chatId, message);
   }
 );
 
 export const onBotMessage = getGatewayListener(
   ToClient.BOT_MESSAGE,
   (message) => {
-    addBotMessage(message);
-    updateChatIsLoading(false);
+    addBotMessage(message.chatId, message);
+    updateChatIsLoading(message.chatId, false);
   }
 );
 
@@ -284,7 +330,10 @@ export const saveChat = async (
   chat: Omit<ChatType, "id"> & { id?: number }
 ) => {
   try {
-    sendMessage(ToServer.SAVE_CHAT, chat);
+    sendMessage(ToServer.SAVE_CHAT, {
+      ...chat,
+      id: chat.id && chat.id > CHAT_ID_OFFSET ? undefined : chat.id,
+    });
   } catch (error) {
     console.error("Error saving chat:", error);
   }
@@ -338,7 +387,6 @@ export const onAgents = getGatewayListener(
 
 export const saveCodeToFile = async (filePath: string, code: string) => {
   try {
-    console.log({ filePath, code });
     sendMessage(ToServer.SAVE_CODE_TO_FILE, { filePath, code });
   } catch (error) {
     console.error("Error saving code to file:", error);

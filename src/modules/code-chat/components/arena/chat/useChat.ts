@@ -1,17 +1,24 @@
-import axios from 'axios';
-import config from '../../../../../config';
-import { codeChatStore$ } from '../../../store/code-chat.store';
-import useStore from '../../../../../state/useStore';
-import { v4 as uuidv4 } from 'uuid';
-import useDebounce from '../../../../../hooks/useDebounce';
-import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat-store.logic';
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import config from '../../../../../config';
+import useDebounce from '../../../../../hooks/useDebounce';
+import useStore from '../../../../../state/useStore';
+import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat-store.logic';
+import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
 
 const useChat = () => {
-  const { chat: { chatHistory, isLoading } = {
-    chatHistory: [],
+  const { chats, tokenCount } = useStore(codeChatStore$);
+  const {
+    id,
+    chat_history,
+    isLoading,
+  } = chats?.[0] || {
+    id: -1,
+    chat_history: [],
     isLoading: false,
-  }, tokenCount } = useStore(codeChatStore$);
+  };
+  const chatId = id ?? getChatIdForFirstChat();
 
   const handleTokenCount = useDebounce
     (async (args: {
@@ -31,6 +38,7 @@ const useChat = () => {
         const messages: ChatMessageType[] = [];
         if (agentInstruction) {
           messages.push({
+            chatId,
             user: 'instructor',
             message: agentInstruction,
             agentName,
@@ -38,13 +46,14 @@ const useChat = () => {
           });
         }
         messages.push({
+          chatId,
           user: 'user',
           message,
           uuid: uuidv4()
         });
         const response = await axios.post(`${config.BASE_URL}/creator/token-count`, {
           chatHistory: [
-            ...chatHistory.filter((message) => message.user !== 'instructor'),
+            ...chat_history.filter((message) => message.user !== 'instructor'),
             ...messages
           ],
           selectedFiles
@@ -57,13 +66,15 @@ const useChat = () => {
 
   const deleteMessage = (uuid: string) => {
     updateChatHistory(
-      chatHistory.filter((message) => message.uuid !== uuid)
+      chatId,
+      chat_history.filter((message) => message.uuid !== uuid)
     );
   };
 
   const setMessageCollapsed = (uuid: string, isCollapsed: boolean) => {
     updateChatHistory(
-      chatHistory.map((message) => {
+      chatId,
+      chat_history.map((message) => {
         if (message.uuid === uuid) {
           return { ...message, isCollapsed };
         }
@@ -72,7 +83,7 @@ const useChat = () => {
     );
   };
 
-  return { chatHistory, tokenCount, sendMessage: sendChatMessage, isLoading, deleteMessage, setMessageCollapsed, handleTokenCount };
+  return { chatHistory: chat_history, tokenCount, sendMessage: sendChatMessage, isLoading, deleteMessage, setMessageCollapsed, handleTokenCount };
 };
 
 export default useChat;

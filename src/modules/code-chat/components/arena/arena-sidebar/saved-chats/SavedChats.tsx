@@ -9,7 +9,7 @@ import {
   updateChatHistory,
   updateStage,
 } from "../../../../store/code-chat-store.logic";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { codeChatStore$, getChatIdForFirstChat } from "../../../../store/code-chat.store";
 import "./SavedChats.scss";
 
 interface SavedChatsProps {}
@@ -42,7 +42,7 @@ useEffect(() => {
 
   // Function to handle clicking on a saved chat
   const handleChatClick = (chat: ChatType) => {
-    updateChatHistory(chat.chat_history);
+    updateChatHistory(getChatIdForFirstChat(), chat.chat_history);
     updateStage({
       stage: { type: 'chat', activeChatId: chat.id, title: chat.title },
       breadcrumb: { items: [{ label: 'Chats', href: '/chats' }, { label: chat.title, href: `/${chat.id}` }] },

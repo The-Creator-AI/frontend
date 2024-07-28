@@ -4,8 +4,10 @@ import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined } from '@ant
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
 import useStore from "../../../../../../../state/useStore";
-import { codeChatStore$ } from "../../../../../store/code-chat.store";
+import { codeChatStore$, getChatIdForNewChat } from "../../../../../store/code-chat.store";
 import { savePlan } from "../../../../../store/code-chat-store.logic";
+import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
+import CodeFileModal from "./components/CodeFile.modal";
 
 interface CodePlanDisplayProps {
     plan: {
@@ -28,6 +30,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const { sendMessage } = useChat();
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
     const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map((step: any) => step.recommendations || [])); // Store recommendations as a 2D array
+    const [isCodeFileModalOpen, setIsCodeFileModalOpen] = useState(false);
 
     useEffect(() => {
         // savePlan({
@@ -41,9 +44,11 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const handleMoreRecommendations = async (filename: string, index: number) => {
         console.log(`Requesting more recommendations for: ${filename}`);
         sendMessage({
+            chatId: getChatIdForNewChat(),
+            chatTitle: chatTitleForRecommendations(filename),
             agentInstruction: codePlanAgent?.systemInstructions,
             agentName: codePlanAgent?.name,
-            message: `Can you give me more detailed and more comprehensive recommendations for ${filename}?`,
+            message: promptForRecommendations(filename),
             selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
     };
@@ -51,9 +56,11 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const handleGetCode = async (filename: string, index: number) => {
         console.log(`Requesting code for: ${filename}`);
         sendMessage({
+            chatId: getChatIdForNewChat(),
+            chatTitle: chatTitleForCode(filename),
             agentInstruction: developerAgent?.systemInstructions,
             agentName: developerAgent?.name,
-            message: `Can you give me the updated code (as per the recommendations) for ${filename}?`,
+            message: promptForCodeFile(filename),
             selectedFiles: selectedFiles.map((filePath) => `${currentPath}/${filePath}`),
         });
     }
@@ -106,69 +113,76 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                     step.command ? <li key={stepIndex} className="command">
                         <span className="command-code">{step.command}</span>
                         <Tooltip title="Copy Command">
-                                <Button
-                                    type="link"
-                                    icon={<CopyOutlined />}
-                                    onClick={() => handleCopy(step.command)}
-                                    className="get-code-button"
-                                />
+                            <Button
+                                type="link"
+                                icon={<CopyOutlined />}
+                                onClick={() => handleCopy(step.command)}
+                                className="get-code-button"
+                            />
                         </Tooltip>
                     </li>
-                    : <li key={stepIndex} className="recommendation">
-                        <span className="recommendation-description">
-                            <span className="filename">
-                                {step.filename}
+                        : <li key={stepIndex} className="recommendation">
+                            <span className="recommendation-description">
+                                <span className="filename">
+                                    {step.filename}
+                                </span>
+                                {/* More Recommendations Button */}
+                                <Tooltip title="More detailed">
+                                    <Button
+                                        type="link"
+                                        icon={<PlusOutlined />}
+                                        onClick={() => handleMoreRecommendations(step.filename, stepIndex as number)}
+                                        className="more-recommendations-button"
+                                    />
+                                </Tooltip>
+                                <Tooltip title="Get Code">
+                                    <Button
+                                        type="link"
+                                        icon={<FileTextOutlined />}
+                                        loading={isFileCodeLoading(step.filename)}
+                                        onClick={() => fileCode(step.filename) ? setIsCodeFileModalOpen(true) : handleGetCode(step.filename, stepIndex as number)}
+                                        className="get-code-button"
+                                    />
+                                </Tooltip>
                             </span>
-                            {/* More Recommendations Button */}
-                            <Tooltip title="More detailed">
-                                <Button
-                                    type="link"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => handleMoreRecommendations(step.filename, stepIndex as number)}
-                                    className="more-recommendations-button"
-                                />
-                            </Tooltip>
-                            <Tooltip title="Get Code">
-                                <Button
-                                    type="link"
-                                    icon={<FileTextOutlined />}
-                                    onClick={() => handleGetCode(step.filename, stepIndex as number)}
-                                    className="get-code-button"
-                                />
-                            </Tooltip>
-                        </span>
-                        {recommendations[stepIndex].map((recommendation, recIndex) => (
-                            <div key={recIndex} className="code-plan-recommendation-item">
-                                {editingRecommendationIndices?.[0] === stepIndex && editingRecommendationIndices[1] === recIndex ? (
-                                    <div className="code-plan-edit-input-container">
-                                        <input
-                                            type="text"
-                                            className="code-plan-edit-input"
-                                            value={recommendation}
-                                            onChange={(e) => handleEditRecommendation([stepIndex, recIndex], step.filename, e.target.value)}
-                                            onKeyDown={(e: any) => {
-                                                if (e.key === "Enter") {
-                                                    handleSaveRecommendation(recIndex as number, step.filename, e.target.value);
-                                                }
-                                            }}
-                                            onBlur={() => handleSaveRecommendation(recIndex as number, step.filename, recommendation)}
-                                        />
-                                        <Button type="link" onClick={handleCancelEdit} icon={<EditOutlined />} className="code-plan-edit-icon" />
-                                    </div>
-                                ) : (
-                                    <span
-                                        onClick={() => handleEditRecommendation([stepIndex, recIndex], step.filename, recommendation)}
-                                    >
-                                        {recommendation}
-                                    </span>
-                                )}
-                            </div>
-                        ))}
-                    </li>
+                            {recommendations[stepIndex].map((recommendation, recIndex) => (
+                                <div key={recIndex} className="code-plan-recommendation-item">
+                                    {editingRecommendationIndices?.[0] === stepIndex && editingRecommendationIndices[1] === recIndex ? (
+                                        <div className="code-plan-edit-input-container">
+                                            <input
+                                                type="text"
+                                                className="code-plan-edit-input"
+                                                value={recommendation}
+                                                onChange={(e) => handleEditRecommendation([stepIndex, recIndex], step.filename, e.target.value)}
+                                                onKeyDown={(e: any) => {
+                                                    if (e.key === "Enter") {
+                                                        handleSaveRecommendation(recIndex as number, step.filename, e.target.value);
+                                                    }
+                                                }}
+                                                onBlur={() => handleSaveRecommendation(recIndex as number, step.filename, recommendation)}
+                                            />
+                                            <Button type="link" onClick={handleCancelEdit} icon={<EditOutlined />} className="code-plan-edit-icon" />
+                                        </div>
+                                    ) : (
+                                        <span
+                                            onClick={() => handleEditRecommendation([stepIndex, recIndex], step.filename, recommendation)}
+                                        >
+                                            {recommendation}
+                                        </span>
+                                    )}
+                                </div>
+                            ))}
+                            <CodeFileModal isOpen={isCodeFileModalOpen}
+                                name={step.filename}
+                                code={fileCode(step.filename)}
+                                onApply={() => setIsCodeFileModalOpen(false)}
+                                onClose={() => setIsCodeFileModalOpen(false)}
+                            />
+                        </li>
                 ))}
             </ul>
         </div>
     );
 };
 
-export default CodePlanDisplay;
+export default React.memo(CodePlanDisplay);

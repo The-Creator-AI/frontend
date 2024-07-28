@@ -4,14 +4,16 @@ import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
 
 // Mock data for chat history
 const mockChatHistory: ChatMessageType[] = [
-  { user: 'user', message: 'Hello!', uuid: '123' },
+  { chatId: 1, user: 'user', message: 'Hello!', uuid: '123' },
   {
+    chatId: 1,
     user: 'bot',
     message: 'Hi there! How can I help you?',
     model: 'gpt-3.5-turbo',
     uuid: '456',
   },
   {
+    chatId: 1,
     user: 'bot',
     message: 'This is a very long message that should be collapsed. '.repeat(50), // Repeat to make it long
     model: 'gpt-3.5-turbo',

@@ -13,7 +13,7 @@ import {
     updateChatHistory,
     updateStage,
 } from "../../../../store/code-chat-store.logic";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { codeChatStore$, getChatIdForFirstChat } from "../../../../store/code-chat.store";
 import "./SavedPlans.scss";
 
 interface SavedPlansProps { }
@@ -50,6 +50,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
         const chatHistory: ChatMessageType[] = [
             // Add an instruction for the AI agent
             {
+                chatId: getChatIdForFirstChat(),
                 user: "instructor",
                 message: `Please load the following saved plan:`,
                 agentName: "Code Plan",
@@ -57,6 +58,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
             },
             // Add the plan content in JSON format
             {
+                chatId: getChatIdForFirstChat(),
                 user: "bot",
                 message: `\`\`\`json\n${typeof plan === "string" ? plan : JSON.stringify(plan, null, 2)
                     }\n\`\`\``,
@@ -65,7 +67,7 @@ const SavedPlans: React.FC<SavedPlansProps> = () => {
             },
         ];
 
-        updateChatHistory(chatHistory);
+        updateChatHistory(getChatIdForFirstChat(), chatHistory);
         // updateStage({ type: 'plan', activeChatId: plan.id, title: plan.title });
         updateStage({
             stage: { type: 'plan', activeChatId: plan.id, title: plan.title },
