@@ -1,4 +1,4 @@
-import { Button, message, Tooltip } from "antd";
+import { Button, Input, message, Tooltip } from "antd";
 import React, { useState, useEffect } from "react";
 import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined, FileTextFilled } from '@ant-design/icons';
 import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
@@ -155,9 +155,8 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                 <div key={recIndex} className="code-plan-recommendation-item">
                                     {editingRecommendationIndices?.[0] === stepIndex && editingRecommendationIndices[1] === recIndex ? (
                                         <div className="code-plan-edit-input-container">
-                                            <input
-                                                type="text"
-                                                className="code-plan-edit-input"
+                                            <Input.TextArea
+                                                className="ant-input-textarea"
                                                 value={recommendation}
                                                 onChange={(e) => handleEditRecommendation([stepIndex, recIndex], step.filename, e.target.value)}
                                                 onKeyDown={(e: any) => {
@@ -167,7 +166,6 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                                 }}
                                                 onBlur={() => handleSaveRecommendation(recIndex as number, step.filename, recommendation)}
                                             />
-                                            <Button type="link" onClick={handleCancelEdit} icon={<EditOutlined />} className="code-plan-edit-icon" />
                                         </div>
                                     ) : (
                                         <span
