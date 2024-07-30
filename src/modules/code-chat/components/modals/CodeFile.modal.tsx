@@ -4,7 +4,6 @@ import React from "react";
 import "./CodeFile.modal.scss";
 
 interface CodeFileModalProps {
-    isOpen: boolean;
     name: string;
     code: string;
     onApply: () => void;
@@ -12,7 +11,6 @@ interface CodeFileModalProps {
 }
 
 const CodeFileModal: React.FC<CodeFileModalProps> = ({
-    isOpen,
     name,
     code,
     onApply,
@@ -23,7 +21,7 @@ const CodeFileModal: React.FC<CodeFileModalProps> = ({
             title={<Typography.Text title={name || "Code File"}>
                 {name || "Code File"}
             </Typography.Text>}
-            open={isOpen}
+            open={true}
             onCancel={onClose}
             width={1200}
             footer={[

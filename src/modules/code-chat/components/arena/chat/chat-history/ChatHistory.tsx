@@ -38,7 +38,7 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
                 {[...chatHistory]
                 // .concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : [])
                 .map((message, index) => (
-                    <ChatMessage message={message}/>
+                    <ChatMessage key={message.uuid} message={message}/>
                 ))}
             </div>
         </div>

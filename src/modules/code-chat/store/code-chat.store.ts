@@ -3,6 +3,7 @@ import {
   ChatMessageType,
   ChatType,
   PlanType,
+  SummarizedResultChunk,
 } from "@The-Creator-AI/fe-be-common/dist/types";
 import { Store } from "../../../state/store";
 import {
@@ -10,6 +11,7 @@ import {
   getFromLocalStorage,
 } from "../../../utils/local-storage";
 import { CodeChatActions } from "./code-chat-store.actions";
+import * as Modals from '../components/modals';
 
 export interface CodeChatStoreState {
   currentPath: string;
@@ -47,6 +49,10 @@ export interface CodeChatStoreState {
       };
   savedPlans: PlanType[];
   savedChats: ChatType[];
+  openModals: {
+    type: keyof typeof Modals;
+    props: any;
+  }[];
 }
 
 export const initialState: CodeChatStoreState = {
@@ -77,6 +83,7 @@ export const initialState: CodeChatStoreState = {
   },
   savedPlans: [],
   savedChats: [],
+  openModals: [],
 };
 
 export const codeChatStoreStateSubject = new Store<

@@ -5,9 +5,9 @@ import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
 import useChat from "../../useChat";
 import useStore from "../../../../../../../state/useStore";
 import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from "../../../../../store/code-chat.store";
-import { saveCodeToFileFromDeveloperResponse, savePlan } from "../../../../../store/code-chat-store.logic";
+import { closeModal, openModal, saveCodeToFileFromDeveloperResponse, savePlan } from "../../../../../store/code-chat-store.logic";
 import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
-import CodeFileModal from "./components/CodeFile.modal";
+import CodeFileModal from "../../../../modals/CodeFile.modal";
 
 interface CodePlanDisplayProps {
     plan: {
@@ -30,10 +30,6 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
     const { sendMessage } = useChat();
     const [editingRecommendationIndices, setEditingRecommendationIndices] = useState<[number, number] | null>(null); // Track the index of the recommendation being edited
     const [recommendations, setRecommendations] = useState<string[][]>(plan.code_plan.map((step: any) => step.recommendations || [])); // Store recommendations as a 2D array
-    const [codeFileModal, setCodeFileModal] = useState({
-        filename: '',
-        isOpen: false
-    });
 
     useEffect(() => {
         // savePlan({
@@ -141,9 +137,15 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                         type="link"
                                         icon={fileCode(step.filename) ? <FileTextFilled /> : <FileTextOutlined />}
                                         loading={isFileCodeLoading(step.filename)}
-                                        onClick={() => fileCode(step.filename) ? setCodeFileModal({
-                                            filename: step.filename,
-                                            isOpen: true
+                                        onClick={() => fileCode(step.filename) ? openModal('CodeFileModal', {
+                                            name: step.filename,
+                                            code: parseDeveloperResponse(fileCode(step.filename)).code || '',
+                                            onApply: () => {
+                                                const parsedMessage = parseDeveloperResponse(fileCode(step.filename));
+                                                saveCodeToFileFromDeveloperResponse(parsedMessage);
+                                                closeModal('CodeFileModal');
+                                            },
+                                            onClose: () => closeModal('CodeFileModal'),
                                         }) : handleGetCode(step.filename, stepIndex as number)}
                                         className="get-code-button"
                                     />
@@ -179,23 +181,6 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                         </li>
                 ))}
             </ul>
-            {codeFileModal ? <CodeFileModal isOpen={codeFileModal.isOpen}
-                key={codeFileModal.filename}
-                name={codeFileModal.filename}
-                code={parseDeveloperResponse(fileCode(codeFileModal.filename)).code || ''}
-                onApply={() => {
-                    const parsedMessage = parseDeveloperResponse(fileCode(codeFileModal.filename));
-                    saveCodeToFileFromDeveloperResponse(parsedMessage);
-                    setCodeFileModal({
-                        filename: '',
-                        isOpen: false
-                    });
-                }}
-                onClose={() => setCodeFileModal({
-                    filename: '',
-                    isOpen: false
-                })}
-            /> : null}
         </div>
     );
 };

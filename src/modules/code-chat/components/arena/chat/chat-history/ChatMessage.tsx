@@ -79,6 +79,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                         )}
                         {parsedMessage.code && (
                             <ReactMarkdown
+                                key={parsedMessage.filePath}
                                 components={{
                                     code: ({ ...props }) => (
                                         <CodeBlock {...props as any} onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage)} />
