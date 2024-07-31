@@ -1,31 +1,35 @@
 .code-plan-display {
-    // Overall container styles
-    padding: 20px;
+    // Overall container styles    
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #f0f0f0;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  
+    .header {
+      padding: 20px;
+      background-color: #747070;
+  
+      .code-plan-title {
+        // Plan title styles
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #ffffff;
+      }
+    
+      .code-plan-summary {
+        // Plan summary styles
+        font-size: 1rem;
+        margin-bottom: 15px;
+        color: #cfcfcf;
+      }
+    }
   
     .command-code {
       font-weight: bold;
       color: #e9e9e9;
       background-color: #656565;
       padding: 5px;
-    }
-  
-    .code-plan-title {
-      // Plan title styles
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #007bff;
-    }
-  
-    .code-plan-summary {
-      // Plan summary styles
-      font-size: 1rem;
-      margin-bottom: 15px;
-      color: #333;
     }
   
     .code-plan-steps {
@@ -37,7 +41,8 @@
     .recommendations {
       margin-top: 40px;
       padding-inline-start: 0;
-
+      padding: 20px;
+  
       .recommendation {
         // Individual step styles
         margin-bottom: 12px;
@@ -88,10 +93,12 @@
         }
   
         .recommendation-items {
-          padding: 15px 15px;
+          padding: 25px 15px;
+          position: relative; // Added for the 'Add' button positioning
   
           .item {
             // Item in the changes list
+            position: relative;
             font-size: 0.9rem;
             color: #555;
             margin-bottom: 8px;
@@ -110,9 +117,39 @@
                 // Customize the Input.TextArea as needed
               }
             }
+            
+            .delete-icon {
+              position: absolute; // Position the delete icon correctly
+              top: 50%; // Align vertically with the center of the item
+              transform: translateY(-50%); // Center vertically
+              right: 10px; // Position the icon on the right side
+              cursor: pointer;
+              font-size: 16px;
+              border: 1px solid #00000024;
+              border-radius: 3px;
+              padding: 2px;
+              color: #0000001c;
+              transition: all 0.2s ease-in-out;
+          
+              &:hover {
+                color: #333;
+                border: 1px solid #333;
+              }
+            }
+          }
+          
+          .add-button {
+            position: absolute; // Position the 'Add' button
+            bottom: 10px; // Align with the bottom
+            right: 15px; // Position on the right side
+            cursor: pointer;
+            display: flex; // Use flex for better alignment
+            align-items: center;
+            color: #333;
           }
         }
       }
     }
   }
   
+      

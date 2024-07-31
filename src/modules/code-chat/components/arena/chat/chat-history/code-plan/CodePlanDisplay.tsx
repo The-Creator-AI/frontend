@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Button, Input, message, Tooltip } from 'antd';
-import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined } from '@ant-design/icons';
+import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import useStore from '../../../../../../../state/useStore';
 import { closeModal, openModal, saveCodeToFileFromDeveloperResponse } from '../../../../../store/code-chat-store.logic';
 import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from '../../../../../store/code-chat.store';
@@ -81,6 +81,23 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
         // TODO: Implement backend update logic here
     }, []);
 
+    const handleDeleteRecommendation = useCallback((indices: [number, number]) => {
+        setRecommendations((prev) => {
+            const updated = [...prev];
+            updated[indices[0]].splice(indices[1], 1);
+            return updated;
+        });
+    }, []);
+
+    const handleAddRecommendation = useCallback((indices: [number, number]) => {
+        setRecommendations((prev) => {
+            const updated = [...prev];
+            updated[indices[0]].push("");
+            setEditingIndices([indices[0], updated[indices[0]].length - 1]);
+            return updated;
+        });
+    }, []);
+
     const handleCopy = useCallback((text: string) => {
         navigator.clipboard.writeText(text).then(() => {
             message.success('Code copied to clipboard!');
@@ -124,11 +141,22 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                         isEditing={editingIndices?.[0] === stepIndex && editingIndices[1] === recIndex}
                         onEdit={(value) => handleEditRecommendation([stepIndex, recIndex], value)}
                         onSave={(value) => handleSaveRecommendation([stepIndex, recIndex], value)}
+                        onDelete={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            handleDeleteRecommendation([stepIndex, recIndex]);
+                        }}
+                        onCancel={() => setEditingIndices(null)}
                     />
                 ))}
+                <div className='add-button'
+                onClick={() => handleAddRecommendation([stepIndex, recommendations[stepIndex].length])}>
+                    <PlusOutlined />
+                    Add
+                </div>
             </div>
         </li>
-    ), [recommendations, editingIndices, handleMoreRecommendations, handleEditRecommendation, handleSaveRecommendation]);
+    ), [recommendations, editingIndices, handleMoreRecommendations, handleEditRecommendation, handleSaveRecommendation, handleDeleteRecommendation, handleAddRecommendation]);
 
     const renderCommandStep = useCallback((step: CommandStep, stepIndex: number) => (
         <li key={stepIndex} className="command">
@@ -166,8 +194,10 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
 
     return (
         <div className="code-plan-display">
-            <h2 className="code-plan-title">{plan.title}</h2>
-            <p className="code-plan-summary">{plan.description}</p>
+            <div className="header">
+                <h2 className="code-plan-title">{plan.title}</h2>
+                <p className="code-plan-summary">{plan.description}</p>
+            </div>
             <ul className="recommendations">
                 {plan.code_plan.map((step, index) =>
                     'filename' in step ? renderCodeStep(step, index) : renderCommandStep(step, index)
