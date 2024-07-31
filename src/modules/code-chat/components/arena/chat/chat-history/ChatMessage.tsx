@@ -1,13 +1,13 @@
-import { CloseOutlined, DownOutlined, UpOutlined, SaveOutlined } from "@ant-design/icons";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import useChat from "../useChat";
 import { ChatMessageType } from '@The-Creator-AI/fe-be-common/dist/types';
+import { CloseOutlined, DownOutlined, SaveOutlined, UpOutlined } from "@ant-design/icons";
+import React, { useEffect, useRef, useState } from "react";
+import { FaUser, FaUserAstronaut } from "react-icons/fa";
+import ReactMarkdown from "react-markdown";
+import { saveCodeToFileFromDeveloperResponse } from "../../../../store/code-chat-store.logic";
+import { getCurrentPath } from "../../../../store/code-chat.store";
+import useChat from "../useChat";
 import "./ChatHistory.scss";
 import CodeBlock from "./CodeBlock";
-import { FaUser, FaUserAstronaut } from "react-icons/fa";
-import { saveCodeToFile, saveCodeToFileFromDeveloperResponse } from "../../../../store/code-chat-store.logic";
-import { getCurrentPath } from "../../../../store/code-chat.store";
 import { ParsedMessage, parseDeveloperResponse } from "./code-plan/CodePlanDisplay.utils";
 
 interface ChatMessageProps {
@@ -70,7 +70,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                         {parsedMessage.filePath && (
                             <div className="file-path">
                                 {parsedMessage.filePath}
-                                <span className='save-icon' onClick={() => saveCodeToFileFromDeveloperResponse(parsedMessage)}>
+                                <span className='save-icon' onClick={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())}>
                                     <SaveOutlined style={{
                                         fontSize: '22px',
                                     }} title="Save code to file"/>
@@ -82,7 +82,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                                 key={parsedMessage.filePath}
                                 components={{
                                     code: ({ ...props }) => (
-                                        <CodeBlock {...props as any} onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage)} />
+                                        <CodeBlock {...props as any} onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())} />
                                     ) as any,
                                 }}
                             >

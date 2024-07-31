@@ -1,13 +1,12 @@
+import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Input, message, Tooltip } from "antd";
-import React, { useState, useEffect } from "react";
-import { CopyOutlined, PlusOutlined, EditOutlined, FileTextOutlined, FileTextFilled } from '@ant-design/icons';
-import "./CodePlanDisplay.scss"; // Add this line to import the stylesheet
-import useChat from "../../useChat";
+import React, { useEffect, useState } from "react";
 import useStore from "../../../../../../../state/useStore";
+import { closeModal, openModal, saveCodeToFileFromDeveloperResponse } from "../../../../../store/code-chat-store.logic";
 import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from "../../../../../store/code-chat.store";
-import { closeModal, openModal, saveCodeToFileFromDeveloperResponse, savePlan } from "../../../../../store/code-chat-store.logic";
+import useChat from "../../useChat";
+import "./CodePlanDisplay.scss";
 import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations } from "./CodePlanDisplay.utils";
-import CodeFileModal from "../../../../modals/CodeFile.modal";
 
 interface CodePlanDisplayProps {
     plan: {
@@ -142,7 +141,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                             code: parseDeveloperResponse(fileCode(step.filename)).code || '',
                                             onApply: () => {
                                                 const parsedMessage = parseDeveloperResponse(fileCode(step.filename));
-                                                saveCodeToFileFromDeveloperResponse(parsedMessage);
+                                                saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath());
                                                 closeModal('CodeFileModal');
                                             },
                                             onClose: () => closeModal('CodeFileModal'),

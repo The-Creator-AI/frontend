@@ -399,19 +399,19 @@ export const onAgents = getGatewayListener(
   }
 );
 
-export const saveCodeToFile = async (filePath: string, code: string) => {
+export const saveCodeToFile = async (filePath: string, currentPath: string, code: string) => {
   try {
-    sendMessage(ToServer.SAVE_CODE_TO_FILE, { filePath, code });
+    sendMessage(ToServer.SAVE_CODE_TO_FILE, { filePath, currentPath, code });
   } catch (error) {
     console.error("Error saving code to file:", error);
   }
 };
 
-export const saveCodeToFileFromDeveloperResponse = async (parsedMessage: ParsedMessage) => {
+export const saveCodeToFileFromDeveloperResponse = async (parsedMessage: ParsedMessage, currentPath: string) => {
   console.log({ parsedMessage });
   if (parsedMessage.filePath && parsedMessage.code) {
       try {
-          await saveCodeToFile(`${getCurrentPath()}/${parsedMessage.filePath}`, parsedMessage.code);
+          await saveCodeToFile(parsedMessage.filePath, currentPath, parsedMessage.code);
       } catch (error) {
           console.error('Failed to save code:', error);
           alert('Failed to save code. Please try again.');
