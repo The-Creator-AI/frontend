@@ -34,38 +34,83 @@
       padding: 0;
     }
   
-    .recommendation {
-      // Individual step styles
-      margin-bottom: 25px;
+    .recommendations {
+      margin-top: 40px;
+      padding-inline-start: 0;
+
+      .recommendation {
+        // Individual step styles
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+        background-color: #d0d0d0;
+    
+        .recommendation-description {
+          // Description of the step
+          display: flex;
+          align-items: center;
+          font-size: 1rem;
+          color: #333;
+          padding: 0px 10px;
+          margin-top: 10px;
+    
+          .filename {
+            // display: flex;
+            align-items: center;
+            font-weight: bold;
+            // color: #e9e9e9;
+            // background-color: #656565;
   
-      .recommendation-description {
-        // Description of the step
-        font-size: 1rem;
-        color: #333;
+            .path {
+              // max-width: 200px;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              font-size: 0.8rem;
+              margin-right: 5px;
+              color: #9b9b9b;
+              // background-color: #656565;
+            }
   
-        .filename {
-          font-weight: bold;
-          // color: #e9e9e9;
-          // background-color: #656565;
-          padding: 5px;
+            .name {
+              font-size: 1.2rem;
+              // color: #e9e9e9;
+              // background-color: #656565;
+            }
+          }
+  
+          .actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            // background-color: #e9e9e9;
+          }
         }
-      }
-    }
   
-    .code-plan-recommendation-item {
-      // Item in the changes list
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 5px;
+        .recommendation-items {
+          padding: 15px 15px;
   
-      // Wrap this in a span
-      // Remove direct styling of the parent li
-      // Add padding to the span
-      // Add margin-bottom to the span
-      .code-plan-edit-input-container {
-        // Use Ant Design's Input.TextArea component for better editing
-        .ant-input-textarea {
-          // Customize the Input.TextArea as needed
+          .item {
+            // Item in the changes list
+            font-size: 0.9rem;
+            color: #555;
+            margin-bottom: 8px;
+            border: 1px solid #f1ecec;
+            // border-radius: 10px;
+            padding: 12px;
+            background-color: #e5e5e5;
+        
+            // Wrap this in a span
+            // Remove direct styling of the parent li
+            // Add padding to the span
+            // Add margin-bottom to the span
+            .code-plan-edit-input-container {
+              // Use Ant Design's Input.TextArea component for better editing
+              .ant-input-textarea {
+                // Customize the Input.TextArea as needed
+              }
+            }
+          }
         }
       }
     }
