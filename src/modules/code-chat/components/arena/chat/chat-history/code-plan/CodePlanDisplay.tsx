@@ -141,7 +141,10 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                                             code: parseDeveloperResponse(fileCode(step.filename)).code || '',
                                             onApply: () => {
                                                 const parsedMessage = parseDeveloperResponse(fileCode(step.filename));
-                                                saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath());
+                                                saveCodeToFileFromDeveloperResponse({
+                                                    ...parsedMessage,
+                                                    filePath: parsedMessage.filePath || step.filename
+                                                }, getCurrentPath());
                                                 closeModal('CodeFileModal');
                                             },
                                             onClose: () => closeModal('CodeFileModal'),
