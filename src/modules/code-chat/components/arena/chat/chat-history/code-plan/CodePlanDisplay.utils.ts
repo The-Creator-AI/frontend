@@ -1,7 +1,9 @@
-import { MessageType } from "antd/es/message/interface";
-import { getChatsReversed } from "../../../../../store/code-chat.store";
-import { ChatMessageType } from "@The-Creator-AI/fe-be-common/dist/types";
-import { updateChatHistory } from "../../../../../store/code-chat.logic";
+import { AgentType, ChatMessageType } from "@The-Creator-AI/fe-be-common/dist/types";
+import { message } from 'antd';
+import { closeModal, openModal, saveCodeToFileFromDeveloperResponse, sendChatMessage, updateChatHistory } from "../../../../../store/code-chat.logic";
+import { getChatIdForNewChat, getChatsReversed, getCurrentPath, getFirstChat } from "../../../../../store/code-chat.store";
+import { CodePlanDisplayProps, CodeStep } from "./CodePlanDisplay.types";
+
 
 export const chatTitleForCode = (filename: string) => {
     return `Code for ${filename}`;
@@ -87,3 +89,105 @@ export const updatePlanInChat = (chatId: number, messageId: string, plan: any) =
         updateChatHistory(chatId, chat.chat_history);
     }
 }
+
+export const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+        message.success('Code copied to clipboard!');
+    });
+};
+
+export const handleCodeButtonClick = (args: {
+    filename: string;
+    selectedFiles: string[];
+    developerAgent: AgentType | null;
+}) => {
+    const { filename, selectedFiles, developerAgent } = args;
+    if (fileCode(filename)) {
+        openModal('CodeFileModal', {
+            name: filename,
+            code: parseDeveloperResponse(fileCode(filename)).code || '',
+            onApply: () => {
+                const parsedMessage = parseDeveloperResponse(fileCode(filename));
+                saveCodeToFileFromDeveloperResponse({
+                    ...parsedMessage,
+                    filePath: parsedMessage.filePath || filename
+                }, getCurrentPath());
+                closeModal('CodeFileModal');
+            },
+            onClose: () => closeModal('CodeFileModal'),
+        });
+    } else {
+        handleGetCode(args);
+    }
+};
+
+export const handleGetCode = (args: {
+    filename: string;
+    selectedFiles: string[];
+    developerAgent: AgentType | null;
+}) => {
+    const { filename, selectedFiles, developerAgent } = args;
+    sendChatMessage({
+        chatId: getChatIdForNewChat(),
+        chatTitle: chatTitleForCode(filename),
+        agentInstruction: developerAgent?.systemInstructions,
+        agentName: developerAgent?.name,
+        message: promptForCodeFile(filename),
+        selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
+        chatHistory: getFirstChat()?.chat_history
+    });
+};
+
+export const handleSaveRecommendation = (args: {
+    chatId: number;
+    messageId: string;
+    plan: CodePlanDisplayProps['plan'];
+    indices: [number, number];
+    newRecommendation: string;
+}) => {
+    const { chatId,messageId, plan, indices, newRecommendation } = args;
+    const newPlan = {...plan};
+    (newPlan.code_plan[indices[0]] as CodeStep).recommendations[indices[1]] = newRecommendation;
+    updatePlanInChat(chatId, messageId, newPlan);
+};
+
+export const handleDeleteRecommendation = (args: {
+    chatId: number;
+    messageId: string;
+    plan: CodePlanDisplayProps['plan'];
+    indices: [number, number];
+}) => {
+    const { chatId, messageId, plan, indices } = args;
+    const newPlan = {...plan};
+    (newPlan.code_plan[indices[0]] as CodeStep).recommendations.splice(indices[1], 1);
+    updatePlanInChat(chatId, messageId, newPlan);
+};
+
+export const handleAddRecommendation = (args: {
+    chatId: number;
+    messageId: string;
+    plan: CodePlanDisplayProps['plan'];
+    stepIndex: number;
+}) => {
+    const { chatId, messageId, plan, stepIndex } = args;
+    const newPlan = {...plan};
+    (newPlan.code_plan[stepIndex] as CodeStep).recommendations.push("");
+    updatePlanInChat(chatId, messageId, newPlan);
+};
+
+export const handleMoreRecommendations = (args: {
+    filename: string;
+    selectedFiles: string[];
+    codePlanAgent: AgentType | null;
+}) => {
+    const { filename, selectedFiles, codePlanAgent } = args;
+    sendChatMessage({
+        chatId: getChatIdForNewChat(),
+        chatTitle: chatTitleForRecommendations(filename),
+        agentInstruction: codePlanAgent?.systemInstructions,
+        agentName: codePlanAgent?.name,
+        message: promptForRecommendations(filename),
+        selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
+        chatHistory: getFirstChat()?.chat_history
+    });
+};

@@ -6,13 +6,11 @@ const queryClient = new QueryClient();
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
-        <React.StrictMode>
-            <QueryClientProvider client={queryClient}>
-                <ErrorBoundary>
-                    {children}
-                </ErrorBoundary>
-            </QueryClientProvider>
-        </React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <ErrorBoundary>
+                {children}
+            </ErrorBoundary>
+        </QueryClientProvider>
     );
 };
 

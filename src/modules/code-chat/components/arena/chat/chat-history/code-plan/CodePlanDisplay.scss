@@ -38,7 +38,7 @@
       padding: 0;
     }
   
-    .recommendations {
+    .code-plan-steps {
       margin-top: 40px;
       padding-inline-start: 0;
       padding: 20px;
@@ -49,6 +49,7 @@
         display: flex;
         flex-direction: column;
         background-color: #d0d0d0;
+        transition: all 0.5s ease;
     
         .recommendation-description {
           // Description of the step
