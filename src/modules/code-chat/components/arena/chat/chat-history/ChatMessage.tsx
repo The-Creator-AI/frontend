@@ -82,7 +82,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                                 key={parsedMessage.filePath}
                                 components={{
                                     code: ({ ...props }) => (
-                                        <CodeBlock {...props as any} onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())} />
+                                        <CodeBlock {...props as any} 
+                                            chatId={message.chatId}
+                                            messageId={message.uuid}
+                                            onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())} />
                                     ) as any,
                                 }}
                             >

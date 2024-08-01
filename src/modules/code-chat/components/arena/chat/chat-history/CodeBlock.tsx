@@ -5,7 +5,7 @@ import PlanDisplay from "./plan/PlanDisplay";
 import CodePlanDisplay from './code-plan/CodePlanDisplay';
 import './CodeBlock.scss';
 
-const CodeBlock = ({ children, className, node, onSave }) => {
+const CodeBlock = ({ children, className, node, onSave, ...props }) => {
     const [copied, setCopied] = useState(false);
     const isJson = node?.properties?.className?.includes('language-json');
     const jsonCode = useMemo(() => {
@@ -41,11 +41,11 @@ const CodeBlock = ({ children, className, node, onSave }) => {
     const renderContent = () => {
         if (jsonCode) {
             if (jsonCode.plan_title) {
-                return <PlanDisplay plan={jsonCode} /> ;
+                return <PlanDisplay {...props} plan={jsonCode} /> ;
             }
 
             if (jsonCode.code_plan) {
-                return <CodePlanDisplay plan={jsonCode} />;
+                return <CodePlanDisplay chatId={props.chatId} messageId={props.messageId} plan={jsonCode} />;
             }
 
             if (jsonCode.acceptance_criteria) {

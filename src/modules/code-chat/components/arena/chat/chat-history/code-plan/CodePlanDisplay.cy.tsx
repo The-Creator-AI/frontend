@@ -19,6 +19,8 @@ describe('<CodePlanDisplay />', () => {
 
     beforeEach(() => {
         cy.mount(<CodePlanDisplay
+            chatId={1}
+            messageId='11'
             plan={{
                 title: 'Test Code Plan',
                 description: 'A mock plan for testing.',

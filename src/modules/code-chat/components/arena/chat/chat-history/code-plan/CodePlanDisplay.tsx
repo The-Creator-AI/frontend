@@ -1,12 +1,12 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Button, Input, message, Tooltip } from 'antd';
-import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined, MinusOutlined, DeleteOutlined } from '@ant-design/icons';
 import useStore from '../../../../../../../state/useStore';
 import { closeModal, openModal, saveCodeToFileFromDeveloperResponse } from '../../../../../store/code-chat-store.logic';
 import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from '../../../../../store/code-chat.store';
 import useChat from '../../useChat';
 import './CodePlanDisplay.scss';
-import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations } from './CodePlanDisplay.utils';
+import { chatTitleForCode, chatTitleForRecommendations, fileCode, isFileCodeLoading, parseDeveloperResponse, promptForCodeFile, promptForRecommendations, updatePlanInChat } from './CodePlanDisplay.utils';
 import RecommendationItem from './components/RecommendationItem';
 
 interface CodeStep {
@@ -20,6 +20,8 @@ interface CommandStep {
 }
 
 interface CodePlanDisplayProps {
+    chatId: number;
+    messageId: string;
     plan: {
         title: string;
         description: string;
@@ -27,18 +29,18 @@ interface CodePlanDisplayProps {
     };
 }
 
-const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
+const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, messageId }) => {
     const { agents, selectedFiles } = useStore(codeChatStore$);
     const { sendMessage } = useChat();
-    const [recommendations, setRecommendations] = useState<string[][]>(
-        plan.code_plan.map((step) => 'recommendations' in step ? step.recommendations : [])
-    );
+    // const [codePlan, setCodePlan] = useState<(CodeStep | CommandStep)[]>(plan.code_plan);
+    const recommendations = useMemo(() => plan.code_plan.map((step) => 'recommendations' in step ? step.recommendations : []), [plan.code_plan]);
     const [editingIndices, setEditingIndices] = useState<[number, number] | null>(null);
+    const [newStepType, setNewStepType] = useState<'code' | 'command' | null>(null);
 
     const codePlanAgent = useMemo(() => agents?.find((agent) => agent.name === "Code Plan"), [agents]);
     const developerAgent = useMemo(() => agents?.find((agent) => agent.name === "Developer"), [agents]);
 
-    const handleMoreRecommendations = useCallback((filename: string) => {
+    const handleMoreRecommendations = (filename: string) => {
         sendMessage({
             chatId: getChatIdForNewChat(),
             chatTitle: chatTitleForRecommendations(filename),
@@ -48,9 +50,9 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
             selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
             chatHistory: getFirstChat()?.chat_history
         });
-    }, [codePlanAgent, sendMessage, selectedFiles]);
+    };
 
-    const handleGetCode = useCallback((filename: string) => {
+    const handleGetCode = (filename: string) => {
         sendMessage({
             chatId: getChatIdForNewChat(),
             chatTitle: chatTitleForCode(filename),
@@ -60,51 +62,82 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
             selectedFiles: selectedFiles.map((filePath) => `${getCurrentPath()}/${filePath}`),
             chatHistory: getFirstChat()?.chat_history
         });
-    }, [developerAgent, sendMessage, selectedFiles]);
+    };
 
-    const handleEditRecommendation = useCallback((indices: [number, number], recommendation: string) => {
+    const handleEditRecommendation = (indices: [number, number]) => {
         setEditingIndices(indices);
-        setRecommendations((prev) => {
-            const updated = [...prev];
-            updated[indices[0]][indices[1]] = recommendation;
-            return updated;
-        });
-    }, []);
+        // const newPlan = {...plan};
+        // (newPlan.code_plan[indices[0]] as CodeStep).recommendations[indices[1]] = recommendation;
+        // updatePlanInChat(chatId, messageId, newPlan);
+    };
 
-    const handleSaveRecommendation = useCallback((indices: [number, number], newRecommendation: string) => {
+    const handleSaveRecommendation = (indices: [number, number], newRecommendation: string) => {
         setEditingIndices(null);
-        setRecommendations((prev) => {
-            const updated = [...prev];
-            updated[indices[0]][indices[1]] = newRecommendation;
-            return updated;
-        });
-        // TODO: Implement backend update logic here
-    }, []);
+        const newPlan = {...plan};
+        (newPlan.code_plan[indices[0]] as CodeStep).recommendations[indices[1]] = newRecommendation;
+        updatePlanInChat(chatId, messageId, newPlan);
+    };
 
-    const handleDeleteRecommendation = useCallback((indices: [number, number]) => {
-        setRecommendations((prev) => {
-            const updated = [...prev];
-            updated[indices[0]].splice(indices[1], 1);
-            return updated;
-        });
-    }, []);
+    const handleDeleteRecommendation = (indices: [number, number]) => {
+        const newPlan = {...plan};
+        (plan.code_plan[indices[0]] as CodeStep).recommendations.splice(indices[1], 1);
+        updatePlanInChat(chatId, messageId, newPlan);
+    };
 
-    const handleAddRecommendation = useCallback((indices: [number, number]) => {
-        setRecommendations((prev) => {
-            const updated = [...prev];
-            updated[indices[0]].push("");
-            setEditingIndices([indices[0], updated[indices[0]].length - 1]);
-            return updated;
-        });
-    }, []);
+    const handleAddRecommendation = (indices: [number, number]) => {
+        // setRecommendations((prev) => {
+        //     const updated = [...prev];
+        //     updated[indices[0]].push("");
+        //     setEditingIndices([indices[0], updated[indices[0]].length - 1]);
+        //     return updated;
+        // });
+        const newPlan = {...plan};
+        (newPlan.code_plan[indices[0]] as CodeStep).recommendations.push("");
+        updatePlanInChat(chatId, messageId, newPlan);
+        // setEditingIndices([indices[0], indices[1]]);
+    };
 
-    const handleCopy = useCallback((text: string) => {
+    const handleAddCodeStep = () => {
+        // setCodePlan((prev) => [...prev, { filename: '', recommendations: [] }]);
+        // setRecommendations((prev) => [...prev, []]);
+        updatePlanInChat(chatId, messageId, {
+            ...plan,
+            code_plan: [...plan.code_plan, { filename: '', recommendations: [] }]
+        });
+        setNewStepType(null);
+    };
+
+    const handleAddCommandStep = () => {
+        updatePlanInChat(chatId, messageId, {
+            ...plan,
+            code_plan: [...plan.code_plan, { filename: '', recommendations: [] }]
+        });
+        setNewStepType(null);
+    };
+
+    const handleDeleteStep = (index: number) => {
+        // setCodePlan((prev) => {
+        //     const updated = [...prev];
+        //     updated.splice(index, 1);
+        //     return updated;
+        // });
+        const newPlan = {...plan};
+        (plan.code_plan).splice(index, 1);
+        updatePlanInChat(chatId, messageId, newPlan);
+        // setRecommendations((prev) => {
+        //     const updated = [...prev];
+        //     updated.splice(index, 1);
+        //     return updated;
+        // });
+    };
+
+    const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text).then(() => {
             message.success('Code copied to clipboard!');
         });
-    }, []);
+    };
 
-    const renderCodeStep = useCallback((step: CodeStep, stepIndex: number) => (
+    const renderCodeStep = (step: CodeStep, stepIndex: number) => (
         <li key={stepIndex} className="recommendation">
             <div className="recommendation-description">
                 <div className="filename" title={step.filename}>
@@ -131,6 +164,14 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                             className="get-code-button"
                         />
                     </Tooltip>
+                    <Tooltip title="Delete Step">
+                        <Button
+                            type="link"
+                            icon={<DeleteOutlined />}
+                            onClick={() => handleDeleteStep(stepIndex)}
+                            className="delete-step-button"
+                        />
+                    </Tooltip>
                 </div>
             </div>
             <div className="recommendation-items">
@@ -139,26 +180,26 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                         key={recIndex}
                         recommendation={recommendation}
                         isEditing={editingIndices?.[0] === stepIndex && editingIndices[1] === recIndex}
-                        onEdit={(value) => handleEditRecommendation([stepIndex, recIndex], value)}
+                        onEdit={() => handleEditRecommendation([stepIndex, recIndex])}
                         onSave={(value) => handleSaveRecommendation([stepIndex, recIndex], value)}
                         onDelete={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
                             handleDeleteRecommendation([stepIndex, recIndex]);
                         }}
-                        onCancel={() => setEditingIndices(null)}
+                        onCancel={() => handleSaveRecommendation([stepIndex, recIndex], recommendation)}
                     />
                 ))}
                 <div className='add-button'
-                onClick={() => handleAddRecommendation([stepIndex, recommendations[stepIndex].length])}>
+                    onClick={() => handleAddRecommendation([stepIndex, recommendations[stepIndex].length])}>
                     <PlusOutlined />
                     Add
                 </div>
             </div>
         </li>
-    ), [recommendations, editingIndices, handleMoreRecommendations, handleEditRecommendation, handleSaveRecommendation, handleDeleteRecommendation, handleAddRecommendation]);
+    );
 
-    const renderCommandStep = useCallback((step: CommandStep, stepIndex: number) => (
+    const renderCommandStep = (step: CommandStep, stepIndex: number) => (
         <li key={stepIndex} className="command">
             <span className="command-code">{step.command}</span>
             <Tooltip title="Copy Command">
@@ -169,10 +210,18 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                     className="get-code-button"
                 />
             </Tooltip>
+            <Tooltip title="Delete Step">
+                <Button
+                    type="link"
+                    icon={<DeleteOutlined />}
+                    onClick={() => handleDeleteStep(stepIndex)}
+                    className="delete-step-button"
+                />
+            </Tooltip>
         </li>
-    ), [handleCopy]);
+    );
 
-    const handleCodeButtonClick = useCallback((filename: string) => {
+    const handleCodeButtonClick = (filename: string) => {
         if (fileCode(filename)) {
             openModal('CodeFileModal', {
                 name: filename,
@@ -190,7 +239,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
         } else {
             handleGetCode(filename);
         }
-    }, [handleGetCode]);
+    };
 
     return (
         <div className="code-plan-display">
@@ -203,9 +252,37 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan }) => {
                     'filename' in step ? renderCodeStep(step, index) : renderCommandStep(step, index)
                 )}
             </ul>
+            <div className="add-step-buttons">
+                <Button onClick={() => setNewStepType('code')}>Add Code Step</Button>
+                <Button onClick={() => setNewStepType('command')}>Add Command Step</Button>
+            </div>
+            {newStepType === 'code' && (
+                <div className="new-step-form">
+                    <Input placeholder="Enter filename" onPressEnter={(e) => {
+                        const filename = (e.target as HTMLInputElement).value;
+                        updatePlanInChat(chatId, messageId, {
+                            ...plan,
+                            code_plan: [...plan.code_plan, { filename, recommendations: [] }]
+                        });
+                        // setRecommendations((prev) => [...prev, []]);
+                        setNewStepType(null);
+                    }} />
+                </div>
+            )}
+            {newStepType === 'command' && (
+                <div className="new-step-form">
+                    <Input placeholder="Enter command" onPressEnter={(e) => {
+                        const command = (e.target as HTMLInputElement).value;
+                        updatePlanInChat(chatId, messageId, {
+                            ...plan,
+                            code_plan: [...plan.code_plan, { command, description: [] }]
+                        });
+                        setNewStepType(null);
+                    }} />
+                </div>
+            )}
         </div>
     );
 };
-
 
 export default React.memo(CodePlanDisplay);

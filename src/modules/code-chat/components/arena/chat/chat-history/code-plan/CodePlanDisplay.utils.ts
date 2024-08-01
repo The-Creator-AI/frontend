@@ -1,4 +1,7 @@
+import { MessageType } from "antd/es/message/interface";
 import { getChatsReversed } from "../../../../../store/code-chat.store";
+import { ChatMessageType } from "@The-Creator-AI/fe-be-common/dist/types";
+import { updateChatHistory } from "../../../../../store/code-chat-store.logic";
 
 export const chatTitleForCode = (filename: string) => {
     return `Code for ${filename}`;
@@ -68,3 +71,24 @@ export const parseDeveloperResponse = (msg: string): ParsedMessage => {
 
     return result;
 };
+
+export const updatePlanInChat = (chatId: number, messageId: string, plan: any) => {
+    console.log({ plan });
+    const chat = getChatsReversed().find((chat) => chat.id === chatId);
+    if (chat) {
+        chat.chat_history = chat.chat_history.map((message : ChatMessageType) => {
+            if (message.uuid === messageId) {
+                const leadingText = message.message.substring(0, message.message.indexOf('```json'));
+                const trailingText = message.message.substring(message.message.lastIndexOf('```') + 4);
+                // console.log({
+                //     originalMessage: message.message,
+                //     newMessage: leadingText + JSON.stringify(plan) + trailingText,
+                // });
+                message.message = leadingText + '```json\n' + JSON.stringify(plan) + '\n```' + trailingText;
+            }
+            return message;
+        });
+
+        updateChatHistory(chatId, chat.chat_history);
+    }
+}

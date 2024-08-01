@@ -1,17 +1,24 @@
 import { Input } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import '../CodePlanDisplay.scss';
+import { useEffect, useState } from 'react';
 
 interface RecommendationItemProps {
     recommendation: string;
     isEditing: boolean;
-    onEdit: (value: string) => void;
+    onEdit: () => void;
     onSave: (value: string) => void;
     onCancel: () => void;
     onDelete: (e: React.MouseEvent) => void;
 }
 
 const RecommendationItem: React.FC<RecommendationItemProps> = ({ recommendation, isEditing, onEdit, onSave, onCancel, onDelete }) => {
+    const [inputValue, setInputValue] = useState(recommendation);
+
+    useEffect(() => {
+        setInputValue(recommendation);
+    }, [recommendation]);
+
     const getContent = () => {
         if (isEditing) {
             return (
@@ -19,11 +26,11 @@ const RecommendationItem: React.FC<RecommendationItemProps> = ({ recommendation,
                     <Input.TextArea
                         autoFocus
                         className="ant-input-textarea"
-                        value={recommendation}
-                        onChange={(e) => onEdit(e.target.value)}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
                         onKeyDown={(e: React.KeyboardEvent) => {
                             if (e.key === "Enter") {
-                                onSave(recommendation);
+                                onSave(inputValue);
                             }
                             if (e.key === "Escape") {
                                 onCancel();
@@ -34,7 +41,7 @@ const RecommendationItem: React.FC<RecommendationItemProps> = ({ recommendation,
                 </div>
             );
         }
-        return <div onClick={() => onEdit(recommendation)}>
+        return <div>
             {recommendation}
             <DeleteOutlined
                 className="delete-icon"
@@ -44,7 +51,7 @@ const RecommendationItem: React.FC<RecommendationItemProps> = ({ recommendation,
         </div>;
     }
 
-    return <div className="item">{getContent()}</div>;
+    return <div className="item" onClick={() => onEdit()}>{getContent()}</div>;
 };
 
 export default RecommendationItem;
