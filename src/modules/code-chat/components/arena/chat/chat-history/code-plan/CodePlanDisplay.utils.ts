@@ -1,7 +1,7 @@
 import { MessageType } from "antd/es/message/interface";
 import { getChatsReversed } from "../../../../../store/code-chat.store";
 import { ChatMessageType } from "@The-Creator-AI/fe-be-common/dist/types";
-import { updateChatHistory } from "../../../../../store/code-chat-store.logic";
+import { updateChatHistory } from "../../../../../store/code-chat.logic";
 
 export const chatTitleForCode = (filename: string) => {
     return `Code for ${filename}`;

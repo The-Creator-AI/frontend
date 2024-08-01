@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Button, Input, message, Tooltip } from 'antd';
 import { CopyOutlined, FileTextFilled, FileTextOutlined, PlusOutlined, MinusOutlined, DeleteOutlined } from '@ant-design/icons';
 import useStore from '../../../../../../../state/useStore';
-import { closeModal, openModal, saveCodeToFileFromDeveloperResponse } from '../../../../../store/code-chat-store.logic';
+import { closeModal, openModal, saveCodeToFileFromDeveloperResponse } from '../../../../../store/code-chat.logic';
 import { codeChatStore$, getChatIdForNewChat, getCurrentPath, getFirstChat } from '../../../../../store/code-chat.store';
 import useChat from '../../useChat';
 import './CodePlanDisplay.scss';

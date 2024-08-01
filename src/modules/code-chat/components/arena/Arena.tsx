@@ -6,7 +6,7 @@ import config from "../../../../config";
 import useStore from "../../../../state/useStore";
 import {
   updateStage
-} from "../../store/code-chat-store.logic";
+} from "../../store/code-chat.logic";
 import { codeChatStore$ } from "../../store/code-chat.store";
 import "./Arena.scss";
 import ArenaSidebar from "./arena-sidebar/ArenaSidebar";

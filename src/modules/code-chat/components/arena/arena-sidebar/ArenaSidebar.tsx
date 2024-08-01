@@ -4,7 +4,7 @@ import { MdChevronRight } from "react-icons/md";
 import "./ArenaSidebar.scss";
 import useStore from "../../../../../state/useStore";
 import { codeChatStore$ } from "../../../store/code-chat.store";
-import { toggleSection } from "../../../store/code-chat-store.logic";
+import { toggleSection } from "../../../store/code-chat.logic";
 
 interface ArenaSidebarProps {
   sections: {

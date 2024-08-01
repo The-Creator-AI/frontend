@@ -3,7 +3,7 @@ import { CloseOutlined, DownOutlined, SaveOutlined, UpOutlined } from "@ant-desi
 import React, { useEffect, useRef, useState } from "react";
 import { FaUser, FaUserAstronaut } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
-import { saveCodeToFileFromDeveloperResponse } from "../../../../store/code-chat-store.logic";
+import { saveCodeToFileFromDeveloperResponse } from "../../../../store/code-chat.logic";
 import { getCurrentPath } from "../../../../store/code-chat.store";
 import useChat from "../useChat";
 import "./ChatHistory.scss";

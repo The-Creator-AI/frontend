@@ -10,8 +10,13 @@ import {
   LOCAL_STORAGE_KEY,
   getFromLocalStorage,
 } from "../../../utils/local-storage";
-import { CodeChatActions } from "./code-chat-store.actions";
+import { CodeChatActions } from "./code-chat.actions";
 import * as Modals from '../components/modals';
+
+interface FileTreeNode {
+  name: string;
+  children: FileTreeNode[];
+}
 
 export interface CodeChatStoreState {
   currentPath: string;
@@ -56,6 +61,7 @@ export interface CodeChatStoreState {
   collapsedSections: {
     [sectionId: string]: boolean; // Use a map to store the collapsed state
   };
+  fileTreeData: FileTreeNode;
 }
 
 export const initialState: CodeChatStoreState = {
@@ -88,6 +94,10 @@ export const initialState: CodeChatStoreState = {
   savedChats: [],
   openModals: [],
   collapsedSections: {}, // Initialize collapsedSections as an empty object
+  fileTreeData: {
+    name: '',
+    children: [], // Initialize fileTreeData with empty children array
+  }
 };
 
 export const codeChatStoreStateSubject = new Store<
@@ -110,4 +120,5 @@ export const getChatIdForFirstChat = () => codeChatStoreStateSubject.getValue().
 export const CHAT_ID_OFFSET = 100000000;
 export const generateChatIdForIndex = (index: number) => CHAT_ID_OFFSET + index;
 export const getChatIdForNewChat = () => generateChatIdForIndex(codeChatStoreStateSubject.getValue().chats.length);
+
 

@@ -5,7 +5,7 @@ import Arena from './components/arena/Arena';
 import Tips from './components/tips/Tips';
 import useStore from '../../state/useStore';
 import { codeChatStore$ } from './store/code-chat.store';
-import { fetchAgents, fetchSavedChats, fetchSavedPlans } from './store/code-chat-store.logic';
+import { fetchAgents, fetchSavedChats, fetchSavedPlans } from './store/code-chat.logic';
 import * as Modals from './components/modals';
 
 

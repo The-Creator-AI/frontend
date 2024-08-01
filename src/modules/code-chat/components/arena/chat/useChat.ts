@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import config from '../../../../../config';
 import useDebounce from '../../../../../hooks/useDebounce';
 import useStore from '../../../../../state/useStore';
-import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat-store.logic';
+import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat.logic';
 import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
 
 const useChat = () => {

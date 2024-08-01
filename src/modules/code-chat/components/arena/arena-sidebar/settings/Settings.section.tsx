@@ -2,7 +2,7 @@ import { List, Typography } from "antd";
 import React, { useMemo } from "react";
 import {
     updateStage
-} from "../../../../store/code-chat-store.logic";
+} from "../../../../store/code-chat.logic";
 import "./Settings.section.scss";
 import useStore from "../../../../../../state/useStore";
 import { codeChatStore$ } from "../../../../store/code-chat.store";

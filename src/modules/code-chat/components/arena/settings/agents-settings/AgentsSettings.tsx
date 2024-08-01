@@ -8,7 +8,7 @@ import { sendMessage } from "../../../../../gateway/store/gateway.logic";
 import {
     saveAgent,
     updateSelectedAgent,
-} from "../../../../store/code-chat-store.logic";
+} from "../../../../store/code-chat.logic";
 import { codeChatStore$ } from "../../../../store/code-chat.store";
 import "./AgentsSettings.scss";
 import { AgentType } from "@The-Creator-AI/fe-be-common/dist/types";

@@ -8,7 +8,7 @@ import {
   saveChat,
   updateChatHistory,
   updateStage,
-} from "../../../../store/code-chat-store.logic";
+} from "../../../../store/code-chat.logic";
 import { codeChatStore$, getChatIdForFirstChat } from "../../../../store/code-chat.store";
 import "./SavedChats.scss";
 

@@ -6,7 +6,7 @@ import MonacoEditor from '@monaco-editor/react';
 import { codeChatStore$, initialState } from '../../../store/code-chat.store';
 import useStore from '../../../../../state/useStore';
 import './FileEditor.scss';
-import { updateStage } from '../../../store/code-chat-store.logic';
+import { updateStage } from '../../../store/code-chat.logic';
 
 interface FileEditorProps {
 }

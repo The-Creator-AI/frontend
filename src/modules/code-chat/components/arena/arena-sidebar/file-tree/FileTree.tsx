@@ -3,7 +3,7 @@ import { MdChevronRight } from 'react-icons/md';
 import './FileTree.scss';
 import useStore from '../../../../../../state/useStore';
 import { codeChatStore$ } from '../../../../store/code-chat.store';
-import { updateRecentFiles, updateSelectedFiles } from '../../../../store/code-chat-store.logic';
+import { updateRecentFiles, updateSelectedFiles } from '../../../../store/code-chat.logic';
 import Checkbox from '../../../../../../components/Checkbox';
 import CommandPalette, { Command } from '../../../command-palette/CommandPalette';
 

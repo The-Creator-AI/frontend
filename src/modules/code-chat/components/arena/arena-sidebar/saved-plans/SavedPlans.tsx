@@ -12,7 +12,7 @@ import {
     savePlan,
     updateChatHistory,
     updateStage,
-} from "../../../../store/code-chat-store.logic";
+} from "../../../../store/code-chat.logic";
 import { codeChatStore$, getChatIdForFirstChat } from "../../../../store/code-chat.store";
 import "./SavedPlans.scss";
 
