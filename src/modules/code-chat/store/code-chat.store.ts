@@ -53,6 +53,9 @@ export interface CodeChatStoreState {
     type: keyof typeof Modals;
     props: any;
   }[];
+  collapsedSections: {
+    [sectionId: string]: boolean; // Use a map to store the collapsed state
+  };
 }
 
 export const initialState: CodeChatStoreState = {
@@ -84,6 +87,7 @@ export const initialState: CodeChatStoreState = {
   savedPlans: [],
   savedChats: [],
   openModals: [],
+  collapsedSections: {}, // Initialize collapsedSections as an empty object
 };
 
 export const codeChatStoreStateSubject = new Store<
@@ -106,3 +110,4 @@ export const getChatIdForFirstChat = () => codeChatStoreStateSubject.getValue().
 export const CHAT_ID_OFFSET = 100000000;
 export const generateChatIdForIndex = (index: number) => CHAT_ID_OFFSET + index;
 export const getChatIdForNewChat = () => generateChatIdForIndex(codeChatStoreStateSubject.getValue().chats.length);
+

@@ -182,6 +182,16 @@ export const updateStage = (newState: {
   );
 };
 
+export const updateCollapsedSections = (newCollapsedSections: CodeChatStoreState["collapsedSections"]) => {
+  codeChatStoreStateSubject._next(
+    {
+      ...codeChatStoreStateSubject.getValue(),
+      collapsedSections: newCollapsedSections
+    },
+    CodeChatActions.UPDATE_COLLAPSED_SECTIONS
+  );
+}
+
 // TODO: imageFiles still need to be handled once backend is ready for it
 export const sendChatMessage = async (args: {
   chatId: number;
@@ -447,3 +457,9 @@ export const closeModal = <T extends keyof typeof Modals,>(modal: T) => {
   }
   updateOpenModals(openModals.filter((m) => m.type !== modal));
 };
+
+export const toggleSection = (sectionId: string) => {
+  const collapsedSections = codeChatStoreStateSubject.getValue().collapsedSections || {};
+  const newCollapsedSections = { ...collapsedSections, [sectionId]: !collapsedSections[sectionId] };
+  updateCollapsedSections(newCollapsedSections);
+}

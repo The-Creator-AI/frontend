@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { DraggableCore, DraggableEventHandler } from "react-draggable";
 import { MdChevronRight } from "react-icons/md";
 import "./ArenaSidebar.scss";
+import useStore from "../../../../../state/useStore";
+import { codeChatStore$ } from "../../../store/code-chat.store";
+import { toggleSection } from "../../../store/code-chat-store.logic";
 
 interface ArenaSidebarProps {
   sections: {
@@ -19,54 +22,12 @@ const ArenaSidebar = React.forwardRef<
 >((props: ArenaSidebarProps, ref) => {
   const [sections, setSections] = useState(props.sections);
   const sectionRefs = sections.map(() => React.createRef<HTMLDivElement>());
+  const { collapsedSections } = useStore(codeChatStore$);
 
   // update sections on prop change
   useEffect(() => {
     setSections(props.sections);
   }, [props.sections]);
-
-//   // If sections update, find the height of each section,
-//   // if total height is shy of 100%, then add this to the last expanded section
-//   useEffect(() => {
-//     let sectionJustExpandedIndex = -1;
-//     if (sectionRefs.length > 0 && ref) {
-//         sectionRefs.forEach((ref, index) => {
-//             const height = ref.current?.clientHeight || 0;
-//             console.log({ height, originalHeight: sections[index].height });
-//             if (!sections[index].collapsed && ref.current && height <=40) {
-//                 ref.current.style.height = sections[index].height + "%";
-//                 sectionJustExpandedIndex = index;
-//             }
-//         });
-//       const containerHeight = (ref as any)?.current?.clientHeight;
-//       const totalHeight = sectionRefs
-//         .map((ref) => ref.current?.clientHeight)
-//         .reduce((acc: any, curr: any) => (acc || 0) + (curr || 0), 0);
-//       const totalHeightPercent = (totalHeight * 100) / containerHeight;
-//       console.log({
-//           totalHeight,
-//           ref: (ref as any)?.current?.clientHeight,
-//           totalHeightPercent,
-//           sectionJustExpandedIndex
-//       })
-//     const lastExpandedSection = sectionRefs
-//         .filter((ref, index) => !sections[index].collapsed && sectionJustExpandedIndex !== index)
-//         .pop()?.current;
-//     const lastExpandedSectionHeight = lastExpandedSection?.clientHeight || 0;
-//     const lastExpandedSectionHeightPercent = (lastExpandedSectionHeight * 100) / containerHeight;
-//     console.log({
-//         lastExpandedSection,
-//         lastExpandedSectionHeight,
-//         lastExpandedSectionHeightPercent
-//     });
-//     if (lastExpandedSection) {
-//         lastExpandedSection.style.height = `${
-//         lastExpandedSectionHeightPercent +
-//         (100 - totalHeightPercent)
-//         }%`;
-//     }
-//     }
-//   }, [sections]);
 
   const handleDrag = (e: any, data: any, index: number) => {
     const deltaY = data.deltaY;
@@ -76,15 +37,9 @@ const ArenaSidebar = React.forwardRef<
     }
   };
 
-  const toggleSection = (index: number) => {
-    setSections((prevSections) =>
-      prevSections.map((section, i) => {
-        if (i === index) {
-          return { ...section, collapsed: !section.collapsed };
-        }
-        return section;
-      })
-    );
+  const toggleSectionLocal = (index: number) => {
+    const sectionId = sections[index].id;
+    toggleSection(sectionId);
   };
 
   return (
@@ -95,21 +50,21 @@ const ArenaSidebar = React.forwardRef<
             key={section.id}
             className="section"
             style={{
-              // height: section.collapsed ? "40px" : `${section.height}%`,
-              // flexGrow: section.collapsed ? 0 : 1,
+              // height: collapsedSections[section.id] ? "40px" : `${section.height}%`,
+              // flexGrow: collapsedSections[section.id] ? 0 : 1,
             }}
             ref={sectionRefs[index]}
           >
             <div
               className="section-header"
-              onClick={() => toggleSection(index)}
+              onClick={() => toggleSectionLocal(index)}
             >
-              <span className={`arrow ${section.collapsed ? "" : "down"}`}>
+              <span className={`arrow ${collapsedSections?.[section.id] ? "" : "down"}`}>
                 <MdChevronRight />
               </span>
               {section.title}
             </div>
-            {!section.collapsed && (
+            {!collapsedSections?.[section.id] && (
               <div className="section-content">{section.content}</div>
             )}
           </div>
@@ -125,3 +80,4 @@ const ArenaSidebar = React.forwardRef<
 });
 
 export default ArenaSidebar;
+

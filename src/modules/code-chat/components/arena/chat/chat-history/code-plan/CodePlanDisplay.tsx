@@ -66,9 +66,6 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, message
 
     const handleEditRecommendation = (indices: [number, number]) => {
         setEditingIndices(indices);
-        // const newPlan = {...plan};
-        // (newPlan.code_plan[indices[0]] as CodeStep).recommendations[indices[1]] = recommendation;
-        // updatePlanInChat(chatId, messageId, newPlan);
     };
 
     const handleSaveRecommendation = (indices: [number, number], newRecommendation: string) => {
@@ -85,50 +82,16 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, message
     };
 
     const handleAddRecommendation = (indices: [number, number]) => {
-        // setRecommendations((prev) => {
-        //     const updated = [...prev];
-        //     updated[indices[0]].push("");
-        //     setEditingIndices([indices[0], updated[indices[0]].length - 1]);
-        //     return updated;
-        // });
         const newPlan = {...plan};
         (newPlan.code_plan[indices[0]] as CodeStep).recommendations.push("");
         updatePlanInChat(chatId, messageId, newPlan);
         // setEditingIndices([indices[0], indices[1]]);
     };
 
-    const handleAddCodeStep = () => {
-        // setCodePlan((prev) => [...prev, { filename: '', recommendations: [] }]);
-        // setRecommendations((prev) => [...prev, []]);
-        updatePlanInChat(chatId, messageId, {
-            ...plan,
-            code_plan: [...plan.code_plan, { filename: '', recommendations: [] }]
-        });
-        setNewStepType(null);
-    };
-
-    const handleAddCommandStep = () => {
-        updatePlanInChat(chatId, messageId, {
-            ...plan,
-            code_plan: [...plan.code_plan, { filename: '', recommendations: [] }]
-        });
-        setNewStepType(null);
-    };
-
     const handleDeleteStep = (index: number) => {
-        // setCodePlan((prev) => {
-        //     const updated = [...prev];
-        //     updated.splice(index, 1);
-        //     return updated;
-        // });
         const newPlan = {...plan};
         (plan.code_plan).splice(index, 1);
         updatePlanInChat(chatId, messageId, newPlan);
-        // setRecommendations((prev) => {
-        //     const updated = [...prev];
-        //     updated.splice(index, 1);
-        //     return updated;
-        // });
     };
 
     const handleCopy = (text: string) => {
