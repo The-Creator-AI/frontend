@@ -43,7 +43,7 @@
       padding-inline-start: 0;
       padding: 20px;
   
-      .recommendation {
+      .code-plan-step {
         // Individual step styles
         margin-bottom: 12px;
         display: flex;
@@ -51,7 +51,7 @@
         background-color: #d0d0d0;
         transition: all 0.5s ease;
     
-        .recommendation-description {
+        .code-plan-step-description {
           // Description of the step
           display: flex;
           align-items: center;
@@ -93,7 +93,7 @@
           }
         }
   
-        .recommendation-items {
+        .code-plan-step-items {
           padding: 25px 15px;
           position: relative; // Added for the 'Add' button positioning
   

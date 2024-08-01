@@ -4,7 +4,7 @@ import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import { useCodePlanDisplay } from './CodePlanDisplay.model';
 import './CodePlanDisplay.scss';
 import { CodePlanDisplayProps } from './CodePlanDisplay.types';
-import { CodeStep } from './components/CodeStep';
+import { CodeStep } from './components/code-step/CodeStep';
 import { CommandStep } from './components/CommandStep';
 import Header from './components/Header';
 import { NewStepForm } from './components/NewStepForm';
