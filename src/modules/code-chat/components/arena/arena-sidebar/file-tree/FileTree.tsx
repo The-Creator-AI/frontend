@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import './FileTree.scss';
 import useStore from '../../../../../../state/useStore';
@@ -6,8 +6,9 @@ import { codeChatStore$ } from '../../../../store/code-chat.store';
 import { updateRecentFiles, updateSelectedFiles } from '../../../../store/code-chat.logic';
 import Checkbox from '../../../../../../components/Checkbox';
 import CommandPalette, { Command } from '../../../command-palette/CommandPalette';
+import { flattenData } from './FileTree.utils';
 
-interface FileNode {
+export interface FileNode {
   name: string;
   children?: FileNode[];
 }
@@ -21,11 +22,12 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
   const { selectedFiles, recentFiles, stage } = useStore(codeChatStore$);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const flattenedData = useMemo(() => flattenData(data), [data]);
 
   const handleCommandPaletteSelect = useCallback(async (file: Command<string>) => {
     file.description && handleNodeClick({} as any, { name: file.title }, file.description);
     setIsCommandPaletteOpen(false);
-  }, [recentFiles]);
+  }, [recentFiles, data]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -223,11 +225,14 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
       <CommandPalette<string>
         isOpen={isCommandPaletteOpen}
         placeholder="Search for files..."
-        commands={recentFiles?.map(f => ({
-          id: f,
-          title: f.split('/').pop() || '',
-          description: f,
-        })) || []}
+        commands={[
+          ...(recentFiles?.map(f => ({
+            id: f,
+            title: f.split('/').pop() || '',
+            description: f,
+          })) || []),
+          ...(flattenedData || [])
+        ]}
         onSelect={handleCommandPaletteSelect}
         position='top'
       />
