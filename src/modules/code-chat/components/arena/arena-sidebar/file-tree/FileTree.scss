@@ -20,10 +20,23 @@
         align-items: center;
         z-index: 1;
 
-        &:hover {
+        &.active {
           &::before { // Use a pseudo-element for the background
             content: "";
             background-color: #e0dcdc;
+            position: absolute;
+            left: -200px;
+            right: -200px;
+            top: 0px;
+            bottom: -2px;
+            z-index: -1;
+          }
+        }
+
+        &:hover {
+          &::before { // Use a pseudo-element for the background
+            content: "";
+            background-color: #e4e6f1;
             position: absolute;
             left: -200px;
             right: -200px;

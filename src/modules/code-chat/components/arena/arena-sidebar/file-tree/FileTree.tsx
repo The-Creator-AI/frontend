@@ -19,7 +19,7 @@ interface FileTreeProps {
 
 const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
-  const { selectedFiles, recentFiles } = useStore(codeChatStore$);
+  const { selectedFiles, recentFiles, stage } = useStore(codeChatStore$);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   const handleCommandPaletteSelect = useCallback(async (file: Command<string>) => {
@@ -179,6 +179,7 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
       const isExpanded = expandedNodes.includes(path);
       const isSelected = selectedFiles?.includes(path);
       const isDirectory = Array.isArray(node.children);
+      const isActive = stage?.type === "file" && stage.filePath === path;
       const classes = ['node'];
 
       if (isDirectory) {
@@ -194,6 +195,11 @@ const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
       if (isSelected) {
         classes.push('selected');
       }
+
+      if (isActive) {
+        classes.push('active');
+      }
+
       return <li key={path}>
         <div className={classes.join(' ')} onClick={(e) => handleNodeClick(e, node, path)}>
           {isDirectory && (
