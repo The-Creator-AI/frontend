@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './ChatInput.scss';
 import useChat from './useChat';
 import useStore from '../../../../../state/useStore';
-import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject, getChatIdForFirstChat } from '../../../store/code-chat.store';
 
 interface ChatInputProps {
     setPreviewImage: React.Dispatch<React.SetStateAction<string | null>>
@@ -14,7 +14,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ setPreviewImage }) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [pastedImages, setPastedImages] = useState<File[]>([]);
     const { sendMessage, isLoading } = useChat();
-    const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStore$);
+    const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStoreStateSubject);
 
     // Auto-resize textarea
     useEffect(() => {

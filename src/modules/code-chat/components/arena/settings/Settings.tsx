@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { codeChatStore$ } from "../../../store/code-chat.store";
+import { codeChatStoreStateSubject } from "../../../store/code-chat.store";
 import useStore from "../../../../../state/useStore";
 import AgentsSettings from "./agents-settings/AgentsSettings";
 import "./Settings.scss";
@@ -9,7 +9,7 @@ import { Typography } from "antd";
 interface SettingsProps { }
 
 const Settings: React.FC<SettingsProps> = () => {
-    const { stage } = useStore(codeChatStore$);
+    const { stage } = useStore(codeChatStoreStateSubject);
     //   const [currentPage, setCurrentPage] = useState<string>("agents");
     const currentPage = useMemo(() => {
         if (stage?.type === 'settings' && stage?.pageId) {

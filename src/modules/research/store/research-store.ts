@@ -13,4 +13,3 @@ export const initialState: ResearchState = {
 
 // Create the store
 export const researchStateSubject = new Store<ResearchState, ResearchActions>(initialState);
-export const researchStore$ = researchStateSubject.asObservable();

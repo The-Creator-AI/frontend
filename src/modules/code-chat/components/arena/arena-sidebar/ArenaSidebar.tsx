@@ -3,7 +3,7 @@ import { DraggableCore, DraggableEventHandler } from "react-draggable";
 import { MdChevronRight } from "react-icons/md";
 import "./ArenaSidebar.scss";
 import useStore from "../../../../../state/useStore";
-import { codeChatStore$ } from "../../../store/code-chat.store";
+import { codeChatStoreStateSubject } from "../../../store/code-chat.store";
 import { toggleSection } from "../../../store/code-chat.logic";
 
 interface ArenaSidebarProps {
@@ -22,7 +22,7 @@ const ArenaSidebar = React.forwardRef<
 >((props: ArenaSidebarProps, ref) => {
   const [sections, setSections] = useState(props.sections);
   const sectionRefs = sections.map(() => React.createRef<HTMLDivElement>());
-  const { collapsedSections } = useStore(codeChatStore$);
+  const { collapsedSections } = useStore(codeChatStoreStateSubject);
 
   // update sections on prop change
   useEffect(() => {

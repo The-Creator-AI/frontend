@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { MdChevronRight } from 'react-icons/md';
 import './FileTree.scss';
 import useStore from '../../../../../../state/useStore';
-import { codeChatStore$ } from '../../../../store/code-chat.store';
+import { codeChatStoreStateSubject } from '../../../../store/code-chat.store';
 import { updateRecentFiles, updateSelectedFiles } from '../../../../store/code-chat.logic';
 import Checkbox from '../../../../../../components/Checkbox';
 import CommandPalette, { Command } from '../../../command-palette/CommandPalette';
@@ -20,7 +20,7 @@ interface FileTreeProps {
 
 const FileTree: React.FC<FileTreeProps> = ({ data, onFileClick }) => {
   const [expandedNodes, setExpandedNodes] = useState<string[]>([]);
-  const { selectedFiles, recentFiles, stage } = useStore(codeChatStore$);
+  const { selectedFiles, recentFiles, stage } = useStore(codeChatStoreStateSubject);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const flattenedData = useMemo(() => flattenData(data), [data]);
 

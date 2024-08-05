@@ -9,7 +9,7 @@ import {
     saveAgent,
     updateSelectedAgent,
 } from "../../../../store/code-chat.logic";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { codeChatStoreStateSubject } from "../../../../store/code-chat.store";
 import "./AgentsSettings.scss";
 import { AgentType } from "@The-Creator-AI/fe-be-common/dist/types";
 import AgentEditorModal from "./AgentEditor.modal";
@@ -20,7 +20,7 @@ interface AgentsSettingsProps { }
 // Functional component for the AgentsSettings
 const AgentsSettings: React.FC<AgentsSettingsProps> = () => {
     // Use custom hook to get the state of agents from the store
-    const { agents } = useStore(codeChatStore$);
+    const { agents } = useStore(codeChatStoreStateSubject);
 
     // State variables for managing the current editing agent, new agent name, and instructions
     const [editingAgent, setEditingAgent] = useState<Omit<AgentType, 'id'> | null>(null);

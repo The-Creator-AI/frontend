@@ -13,4 +13,3 @@ export const animationsStoreStateSubject = new Store<
   AnimationsStoreState,
   AnimationsActions
 >(initialState);
-export const animationsStore$ = animationsStoreStateSubject.asObservable();

@@ -2,7 +2,7 @@ import { DeleteOutlined, FileTextFilled, FileTextOutlined, PlusOutlined } from '
 import { Button, Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import useStore from '../../../../../../../../../state/useStore';
-import { codeChatStore$ } from '../../../../../../../store/code-chat.store';
+import { codeChatStoreStateSubject } from '../../../../../../../store/code-chat.store';
 import { CodeStep as CodeStepType } from '../../CodePlanDisplay.types';
 import { fileCode, handleCodeButtonClick, handleMoreRecommendations, isFileCodeLoading } from '../../CodePlanDisplay.utils';
 
@@ -17,7 +17,7 @@ export const CodeStepHeader: React.FC<CodeStepHeaderProps> = ({
     index,
     onDeleteStep
 }) => {
-    const { agents, selectedFiles } = useStore(codeChatStore$);
+    const { agents, selectedFiles } = useStore(codeChatStoreStateSubject);
     const codePlanAgent = useMemo(() => agents?.find((agent) => agent.name === "Code Plan"), [agents]);
     const developerAgent = useMemo(() => agents?.find((agent) => agent.name === "Developer"), [agents]);
 

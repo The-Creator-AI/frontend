@@ -7,7 +7,7 @@ import useStore from "../../../../state/useStore";
 import {
   updateStage
 } from "../../store/code-chat.logic";
-import { codeChatStore$ } from "../../store/code-chat.store";
+import { codeChatStoreStateSubject } from "../../store/code-chat.store";
 import "./Arena.scss";
 import ArenaSidebar from "./arena-sidebar/ArenaSidebar";
 import FileTree from "./arena-sidebar/file-tree/FileTree";
@@ -35,7 +35,7 @@ const Arena: React.FC<ArenaProps> = ({
   // State to track the currently active file (not in use currently)
   // const [activeFile, setActiveFile] = useState<string | null>(null);
 
-  const { currentPath, stage } = useStore(codeChatStore$);
+  const { currentPath, stage } = useStore(codeChatStoreStateSubject);
 
   // Fetch file tree data based on the current path using react-query
   const { data: fileTreeData } = useQuery({

@@ -5,10 +5,10 @@ import config from '../../../../../config';
 import useDebounce from '../../../../../hooks/useDebounce';
 import useStore from '../../../../../state/useStore';
 import { sendChatMessage, updateChatHistory, updateTokenCount } from '../../../store/code-chat.logic';
-import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject, getChatIdForFirstChat } from '../../../store/code-chat.store';
 
 const useChat = () => {
-  const { chats, tokenCount } = useStore(codeChatStore$);
+  const { chats, tokenCount } = useStore(codeChatStoreStateSubject);
   const {
     id,
     chat_history,

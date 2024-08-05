@@ -3,7 +3,7 @@ import { message as Message } from 'antd';
 import React, { useEffect, useRef, useState } from 'react';
 import useStore from '../../../../../state/useStore';
 import { clearChats, saveChat, updateChatHistory, updateStage } from '../../../store/code-chat.logic';
-import { codeChatStore$, getChatIdForFirstChat } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject, getChatIdForFirstChat } from '../../../store/code-chat.store';
 import AgentSelector from './AgentSelector';
 import './ChatBox.scss';
 import ChatInput from './ChatInput';
@@ -14,7 +14,7 @@ interface ChatBoxProps {
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({ setPreviewImage }) => {
-  const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStore$);
+  const { selectedAgent, currentPath, selectedFiles, stage } = useStore(codeChatStoreStateSubject);
   const { handleTokenCount, tokenCount, chatHistory } = useChat();
   const [isLoadingTokenCount, setIsLoadingTokenCount] = useState(false);
   const [message, setMessage] = useState('');

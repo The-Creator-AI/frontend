@@ -104,7 +104,6 @@ export const codeChatStoreStateSubject = new Store<
   CodeChatStoreState,
   CodeChatActions
 >(initialState);
-export const codeChatStore$ = codeChatStoreStateSubject.asObservable();
 
 export const getCurrentPath = () =>
   codeChatStoreStateSubject.getValue().currentPath;
@@ -120,5 +119,4 @@ export const getChatIdForFirstChat = () => codeChatStoreStateSubject.getValue().
 export const CHAT_ID_OFFSET = 100000000;
 export const generateChatIdForIndex = (index: number) => CHAT_ID_OFFSET + index;
 export const getChatIdForNewChat = () => generateChatIdForIndex(codeChatStoreStateSubject.getValue().chats.length);
-
 

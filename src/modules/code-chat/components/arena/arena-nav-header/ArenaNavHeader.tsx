@@ -1,10 +1,10 @@
 import React from 'react';
 import './ArenaNavHeader.scss';
-import { codeChatStore$ } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject } from '../../../store/code-chat.store';
 import useStore from '../../../../../state/useStore';
 
 const ArenaNavHeader: React.FC = () => {
-  const { breadcrumb } = useStore(codeChatStore$);
+  const { breadcrumb } = useStore(codeChatStoreStateSubject);
 
   return (
     <header className="arena-nav-header">

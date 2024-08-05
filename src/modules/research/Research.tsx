@@ -1,20 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import { ToServer } from "@The-Creator-AI/fe-be-common";
+import React, { useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import useStore from "../../state/useStore";
-import "./Research.scss"; // Import your CSS file
-import { researchStore$ } from "./store/research-store";
-import {
-    addUpdateResult,
-    clearResults,
-    setError,
-    setIsLoading,
-    updateQuery,
-} from "./store/research-store.logic";
 import { sendMessage } from "../gateway/store/gateway.logic";
-import { ToServer } from "@The-Creator-AI/fe-be-common";
+import "./Research.scss"; // Import your CSS file
+import { researchStateSubject } from "./store/research-store";
+import {
+    clearResults,
+    updateQuery
+} from "./store/research-store.logic";
 
 const Research: React.FC = () => {
-    const state = useStore(researchStore$);
+    const state = useStore(researchStateSubject);
     const inputRef = useRef<HTMLInputElement>(null);
     const { query = "",
         isLoading,

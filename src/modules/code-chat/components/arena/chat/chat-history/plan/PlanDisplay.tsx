@@ -4,7 +4,7 @@ import { Button } from "antd";
 import React, { useState } from "react";
 import { message } from 'antd';
 
-import { codeChatStore$, getChatIdForNewChat } from "../../../../../store/code-chat.store";
+import { codeChatStoreStateSubject, getChatIdForNewChat } from "../../../../../store/code-chat.store";
 import useStore from "../../../../../../../state/useStore";
 import useChat from "../../useChat";
 import "./PlanDisplay.scss"; // Add this line to import the stylesheet
@@ -30,7 +30,7 @@ interface PlanDisplayProps {
 }
 
 const PlanDisplay: React.FC<PlanDisplayProps> = ({ plan }) => {
-    const { agents, selectedFiles, currentPath } = useStore(codeChatStore$);
+    const { agents, selectedFiles, currentPath } = useStore(codeChatStoreStateSubject);
     const stubbedCodeAgent = agents?.find((agent) => agent.name === "Stubbed code");
     const { sendMessage } = useChat();
 

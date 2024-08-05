@@ -1,21 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Observable } from 'rxjs';
+import { useEffect, useState } from "react";
+import { Store } from "./store";
 
-const useStore = <T>(
-  observable$: Observable<T>,
-  initialState?: T
-): T => {
-  const [state, setState] = useState<T | {}>(initialState || ({} as T));
+const useStore = <S, A>(
+  subject: Store<S, A>,
+  subscribedKeys?: Array<keyof S>
+): S => {
+  const [state, setState] = useState<S>(subject.getValue());
 
   useEffect(() => {
-    const subscription = observable$.subscribe((newState) => {
-      setState(newState);
+    const subscription = subject.subscribe((newState) => {
+      const isAnyKeyChanged = subscribedKeys?.some((key) => newState[key] !== state[key]);
+      if (isAnyKeyChanged || !subscribedKeys) {
+        setState(newState);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [observable$]); 
+  }, [subject, subscribedKeys]);
 
-  return state as T;
+  return state as S;
 };
 
 export default useStore;

@@ -1,11 +1,11 @@
 import React from 'react';
 import useStore from '../../../../../state/useStore';
-import { codeChatStore$ } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject } from '../../../store/code-chat.store';
 import './AgentSelector.scss';
 import { updateSelectedAgent } from '../../../store/code-chat.logic';
 
 const AgentSelector: React.FC = () => {
-    const { agents, selectedAgent } = useStore(codeChatStore$);
+    const { agents, selectedAgent } = useStore(codeChatStoreStateSubject);
 
     const handleAgentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedAgentId = Number(event.target.value);

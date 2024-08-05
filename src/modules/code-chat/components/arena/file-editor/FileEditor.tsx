@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import config from '../../../../../config';
 import MonacoEditor from '@monaco-editor/react';
-import { codeChatStore$, initialState } from '../../../store/code-chat.store';
+import { codeChatStoreStateSubject, initialState } from '../../../store/code-chat.store';
 import useStore from '../../../../../state/useStore';
 import './FileEditor.scss';
 import { updateStage } from '../../../store/code-chat.logic';
@@ -12,7 +12,7 @@ interface FileEditorProps {
 }
 
 const FileEditor: React.FC<FileEditorProps> = ({ }) => {
-    const { currentPath, stage } = useStore(codeChatStore$, initialState);
+    const { currentPath, stage } = useStore(codeChatStoreStateSubject);
     const filePath = stage?.type === 'file' && stage.filePath;
     const content = stage?.type === 'file' && stage.content;
 

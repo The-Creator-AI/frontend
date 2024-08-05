@@ -13,13 +13,13 @@ import {
     updateChatHistory,
     updateStage,
 } from "../../../../store/code-chat.logic";
-import { codeChatStore$, getChatIdForFirstChat } from "../../../../store/code-chat.store";
+import { codeChatStoreStateSubject, getChatIdForFirstChat } from "../../../../store/code-chat.store";
 import "./SavedPlans.scss";
 
 interface SavedPlansProps { }
 
 const SavedPlans: React.FC<SavedPlansProps> = () => {
-    const { savedPlans, stage } = useStore(codeChatStore$);
+    const { savedPlans, stage } = useStore(codeChatStoreStateSubject);
 
     const [editingPlanId, setEditingPlanId] = useState<number | null>(null);
     const [newPlanTitle, setNewPlanTitle] = useState<string>("");

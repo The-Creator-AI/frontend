@@ -5,7 +5,7 @@ import {
 } from "../../../../store/code-chat.logic";
 import "./Settings.section.scss";
 import useStore from "../../../../../../state/useStore";
-import { codeChatStore$ } from "../../../../store/code-chat.store";
+import { codeChatStoreStateSubject } from "../../../../store/code-chat.store";
 
 export const SETTINGS_ITEMS = {
     AGENTS: {
@@ -18,7 +18,7 @@ interface SavedPlansProps { }
 
 const SavedPlans: React.FC<SavedPlansProps> = () => {
     const settingsItems = useMemo(() => Object.values(SETTINGS_ITEMS), []);
-    const { stage } = useStore(codeChatStore$);
+    const { stage } = useStore(codeChatStoreStateSubject);
 
     return (
         <List
