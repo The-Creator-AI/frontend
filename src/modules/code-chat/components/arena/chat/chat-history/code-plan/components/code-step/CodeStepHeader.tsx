@@ -10,12 +10,14 @@ interface CodeStepHeaderProps {
     step: CodeStepType;
     index: number;
     onDeleteStep: (index: number) => void;
+    onCodeFileClick?: (filename: string, code: string) => void;
 }
 
 export const CodeStepHeader: React.FC<CodeStepHeaderProps> = ({
     step,
     index,
-    onDeleteStep
+    onDeleteStep,
+    onCodeFileClick, // Use the prop
 }) => {
     const { agents, selectedFiles } = useStore(codeChatStoreStateSubject);
     const codePlanAgent = useMemo(() => agents?.find((agent) => agent.name === "Code Plan"), [agents]);
@@ -47,11 +49,14 @@ export const CodeStepHeader: React.FC<CodeStepHeaderProps> = ({
                         type="link"
                         icon={fileCode(step.filename) ? <FileTextFilled /> : <FileTextOutlined />}
                         loading={isFileCodeLoading(step.filename)}
-                        onClick={() => developerAgent && handleCodeButtonClick({
-                            filename: step.filename,
-                            developerAgent,
-                            selectedFiles,
-                        })}
+                        onClick={() => {
+                            !fileCode(step.filename) && developerAgent && handleCodeButtonClick({
+                                filename: step.filename,
+                                developerAgent,
+                                selectedFiles,
+                            });
+                            onCodeFileClick && onCodeFileClick(step.filename, fileCode(step.filename));
+                        }}
                         className="get-code-button"
                     />
                 </Tooltip>

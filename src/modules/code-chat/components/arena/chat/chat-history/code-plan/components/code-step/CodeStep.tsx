@@ -11,6 +11,7 @@ interface CodeStepProps {
     step: CodeStepType;
     index: number;
     onDeleteStep: (index: number) => void;
+    onCodeFileClick: (filename: string, code: string) => void;
 }
 
 export const CodeStep: React.FC<CodeStepProps> = ({
@@ -19,7 +20,8 @@ export const CodeStep: React.FC<CodeStepProps> = ({
     plan,
     step,
     index,
-    onDeleteStep
+    onDeleteStep,
+    onCodeFileClick
 }) => {
     return (
         <Draggable key={index} draggableId={`step-${index + 1}`} index={index}>
@@ -36,6 +38,7 @@ export const CodeStep: React.FC<CodeStepProps> = ({
                             step={step}
                             index={index}
                             onDeleteStep={onDeleteStep}
+                            onCodeFileClick={onCodeFileClick}
                         />
                         <CodeStepBody
                             chatId={chatId}
@@ -50,3 +53,5 @@ export const CodeStep: React.FC<CodeStepProps> = ({
         </Draggable>
     );
 };
+
+export default CodeStep;
