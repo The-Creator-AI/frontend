@@ -12,13 +12,16 @@ import { ParsedMessage, parseDeveloperResponse } from "./code-plan/CodePlanDispl
 
 interface ChatMessageProps {
     message: ChatMessageType;
+    setMessageCollapsed: (uuid: string, isCollapsed: boolean) => void;
+    deleteMessage: (uuid: string) => void;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
     message,
+    setMessageCollapsed,
+    deleteMessage
 }) => {
     const messageRef = useRef<HTMLDivElement>(null);
-    const { deleteMessage, setMessageCollapsed } = useChat();
     const [showCollapse, setShowCollapse] = useState(false);
     const [parsedMessage, setParsedMessage] = useState<ParsedMessage>({
         filePath: null,
@@ -73,7 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                                 <span className='save-icon' onClick={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())}>
                                     <SaveOutlined style={{
                                         fontSize: '22px',
-                                    }} title="Save code to file"/>
+                                    }} title="Save code to file" />
                                 </span>
                             </div>
                         )}
@@ -82,14 +85,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                                 key={parsedMessage.filePath}
                                 components={{
                                     code: ({ ...props }) => (
-                                        <CodeBlock {...props as any} 
+                                        <CodeBlock {...props as any}
                                             chatId={message.chatId}
                                             messageId={message.uuid}
                                             onSave={() => saveCodeToFileFromDeveloperResponse(parsedMessage, getCurrentPath())} />
                                     ) as any,
                                 }}
                             >
-                                 {message.message}
+                                {message.message}
                             </ReactMarkdown>
                         )}
                         <ReactMarkdown components={{ code: CodeBlock as any }}>
@@ -114,4 +117,4 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     );
 };
 
-export default ChatMessage;
+export default React.memo(ChatMessage);

@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import useChat from "../useChat";
 import "./ChatHistory.scss"; // Import your CSS file
 import ChatMessage from "./ChatMessage";
-import { v4 as uuidv4 } from 'uuid';
 
 interface ChatHistoryProps {
 }
 
 const ChatHistory: React.FC<ChatHistoryProps> = ({
 }) => {
-    const { chatHistory } = useChat();
+    const { chatHistory, deleteMessage, setMessageCollapsed } = useChat();
     const isScrollAtBottom = useRef(false);
     const chatHistoryRef = useRef<HTMLDivElement>(null);
 
@@ -36,10 +35,11 @@ const ChatHistory: React.FC<ChatHistoryProps> = ({
         <div className="chat-history-popup" ref={chatHistoryRef}>
             <div className="chat-history-container">
                 {[...chatHistory]
-                // .concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : [])
-                .map((message, index) => (
-                    <ChatMessage key={message.uuid} message={message}/>
-                ))}
+                    // .concat(isLoading ? [{ user: "bot", message: "Typing...", uuid: uuidv4() }] : [])
+                    .map((message, index) => (
+                        <ChatMessage key={message.uuid + JSON.stringify(message).length} message={message}
+                            setMessageCollapsed={setMessageCollapsed} deleteMessage={deleteMessage} />
+                    ))}
             </div>
         </div>
     );

@@ -28,13 +28,16 @@ const CodeStepBody: React.FC<CodeStepBodyProps> = ({
                     recommendation={recommendation}
                     isEditing={editingIndex === recIndex}
                     onEdit={() => setEditingIndex(recIndex)}
-                    onSave={(value) => handleSaveRecommendation({
-                        chatId,
-                        messageId,
-                        indices: [index, recIndex],
-                        plan,
-                        newRecommendation: value,
-                    })}
+                    onSave={(value) => {
+                        handleSaveRecommendation({
+                            chatId,
+                            messageId,
+                            indices: [index, recIndex],
+                            plan,
+                            newRecommendation: value,
+                        });
+                        setEditingIndex(null);
+                    }}
                     onDelete={(e) => {
                         e.stopPropagation();
                         e.preventDefault();
@@ -44,14 +47,18 @@ const CodeStepBody: React.FC<CodeStepBodyProps> = ({
                             indices: [index, recIndex],
                             plan,
                         });
+                        setEditingIndex(null);
                     }}
-                    onCancel={() => handleSaveRecommendation({
-                        chatId,
-                        messageId,
-                        indices: [index, recIndex],
-                        plan,
-                        newRecommendation: recommendation,
-                    })}
+                    onCancel={() => {
+                        handleSaveRecommendation({
+                            chatId,
+                            messageId,
+                            indices: [index, recIndex],
+                            plan,
+                            newRecommendation: recommendation,
+                        });
+                        setEditingIndex(null);
+                    }}
                 />
             ))}
             <div className='add-button'

@@ -145,9 +145,20 @@ export const handleSaveRecommendation = (args: {
     indices: [number, number];
     newRecommendation: string;
 }) => {
-    const { chatId,messageId, plan, indices, newRecommendation } = args;
-    const newPlan = {...plan};
-    (newPlan.code_plan[indices[0]] as CodeStep).recommendations[indices[1]] = newRecommendation;
+    const { chatId, messageId, plan, indices, newRecommendation } = args;
+    const newPlan = {
+        ...plan,
+        code_plan: plan.code_plan.map((step, stepIndex) => 
+            stepIndex === indices[0]
+                ? {
+                    ...step,
+                    recommendations: (step as CodeStep).recommendations.map((rec, recIndex) =>
+                        recIndex === indices[1] ? newRecommendation : rec
+                    )
+                }
+                : step
+        )
+    };
     updatePlanInChat(chatId, messageId, newPlan);
 };
 
@@ -158,8 +169,17 @@ export const handleDeleteRecommendation = (args: {
     indices: [number, number];
 }) => {
     const { chatId, messageId, plan, indices } = args;
-    const newPlan = {...plan};
-    (newPlan.code_plan[indices[0]] as CodeStep).recommendations.splice(indices[1], 1);
+    const newPlan = {
+        ...plan,
+        code_plan: plan.code_plan.map((step, stepIndex) =>
+            stepIndex === indices[0]
+                ? {
+                    ...step,
+                    recommendations: (step as CodeStep).recommendations.filter((_, recIndex) => recIndex !== indices[1])
+                }
+                : step
+        )
+    };
     updatePlanInChat(chatId, messageId, newPlan);
 };
 
@@ -170,8 +190,17 @@ export const handleAddRecommendation = (args: {
     stepIndex: number;
 }) => {
     const { chatId, messageId, plan, stepIndex } = args;
-    const newPlan = {...plan};
-    (newPlan.code_plan[stepIndex] as CodeStep).recommendations.push("");
+    const newPlan = {
+        ...plan,
+        code_plan: plan.code_plan.map((step, index) =>
+            index === stepIndex
+                ? {
+                    ...step,
+                    recommendations: [...(step as CodeStep).recommendations, ""]
+                }
+                : step
+        )
+    };
     updatePlanInChat(chatId, messageId, newPlan);
 };
 

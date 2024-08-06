@@ -36,7 +36,7 @@ const RecommendationItem: React.FC<RecommendationItemProps> = ({ recommendation,
                                 onCancel();
                             }
                         }}
-                        onBlur={() => onSave(recommendation)}
+                        onBlur={() => onSave(inputValue)}
                     />
                 </div>
             );
