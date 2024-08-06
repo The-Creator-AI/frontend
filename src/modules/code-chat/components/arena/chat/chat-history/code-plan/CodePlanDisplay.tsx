@@ -30,7 +30,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, message
 
   return (
     <div className="code-plan-display" ref={ref}>
-      <div className="main">
+      <div className="main" style={{ flex: displayCodeFile ? '1' : '1 1 100%' }}> {/* Adjust flex based on preview state */}
       <Header
         plan={plan}
         chatId={chatId}
@@ -88,11 +88,13 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, message
       )}
       </div>
       {displayCodeFile && (
-        <div className='preview'>
+        <div className='preview' style={{ display: displayCodeFile ? 'block' : 'none' }}>
           <CodeFile
             name={displayCodeFile.filename || ''}
             code={displayCodeFile.code || ''}
-            onClose={handleCloseCodeFile}
+            onClose={() => {
+              handleCloseCodeFile();
+            }}
             height={(ref.current?.clientHeight || 800) - 150}
         />
         </div>
