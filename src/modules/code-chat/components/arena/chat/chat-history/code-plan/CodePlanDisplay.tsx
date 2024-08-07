@@ -95,7 +95,7 @@ const CodePlanDisplay: React.FC<CodePlanDisplayProps> = ({ plan, chatId, message
             onClose={() => {
               handleCloseCodeFile();
             }}
-            height={(ref.current?.clientHeight || 800) - 150}
+            height={750}
         />
         </div>
       )}
