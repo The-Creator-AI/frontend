@@ -32,7 +32,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
+    "start": "cross-env PORT=${PORT:-3001} react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "cy": "cypress open",
@@ -67,6 +67,7 @@
     "@types/chai": "^4.3.16",
     "@types/node": "^20.14.2",
     "@types/uuidv4": "^5.0.0",
+    "cross-env": "^7.0.3",
     "cypress": "^13.11.0",
     "cypress-multi-reporters": "^1.6.4",
     "marge": "^1.0.1",
