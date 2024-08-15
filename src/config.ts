@@ -1,3 +1,3 @@
 export default {
-    BASE_URL: `http://localhost:${process.env.REACT_APP_BACKEND_PORT || 3000}` 
+    BASE_URL: `http://localhost:${process.env.REACT_APP_BACKEND_PORT || 7979}` 
 };
