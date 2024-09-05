@@ -44,13 +44,16 @@ export const CodeStepHeader: React.FC<CodeStepHeaderProps> = ({
                         className="more-recommendations-button"
                     />
                 </Tooltip>
-                <Tooltip title={isFileCodeLoading(step.filename) ? "Loading..." : fileCode(step.filename) ? "View Code" : "Get Code"}>
+                {/* <Tooltip title={isFileCodeLoading(step.filename) ? "Loading..." : fileCode(step.filename) ? "View Code" : "Get Code"}> */}
+                <Tooltip title={"Get Code"}>
                     <Button
                         type="link"
-                        icon={fileCode(step.filename) ? <FileTextFilled /> : <FileTextOutlined />}
+                        icon={<FileTextOutlined />}
+                        // icon={fileCode(step.filename) ? <FileTextFilled /> : <FileTextOutlined />}
                         loading={isFileCodeLoading(step.filename)}
                         onClick={() => {
-                            !fileCode(step.filename) && developerAgent && handleCodeButtonClick({
+                            // !fileCode(step.filename) && 
+                            developerAgent && handleCodeButtonClick({
                                 filename: step.filename,
                                 developerAgent,
                                 selectedFiles,

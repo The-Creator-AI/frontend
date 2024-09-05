@@ -101,24 +101,24 @@ export const handleCodeButtonClick = (args: {
     selectedFiles: string[];
     developerAgent: AgentType | null;
 }) => {
-    const { filename, selectedFiles, developerAgent } = args;
-    if (fileCode(filename)) {
-        openModal('CodeFileModal', {
-            name: filename,
-            code: parseDeveloperResponse(fileCode(filename)).code || '',
-            onApply: () => {
-                const parsedMessage = parseDeveloperResponse(fileCode(filename));
-                saveCodeToFileFromDeveloperResponse({
-                    ...parsedMessage,
-                    filePath: parsedMessage.filePath || filename
-                }, getCurrentPath());
-                closeModal('CodeFileModal');
-            },
-            onClose: () => closeModal('CodeFileModal'),
-        });
-    } else {
+    // const { filename, selectedFiles, developerAgent } = args;
+    // if (fileCode(filename)) {
+    //     openModal('CodeFileModal', {
+    //         name: filename,
+    //         code: parseDeveloperResponse(fileCode(filename)).code || '',
+    //         onApply: () => {
+    //             const parsedMessage = parseDeveloperResponse(fileCode(filename));
+    //             saveCodeToFileFromDeveloperResponse({
+    //                 ...parsedMessage,
+    //                 filePath: parsedMessage.filePath || filename
+    //             }, getCurrentPath());
+    //             closeModal('CodeFileModal');
+    //         },
+    //         onClose: () => closeModal('CodeFileModal'),
+    //     });
+    // } else {
         handleGetCode(args);
-    }
+    // }
 };
 
 export const handleGetCode = (args: {
@@ -128,7 +128,8 @@ export const handleGetCode = (args: {
 }) => {
     const { filename, selectedFiles, developerAgent } = args;
     sendChatMessage({
-        chatId: getChatIdForNewChat(),
+        // chatId: getChatIdForNewChat(),
+        chatId: getFirstChat().id || getChatIdForNewChat(),
         chatTitle: chatTitleForCode(filename),
         agentInstruction: developerAgent?.systemInstructions,
         agentName: developerAgent?.name,
