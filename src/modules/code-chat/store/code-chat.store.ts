@@ -64,11 +64,12 @@ export interface CodeChatStoreState {
   fileTreeData: FileTreeNode;
 }
 
+const currentPath = new URL(window.location.href).searchParams.get("path") || "";
 export const initialState: CodeChatStoreState = {
-  currentPath: new URL(window.location.href).searchParams.get("path") || "",
-  selectedFiles: getFromLocalStorage(
+  currentPath: currentPath,
+  selectedFiles: getFromLocalStorage<Record<string, Array<string>>>(
     LOCAL_STORAGE_KEY.SELECTED_FILES
-  ) as string[],
+  )?.[currentPath] || [],
   recentFiles: [],
   agents: [],
   selectedAgent: null,
@@ -95,9 +96,9 @@ export const initialState: CodeChatStoreState = {
   openModals: [],
   collapsedSections: {}, // Initialize collapsedSections as an empty object
   fileTreeData: {
-    name: '',
+    name: "",
     children: [], // Initialize fileTreeData with empty children array
-  }
+  },
 };
 
 export const codeChatStoreStateSubject = new Store<

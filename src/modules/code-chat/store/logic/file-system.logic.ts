@@ -1,11 +1,13 @@
 import {
   LOCAL_STORAGE_KEY,
+  getFromLocalStorage,
   saveToLocalStorage,
 } from "../../../../utils/local-storage";
 import { CodeChatActions } from "../code-chat.actions";
 import {
   CodeChatStoreState,
   codeChatStoreStateSubject,
+  getCurrentPath,
 } from "../code-chat.store";
 
 import axios from "axios";
@@ -26,7 +28,12 @@ export const updateCurrentPath = (newPath: string) => {
 };
 
 export const updateSelectedFiles = (newFiles: string[]) => {
-  saveToLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES, newFiles);
+  const currentPath = getCurrentPath();
+  const selectedFiles = getFromLocalStorage<Record<string, Array<string>>>(LOCAL_STORAGE_KEY.SELECTED_FILES);
+  saveToLocalStorage(LOCAL_STORAGE_KEY.SELECTED_FILES, {
+    ...selectedFiles,
+    [currentPath]: newFiles,
+  });
   codeChatStoreStateSubject._next(
     {
       ...codeChatStoreStateSubject.getValue(),
